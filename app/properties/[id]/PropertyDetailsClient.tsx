@@ -1,12 +1,10 @@
 "use client"
 
-import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import PropertyPrint from "@/components/PropertyPrint"
-import PropertyPrintView from "@/components/PropertyPrintView"
+import dynamic from "next/dynamic"
 import {
   ArrowLeft,
   Heart,
@@ -32,10 +30,15 @@ import {
 } from "lucide-react"
 import { generateStructuredData } from "@/lib/seo"
 import { analytics } from "@/lib/analytics"
-import ImageGallery from "@/components/ImageGallery"
-import ShareModal from "@/components/ShareModal"
-import MortgageCalculator from "@/components/MortgageCalculator"
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
+
+// Lazy-load heavy components that are not needed on initial render
+const PropertyPrint = dynamic(() => import("@/components/PropertyPrint"), { ssr: false })
+const PropertyPrintView = dynamic(() => import("@/components/PropertyPrintView"), { ssr: false })
+const ImageGallery = dynamic(() => import("@/components/ImageGallery"), { ssr: false })
+const ShareModal = dynamic(() => import("@/components/ShareModal"), { ssr: false })
+const MortgageCalculator = dynamic(() => import("@/components/MortgageCalculator"), { ssr: false })
+const ContactFormModal = dynamic(() => import("@/components/ContactFormModal"), { ssr: false })
 
 interface Property {
   id: string
@@ -79,8 +82,6 @@ export default function PropertyDetailsClient() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(false)
   const [showContactForm, setShowContactForm] = useState(false)
-  const [contactForm, setContactForm] = useState({ name: "", email: "", phone: "", message: "" })
-  const [submitStatus, setSubmitStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [viewStats, setViewStats] = useState<ViewStats>({ view_count: 0, views_today: 0 })
   const [showLightbox, setShowLightbox] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
@@ -109,7 +110,8 @@ export default function PropertyDetailsClient() {
         property_type: property.property_type,
       })
     }
-  }, [property, addToRecentlyViewed])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [property])
 
   const trackPropertyView = async () => {
     try {
@@ -173,49 +175,17 @@ export default function PropertyDetailsClient() {
     })
   }
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (property?.images && property.images.length > 1) {
       setCurrentImageIndex((prev) => (prev + 1) % property.images.length)
     }
-  }
+  }, [property?.images])
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (property?.images && property.images.length > 1) {
       setCurrentImageIndex((prev) => (prev - 1 + property.images.length) % property.images.length)
     }
-  }
-
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitStatus("loading")
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      console.log("Contact form submitted:", {
-        ...contactForm,
-        propertyId: property?.id,
-        propertyTitle: property?.title,
-        agentId: property?.users?.id,
-      })
-
-      if (property) {
-        analytics.trackInquiry(property.id, property.title, "contact_form")
-      }
-
-      setShowContactForm(false)
-      setContactForm({ name: "", email: "", phone: "", message: "" })
-
-      setSubmitStatus("success")
-      alert("Message sent successfully! The agent will contact you soon.")
-    } catch {
-      console.error("Error sending message")
-      setSubmitStatus("error")
-      alert("Failed to send message. Please try again.")
-    } finally {
-      setSubmitStatus("idle")
-    }
-  }
+  }, [property?.images])
 
   const toggleFavorite = () => {
     setIsFavorite(!isFavorite)
@@ -402,6 +372,7 @@ export default function PropertyDetailsClient() {
                   }
                   alt={`${property.title} - Image ${currentImageIndex + 1}`}
                   fill
+                  sizes="(max-width: 1024px) 100vw, 66vw"
                   className="object-cover"
                   priority
                 />
@@ -471,6 +442,8 @@ export default function PropertyDetailsClient() {
                         src={image || "/placeholder.svg"}
                         alt={`Thumbnail ${index + 1}`}
                         fill
+                        sizes="96px"
+                        loading="lazy"
                         className="object-cover"
                       />
                     </button>
@@ -692,86 +665,12 @@ export default function PropertyDetailsClient() {
         </div>
 
         {showContactForm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg max-w-md w-full p-6 max-h-[90vh] overflow-y-auto">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-gray-900">Contact Agent</h3>
-                <button
-                  onClick={() => setShowContactForm(false)}
-                  className="text-gray-400 hover:text-gray-600 transition"
-                >
-                  ×
-                </button>
-              </div>
-
-              <form onSubmit={handleContactSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
-                  <input
-                    type="text"
-                    value={contactForm.name}
-                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Email Address *</label>
-                  <input
-                    type="email"
-                    value={contactForm.email}
-                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    required
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  <input
-                    type="tel"
-                    value={contactForm.phone}
-                    onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="+233 XX XXX XXXX"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Message *</label>
-                  <textarea
-                    value={contactForm.message}
-                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                    rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder={`Hi, I'm interested in ${property.title}. Could you please provide more information?`}
-                    required
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowContactForm(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition"
-                    disabled={submitStatus === "loading"}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-                    disabled={submitStatus === "loading"}
-                  >
-                    {submitStatus === "loading" ? "Sending..." : "Send Message"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <ContactFormModal
+            propertyId={property.id}
+            propertyTitle={property.title}
+            agentId={property.users?.id}
+            onClose={() => setShowContactForm(false)}
+          />
         )}
       </div>
     </>
