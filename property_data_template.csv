@@ -1,0 +1,2 @@
+title,description,price,location,property_type,listing_type,bedrooms,bathrooms,area,parking,amenities,featured,status,agent,phone,image1,image2,image3,image4
+"Example: Luxury 4 Bedroom Villa","Example: Spacious modern villa with contemporary finishes",850000,"East Legon, Accra",Villa,sale,4,3,350,2,"Swimming Pool|Security|Garden",false,active,"Kwame Mensah","+233 24 123 4567","/placeholder.svg?height=600&width=800","/placeholder.svg?height=600&width=800","/placeholder.svg?height=600&width=800","/placeholder.svg?height=600&width=800"

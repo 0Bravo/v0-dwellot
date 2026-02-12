@@ -1,0 +1,153 @@
+Section,Category,Item,Details,Value/Notes
+Key Partners,Real Estate Developers,Appolonia City,"13 properties | +233 302 967150 | The Oxford, Mews, Industrial | $83K-$650K",Strategic partnership - largest
+Key Partners,Real Estate Developers,Devtraco Group,"2 properties | +233 540 10 7476 | Woodlands Orchid (80x70 $34K) & Jute (70x40 $17.5K) | 592-acre gated city Dawhenya",Strategic partnership
+Key Partners,Real Estate Developers,BestWorld Company/Kharis Properties,"3 properties | Quality residential developments",Strategic partnership
+Key Partners,Real Estate Developers,Future developers,Oxford Estate and other premium developers,Pipeline
+Key Partners,Service Providers,Payment processors,Stripe for international transactions,Infrastructure
+Key Partners,Service Providers,Cloud hosting,Vercel for hosting,Infrastructure
+Key Partners,Service Providers,Database provider,Supabase for data storage,Infrastructure
+Key Partners,Marketing,Digital marketing agencies,SEO and social media partners,Growth
+Key Partners,Marketing,Property photographers,Professional imagery services,Content
+Key Partners,Legal,Legal advisors,Property law and compliance,Compliance
+Key Partners,Legal,Real estate agents,Individual agents and agencies,Distribution
+
+Key Activities,Platform Operations,Property listing management,Add/update/manage property listings,Daily
+Key Activities,Platform Operations,Database maintenance,Ensure data integrity and performance,Weekly
+Key Activities,Platform Operations,Site monitoring,Performance and uptime monitoring,Daily
+Key Activities,Customer Acquisition,SEO optimization,Improve search rankings for Ghana property keywords,Weekly
+Key Activities,Customer Acquisition,Content marketing,Blog posts and property guides,Weekly
+Key Activities,Customer Acquisition,Social media marketing,TikTok (@dwellot.ghana) and other platforms,Daily
+Key Activities,Customer Acquisition,Paid advertising,Google Ads for high-intent keywords,Monthly
+Key Activities,Partnership Management,Developer relationships,Maintain partnerships with property developers,Monthly
+Key Activities,Partnership Management,Agent onboarding,Recruit and onboard new real estate agents,Monthly
+Key Activities,Quality Assurance,Property verification,Verify property details and legitimacy,Per listing
+Key Activities,Quality Assurance,Customer support,Respond to inquiries and support requests,Daily
+Key Activities,Product Development,Feature development,Build new platform features,Monthly
+Key Activities,Product Development,User experience optimization,Improve site usability and conversion,Ongoing
+
+Key Resources,Technology,Website platform,"Next.js 16, React, TypeScript",Core asset
+Key Resources,Technology,Database,Supabase PostgreSQL with RLS,Core asset
+Key Resources,Technology,Domain,www.dwellot.com,Brand asset
+Key Resources,Technology,Hosting,Vercel infrastructure,Infrastructure
+Key Resources,Human Capital,Development team,Part-time developer ($250-500/month),Team
+Key Resources,Human Capital,Content creator,Blog and social media content,Team
+Key Resources,Human Capital,Customer support,Inquiry response and lead management,Team
+Key Resources,Content,Property listings,"Currently 18 properties: Appolonia City (13), BestWorld/Kharis (3), Devtraco Group (2)",Inventory
+Key Resources,Content,Property images,High-quality professional images,Content
+Key Resources,Content,Blog content,SEO-optimized articles and guides,Content
+Key Resources,Brand,Brand identity,Logo and visual identity,Brand asset
+Key Resources,Brand,Social media presence,TikTok @dwellot.ghana,Distribution
+Key Resources,Data,User database,Registered users and saved searches,Data asset
+Key Resources,Data,Analytics,User behavior and conversion data,Intelligence
+
+Value Propositions,For Property Buyers/Renters,Verified listings,Curated properties from reputable developers,Trust
+Value Propositions,For Property Buyers/Renters,Premium selection,"Focus on quality properties (Appolonia, Devtraco, East Legon)",Quality
+Value Propositions,For Property Buyers/Renters,USD pricing transparency,Clear pricing in dollars for diaspora buyers,Convenience
+Value Propositions,For Property Buyers/Renters,Comprehensive information,"Detailed specs, images, amenities, payment plans",Information
+Value Propositions,For Property Buyers/Renters,Modern user experience,Fast responsive website with search and filters,UX
+Value Propositions,For Property Buyers/Renters,Direct developer access,Connect directly with property developers,Efficiency
+Value Propositions,For Property Buyers/Renters,Investment guidance,Blog content on buying property in Ghana,Education
+Value Propositions,For Property Developers/Agents,Premium exposure,Reach qualified buyers and diaspora market,Visibility
+Value Propositions,For Property Developers/Agents,Digital marketing,Modern platform vs traditional methods,Marketing
+Value Propositions,For Property Developers/Agents,Lead generation,Qualified inquiries from serious buyers,Leads
+Value Propositions,For Property Developers/Agents,Professional presentation,High-quality property showcases,Branding
+Value Propositions,For Property Developers/Agents,Analytics,Track views and engagement,Data
+Value Propositions,For Property Developers/Agents,Low cost,Affordable compared to traditional advertising,Cost efficiency
+
+Customer Relationships,Buyers/Renters,Self-service platform,Browse and search independently,Automated
+Customer Relationships,Buyers/Renters,Inquiry system,Submit inquiries for specific properties,Transactional
+Customer Relationships,Buyers/Renters,Email communication,Property updates and newsletters,Automated
+Customer Relationships,Buyers/Renters,Phone support,Direct contact via +233 540 10 7476,Personal
+Customer Relationships,Buyers/Renters,WhatsApp support,Quick responses to questions,Personal
+Customer Relationships,Buyers/Renters,Social media engagement,TikTok content and DMs,Community
+Customer Relationships,Developers/Agents,Account management,Dedicated support for partners,Personal
+Customer Relationships,Developers/Agents,Performance reports,Monthly analytics and insights,Automated
+Customer Relationships,Developers/Agents,Co-marketing,Joint promotional activities,Partnership
+
+Channels,Digital,Website,www.dwellot.com - primary platform,Direct owned
+Channels,Digital,Mobile web,Responsive design for mobile users,Direct owned
+Channels,Social Media,TikTok,@dwellot.ghana - property videos and tours,Owned
+Channels,Social Media,Facebook,Property listings and community (planned),Partner
+Channels,Social Media,Instagram,Visual property content (planned),Partner
+Channels,Search,Google Search,SEO-optimized for Ghana property keywords,Partner
+Channels,Search,Google Ads,Paid search advertising (planned),Partner
+Channels,Traditional,Word of mouth,Referrals from satisfied customers,Indirect
+Channels,Traditional,Developer partnerships,Co-marketing with Appolonia Devtraco Kharis,Partner
+Channels,Traditional,Real estate agents,Agent network distribution,Partner
+
+Customer Segments,Primary,Ghanaian Diaspora,"Living abroad, buying property back home",High value
+Customer Segments,Primary,Expatriates,Foreign nationals living/moving to Ghana,High value
+Customer Segments,Primary,Local professionals,"High earners in Accra, Kumasi",Medium-high value
+Customer Segments,Primary,Property investors,Buying for rental income or appreciation,High value
+Customer Segments,Secondary,First-time homebuyers,Young professionals entering market,Medium value
+Customer Segments,Secondary,Upgraders,Moving from rental to ownership,Medium value
+Customer Segments,Secondary,Land buyers,Purchasing plots for future development,Medium value
+Customer Segments,Tertiary,Renters,Looking for quality rental properties,Lower value
+Customer Segments,B2B,Property developers,Need marketing and sales channels,Partnership
+Customer Segments,B2B,Real estate agents,Seeking digital presence,Partnership
+
+Cost Structure,Fixed Costs,Hosting,Vercel hosting and infrastructure,$50-100/month
+Cost Structure,Fixed Costs,Database,Supabase PostgreSQL hosting,$0-50/month
+Cost Structure,Fixed Costs,Domain,www.dwellot.com renewal,$15/year
+Cost Structure,Fixed Costs,Developer maintenance,Part-time developer support,$250-500/month
+Cost Structure,Fixed Costs,Content creation,Blog writing and social media,$100-250/month
+Cost Structure,Variable Costs,Paid advertising,Google Ads and social media ads,$200-1000/month
+Cost Structure,Variable Costs,Photography,Professional property photos,$50-150/property
+Cost Structure,Variable Costs,Transaction fees,Stripe payment processing fees,2.9% + $0.30/transaction
+Cost Structure,Variable Costs,Customer support tools,CRM and communication tools,$0-100/month
+Cost Structure,One-time,Legal setup,Business registration and contracts,$500-2000
+Cost Structure,One-time,Brand development,Logo design and materials,Already completed
+Cost Structure,Total Monthly,Minimum burn rate,Essential operations only,$557/month
+Cost Structure,Total Monthly,Growth mode,With marketing and expansion,$1177-2177/month
+
+Revenue Streams,Primary,Listing fees,Developers pay per property listing,$50-200/property/month
+Revenue Streams,Primary,Featured listings,Premium placement on homepage,$200-500/property/month
+Revenue Streams,Primary,Commission,Percentage of sale price,2-5% of sale price
+Revenue Streams,Secondary,Lead generation,Pay per qualified inquiry,$20-50/lead
+Revenue Streams,Secondary,Subscription,Monthly agent/developer subscriptions,$100-500/month
+Revenue Streams,Future,Premium memberships,Exclusive access for buyers,$10-20/month
+Revenue Streams,Future,Advertising,Banner ads and sponsored content,$100-500/month
+Revenue Streams,Future,Data services,Market insights and analytics reports,$500-2000/report
+Revenue Streams,Future,Property management referrals,Commission from property managers,5-10% of first year
+
+Financial Projections,Break-even,Monthly revenue needed,Cover $557-1177 operating costs,$557-1177/month
+Financial Projections,Break-even,Properties needed,"1-2 featured listings or 6-12 basic listings per month",1-2 sales
+Financial Projections,Year 1,Conservative estimate,50 properties × $100 average = $5K/month,$60K/year
+Financial Projections,Year 1,Optimistic estimate,100 properties × $150 average = $15K/month,$180K/year
+Financial Projections,Year 2,Growth target,10-15 commission sales × $17.5K average price × 3% = $5.25K-7.88K/month,$63K-94.5K/year
+Financial Projections,Year 2,Total revenue potential,Listings + commissions + subscriptions,$90K-180K/year
+
+Strategic Recommendations,Short-term (0-3 months),Focus on partnerships,Sign 5-10 developer/agent partnerships,Priority 1
+Strategic Recommendations,Short-term (0-3 months),Content marketing,Publish 12 SEO blog posts,Priority 2
+Strategic Recommendations,Short-term (0-3 months),TikTok growth,Post 3-5 property videos per week,Priority 3
+Strategic Recommendations,Short-term (0-3 months),Google My Business,Set up and optimize listing,Priority 4
+Strategic Recommendations,Medium-term (3-6 months),Launch paid advertising,Google Ads for high-intent keywords,Priority 1
+Strategic Recommendations,Medium-term (3-6 months),Expand property inventory,Target 100+ verified listings,Priority 2
+Strategic Recommendations,Medium-term (3-6 months),Build agent network,Recruit 20-30 active agents,Priority 3
+Strategic Recommendations,Medium-term (3-6 months),Email marketing,Newsletter for leads and buyers,Priority 4
+Strategic Recommendations,Long-term (6-12 months),Mobile app development,iOS/Android apps for better UX,Priority 1
+Strategic Recommendations,Long-term (6-12 months),Virtual tours,3D property walkthroughs,Priority 2
+Strategic Recommendations,Long-term (6-12 months),Mortgage partnerships,Connect buyers with lenders,Priority 3
+Strategic Recommendations,Long-term (6-12 months),Regional expansion,Kumasi Takoradi Tamale markets,Priority 4
+
+Competitive Advantages,Market Position,Premium focus,Quality over quantity approach,Differentiation
+Competitive Advantages,Market Position,Diaspora targeting,USD pricing and international focus,Niche
+Competitive Advantages,Technology,Modern platform,Next.js vs outdated competitor sites,Technical edge
+Competitive Advantages,Technology,Mobile-first,Responsive design for mobile users,UX advantage
+Competitive Advantages,Technology,Fast performance,Vercel hosting for speed,Technical edge
+Competitive Advantages,Partnerships,Developer relationships,Direct partnerships with top developers,Distribution
+Competitive Advantages,Brand,Professional presentation,High-quality imagery and content,Brand strength
+Competitive Advantages,Brand,Trust signals,Verified listings and transparency,Credibility
+
+Key Metrics,Acquisition,Website traffic,Monthly unique visitors,Target: 10K/month
+Key Metrics,Acquisition,SEO rankings,"Position for ""Ghana property"" etc",Target: Top 10
+Key Metrics,Acquisition,Social media followers,TikTok and other platforms,Target: 5K followers
+Key Metrics,Engagement,Property views,Average views per listing,Target: 50-100/property
+Key Metrics,Engagement,Time on site,Average session duration,Target: 3-5 minutes
+Key Metrics,Engagement,Inquiry rate,% of visitors who submit inquiries,Target: 2-5%
+Key Metrics,Conversion,Leads generated,Monthly qualified inquiries,Target: 50-100/month
+Key Metrics,Conversion,Properties sold,Monthly sales through platform,Target: 2-5/month
+Key Metrics,Financial,Revenue,Monthly recurring revenue,Target: $5K-15K/month
+Key Metrics,Financial,Customer LTV,Lifetime value per developer/agent,Target: $1K-5K
+Key Metrics,Retention,Developer retention,% of partners staying active,Target: 80%+
+Key Metrics,Retention,Repeat customers,Buyers who purchase again,Target: 10-20%

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dwellot Project Audit Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h1 { color: #2563eb; border-bottom: 3px solid #2563eb; padding-bottom: 10px; }
+        h2 { color: #1e40af; margin-top: 30px; }
+        .summary { background: #eff6ff; padding: 20px; border-radius: 6px; margin: 20px 0; }
+        .summary-item { display: inline-block; margin: 10px 20px; font-size: 18px; font-weight: bold; }
+        .found { color: #059669; }
+        .missing { color: #dc2626; }
+        .warning { color: #d97706; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #2563eb; color: white; padding: 12px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+        tr:hover { background: #f9fafb; }
+        .status-found { color: #059669; font-weight: bold; }
+        .status-missing { color: #dc2626; font-weight: bold; }
+        .status-incomplete { color: #d97706; font-weight: bold; }
+        .timestamp { color: #6b7280; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Dwellot Project Audit Report</h1>
+        <p class="timestamp">Generated: October 06, 2025 at 14:14:14</p>
+        
+        <div class="summary">
+            <div class="summary-item">📊 Total Items: <span>41</span></div>
+            <div class="summary-item found">✓ Found: <span>36</span></div>
+            <div class="summary-item missing">✗ Missing: <span>5</span></div>
+            <div class="summary-item warning">⚠ Warnings: <span>0</span></div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Item</th>
+                    <th>Status</th>
+                    <th>Path</th>
+                </tr>
+            </thead>
+            <tbody>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>package.json</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\package.json</td>
+                </tr>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>tsconfig.json</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\tsconfig.json</td>
+                </tr>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>next.config.js</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\next.config.js</td>
+                </tr>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>next.config.mjs</td>
+                    <td class="status-missing">Missing</td>
+                    <td style="font-size: 12px; color: #6b7280;">N/A</td>
+                </tr>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>tailwind.config.ts</td>
+                    <td class="status-missing">Missing</td>
+                    <td style="font-size: 12px; color: #6b7280;">N/A</td>
+                </tr>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>tailwind.config.js</td>
+                    <td class="status-missing">Missing</td>
+                    <td style="font-size: 12px; color: #6b7280;">N/A</td>
+                </tr>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>.env.local</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\.env.local</td>
+                </tr>                <tr>
+                    <td><strong>Configuration</strong></td>
+                    <td>.gitignore</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\.gitignore</td>
+                </tr>                <tr>
+                    <td><strong>Structure</strong></td>
+                    <td>App Directory</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">src/app</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>/</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>admin/users</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\admin\users\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>agents</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\agents\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>auth</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\auth\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>dashboard</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\dashboard\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>dashboard/properties</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\dashboard\properties\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>properties</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\properties\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>properties/[id]</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\properties\[id]\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Pages</strong></td>
+                    <td>test-connection</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\test-connection\page.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Layouts</strong></td>
+                    <td>layout.tsx</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\layout.tsx</td>
+                </tr>                <tr>
+                    <td><strong>API Routes</strong></td>
+                    <td>route.ts</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\api\properties\route.ts</td>
+                </tr>                <tr>
+                    <td><strong>API Routes</strong></td>
+                    <td>route.ts</td>
+                    <td class="status-found">Exists</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\app\api\properties\[id]\route.ts</td>
+                </tr>                <tr>
+                    <td><strong>Library</strong></td>
+                    <td>auth-context.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\lib\auth-context.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Library</strong></td>
+                    <td>database.ts</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\lib\database.ts</td>
+                </tr>                <tr>
+                    <td><strong>Library</strong></td>
+                    <td>properties.ts</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\lib\properties.ts</td>
+                </tr>                <tr>
+                    <td><strong>Library</strong></td>
+                    <td>supabase.ts</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\lib\supabase.ts</td>
+                </tr>                <tr>
+                    <td><strong>Library</strong></td>
+                    <td>user-roles.ts</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\lib\user-roles.ts</td>
+                </tr>                <tr>
+                    <td><strong>Components</strong></td>
+                    <td>Breadcrumb.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\components\Breadcrumb.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Components</strong></td>
+                    <td>Footer.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\components\Footer.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Components</strong></td>
+                    <td>Navbar.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\components\Navbar.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Components</strong></td>
+                    <td>ProctedRoute.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\components\ProctedRoute.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Components</strong></td>
+                    <td>SubNavigation.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\components\SubNavigation.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Components</strong></td>
+                    <td>UserManagement.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\components\admin\UserManagement.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Components</strong></td>
+                    <td>RoleBasedDashboard.tsx</td>
+                    <td class="status-found">Found</td>
+                    <td style="font-size: 12px; color: #6b7280;">C:\Users\Seed Capital\dwellot\src\components\dashboard\RoleBasedDashboard.tsx</td>
+                </tr>                <tr>
+                    <td><strong>Dependencies</strong></td>
+                    <td>@supabase/supabase-js</td>
+                    <td class="status-found">Installed</td>
+                    <td style="font-size: 12px; color: #6b7280;">^2.58.0</td>
+                </tr>                <tr>
+                    <td><strong>Dependencies</strong></td>
+                    <td>next</td>
+                    <td class="status-found">Installed</td>
+                    <td style="font-size: 12px; color: #6b7280;">15.5.4</td>
+                </tr>                <tr>
+                    <td><strong>Dependencies</strong></td>
+                    <td>react</td>
+                    <td class="status-found">Installed</td>
+                    <td style="font-size: 12px; color: #6b7280;">19.1.0</td>
+                </tr>                <tr>
+                    <td><strong>Dependencies</strong></td>
+                    <td>tailwindcss</td>
+                    <td class="status-missing">Not Installed</td>
+                    <td style="font-size: 12px; color: #6b7280;">N/A</td>
+                </tr>                <tr>
+                    <td><strong>Dependencies</strong></td>
+                    <td>lucide-react</td>
+                    <td class="status-found">Installed</td>
+                    <td style="font-size: 12px; color: #6b7280;">^0.544.0</td>
+                </tr>                <tr>
+                    <td><strong>Dependencies</strong></td>
+                    <td>typescript</td>
+                    <td class="status-missing">Not Installed</td>
+                    <td style="font-size: 12px; color: #6b7280;">N/A</td>
+                </tr>                <tr>
+                    <td><strong>Supabase</strong></td>
+                    <td>Client Configuration</td>
+                    <td class="status-found">Configured</td>
+                    <td style="font-size: 12px; color: #6b7280;">lib/supabase.*</td>
+                </tr>                <tr>
+                    <td><strong>Supabase</strong></td>
+                    <td>Environment Variables</td>
+                    <td class="status-found">Configured</td>
+                    <td style="font-size: 12px; color: #6b7280;">.env.local</td>
+                </tr>            </tbody>
+        </table>
+    </div>
+</body>
+</html>
