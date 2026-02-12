@@ -1,60 +1,77 @@
 import type { Metadata } from "next"
-import { generateEnhancedPropertyMetadata } from "@/lib/seo"
+import {
+  generateEnhancedPropertyMetadata,
+  generateEnhancedStructuredData,
+  generateBreadcrumbSchema,
+} from "@/lib/seo"
+import { createAdminClient } from "@/lib/supabase/admin"
 import PropertyDetailsClient from "./PropertyDetailsClient"
 
-interface Property {
-  id: string
-  title: string
-  location: string
-  price: number
-  listing_type: string
-  property_type: string
-  bedrooms: number
-  bathrooms: number
-  area: number
-  parking: number
-  description: string
-  images: string[]
-  features: string[]
-  featured: boolean
-  status: string
-  users: {
-    id: string
-    name: string
-    email: string
-    phone: string
+export const revalidate = 60
+
+async function getProperty(id: string) {
+  try {
+    const adminClient = createAdminClient()
+    const { data, error } = await adminClient
+      .from("properties")
+      .select("id, title, description, price, location, property_type, listing_type, bedrooms, bathrooms, area, parking, images, amenities, featured, status, agent, phone, view_count, created_at, updated_at")
+      .eq("id", Number.parseInt(id))
+      .single()
+
+    if (error || !data) return null
+    return data
+  } catch {
+    return null
   }
-  created_at: string
-  updated_at: string
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/api/properties/${id}`,
-      {
-        cache: "no-store",
-      },
-    )
+  const property = await getProperty(id)
 
-    if (!response.ok) {
-      return {
-        title: "Property Not Found | Dwellot Ghana",
-        description: "The property you're looking for could not be found. Browse other properties in Ghana.",
-      }
-    }
-
-    const property = await response.json()
-    return generateEnhancedPropertyMetadata(property)
-  } catch (error) {
+  if (!property) {
     return {
-      title: "Property | Dwellot Ghana",
-      description: "View property details on Dwellot - Ghana's #1 property marketplace",
+      title: "Property Not Found | Dwellot Ghana",
+      description: "The property you're looking for could not be found. Browse other properties in Ghana.",
     }
   }
+
+  return generateEnhancedPropertyMetadata(property)
 }
 
-export default function PropertyDetailPage() {
-  return <PropertyDetailsClient />
+export default async function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const property = await getProperty(id)
+
+  // Build JSON-LD structured data from server-fetched property
+  const structuredData = property
+    ? generateEnhancedStructuredData(property)
+    : null
+
+  const breadcrumbData = property
+    ? generateBreadcrumbSchema([
+        { name: "Home", url: "https://dwellot.com" },
+        { name: "Properties", url: "https://dwellot.com/properties" },
+        { name: property.location, url: `https://dwellot.com/properties?location=${encodeURIComponent(property.location)}` },
+        { name: property.title, url: `https://dwellot.com/properties/${property.id}` },
+      ])
+    : null
+
+  return (
+    <>
+      {structuredData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      )}
+      {breadcrumbData && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+        />
+      )}
+      <PropertyDetailsClient />
+    </>
+  )
 }
