@@ -6,7 +6,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/dashboard/", "/auth/", "/api/"],
+        disallow: [
+          "/admin/",
+          "/dashboard/",
+          "/auth/",
+          "/api/",
+          "/profile/",
+          "/favorites/",
+          "/test-connection/",
+        ],
       },
     ],
     sitemap: "https://dwellot.com/sitemap.xml",
