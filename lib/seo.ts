@@ -157,10 +157,10 @@ export function generateEnhancedPropertyMetadata(property: PropertySEO): Metadat
   const url = `https://dwellot.com/properties/${property.id}`
   const imageUrl = property.images[0] || "/images/hero-bg.jpg"
 
-  const aiOptimizedDescription = `${property.listing_type === "sale" ? "Purchase" : "Rent"} this beautiful ${property.bedrooms}-bedroom ${property.property_type} located in ${property.location}, Ghana. Priced at $${property.price.toLocaleString()}, this property features ${property.bathrooms} bathroom${property.bathrooms > 1 ? "s" : ""} and offers excellent value. ${property.description?.slice(0, 120)}... Available for immediate viewing.`
+  const aiOptimizedDescription = `${property.bedrooms} bedroom ${property.property_type.toLowerCase()} for ${property.listing_type} in ${property.location}, Ghana. $${property.price.toLocaleString()}. ${property.bathrooms} bathroom${property.bathrooms > 1 ? "s" : ""}${property.area ? `, ${property.area}m\u00B2` : ""}. Browse on Dwellot.`
 
   return {
-    title: `${property.title} - ${property.listing_type === "sale" ? "For Sale" : "For Rent"} in ${property.location}, Ghana | Dwellot`,
+    title: `${property.title} | ${property.bedrooms} Bed ${property.property_type} in ${property.location} | Dwellot`,
     description: aiOptimizedDescription,
     keywords: [
       `${property.location} property`,
@@ -209,14 +209,19 @@ export function generateEnhancedPropertyMetadata(property: PropertySEO): Metadat
   }
 }
 
-export function generateEnhancedStructuredData(property: PropertySEO) {
+export function generateEnhancedStructuredData(property: PropertySEO & { created_at?: string }) {
+  const images = (property.images || []).map((img) =>
+    img.startsWith("http") ? img : `https://dwellot.com${img}`,
+  )
+
   return {
     "@context": "https://schema.org",
-    "@type": ["RealEstateListing", "Product", "Place"],
+    "@type": "RealEstateListing",
     name: property.title,
     description: property.description,
     url: `https://dwellot.com/properties/${property.id}`,
-    image: property.images.map((img) => (img.startsWith("http") ? img : `https://dwellot.com${img}`)),
+    ...(property.created_at && { datePosted: property.created_at }),
+    image: images,
     offers: {
       "@type": "Offer",
       price: property.price,
@@ -237,26 +242,20 @@ export function generateEnhancedStructuredData(property: PropertySEO) {
     address: {
       "@type": "PostalAddress",
       addressLocality: property.location,
-      addressCountry: "Ghana",
       addressRegion: "Greater Accra",
-    },
-    geo: {
-      "@type": "GeoCoordinates",
       addressCountry: "GH",
     },
-    numberOfRooms: property.bedrooms,
+    numberOfRooms: property.bedrooms + property.bathrooms,
+    numberOfBedrooms: property.bedrooms,
     numberOfBathroomsTotal: property.bathrooms,
-    floorSize: {
-      "@type": "QuantitativeValue",
-      value: property.area || 0,
-      unitCode: "SQM",
-    },
+    ...(property.area && {
+      floorSize: {
+        "@type": "QuantitativeValue",
+        value: property.area,
+        unitCode: "SQM",
+      },
+    }),
     category: property.property_type,
     additionalType: property.listing_type === "sale" ? "Sale" : "Rental",
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      reviewCount: "1",
-    },
   }
 }
