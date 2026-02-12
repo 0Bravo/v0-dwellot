@@ -12,7 +12,7 @@ import { CompareProvider } from "@/contexts/CompareContext"
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext"
 import dynamic from "next/dynamic"
 
-const NewsletterModal = dynamic(() => import("@/components/NewsletterModal"), { ssr: false })
+const NewsletterModal = dynamic(() => import("@/components/NewsletterModal"))
 
 const inter = Inter({ subsets: ["latin"] })
 
