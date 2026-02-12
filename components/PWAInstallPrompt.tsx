@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { X, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { registerServiceWorker } from "@/lib/register-sw"
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>
@@ -14,6 +15,8 @@ export default function PWAInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false)
 
   useEffect(() => {
+    registerServiceWorker()
+
     const handler = (e: Event) => {
       e.preventDefault()
       setDeferredPrompt(e as BeforeInstallPromptEvent)
