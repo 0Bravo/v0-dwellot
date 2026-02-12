@@ -489,6 +489,25 @@ export default function PropertyDetailsClient() {
                   </div>
                 </div>
 
+                {/* Mobile-only property stats bar */}
+                <div className="flex items-center flex-wrap gap-4 text-sm text-gray-500 mb-6 lg:hidden">
+                  <span className="flex items-center gap-1.5">
+                    <Eye className="w-4 h-4" />
+                    {viewStats.view_count} views
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Eye className="w-4 h-4" />
+                    {viewStats.views_today} today
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <Clock className="w-4 h-4" />
+                    {formatDate(property.created_at)}
+                  </span>
+                  <span className="text-gray-400 font-mono">
+                    #{property.id.slice(-6).toUpperCase()}
+                  </span>
+                </div>
+
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 border-t border-b">
                   <div className="text-center">
                     <Bed className="w-8 h-8 text-blue-600 mx-auto mb-2" />
