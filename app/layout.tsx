@@ -10,7 +10,9 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ToastProvider } from "@/components/Toast"
 import { CompareProvider } from "@/contexts/CompareContext"
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext"
-import NewsletterModal from "@/components/NewsletterModal"
+import dynamic from "next/dynamic"
+
+const NewsletterModal = dynamic(() => import("@/components/NewsletterModal"), { ssr: false })
 
 const inter = Inter({ subsets: ["latin"] })
 

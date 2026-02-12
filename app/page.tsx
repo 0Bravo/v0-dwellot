@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -20,9 +20,11 @@ import {
   CheckCircle,
   Camera,
 } from "lucide-react"
-import RecentlyViewedWidget from "@/components/RecentlyViewedWidget"
-import PWAInstallPrompt from "@/components/PWAInstallPrompt"
+import dynamic from "next/dynamic"
 import { registerServiceWorker } from "@/lib/register-sw"
+
+const RecentlyViewedWidget = dynamic(() => import("@/components/RecentlyViewedWidget"), { ssr: false })
+const PWAInstallPrompt = dynamic(() => import("@/components/PWAInstallPrompt"), { ssr: false })
 
 interface Property {
   id: number
@@ -120,7 +122,7 @@ export default function HomePage() {
     fetchProperties()
   }, [])
 
-  const toggleSave = (e: React.MouseEvent, propertyId: number) => {
+  const toggleSave = useCallback((e: React.MouseEvent, propertyId: number) => {
     e.preventDefault()
     e.stopPropagation()
     setSavedProperties((prev) => {
@@ -132,27 +134,25 @@ export default function HomePage() {
       }
       return newSet
     })
-  }
+  }, [])
 
-  const handleImageNavigation = (
-    e: React.MouseEvent,
-    propertyId: number,
-    direction: "prev" | "next",
-    totalImages: number,
-  ) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setCurrentImages((prev) => {
-      const current = prev[propertyId] || 0
-      let newIndex
-      if (direction === "next") {
-        newIndex = (current + 1) % totalImages
-      } else {
-        newIndex = current === 0 ? totalImages - 1 : current - 1
-      }
-      return { ...prev, [propertyId]: newIndex }
-    })
-  }
+  const handleImageNavigation = useCallback(
+    (e: React.MouseEvent, propertyId: number, direction: "prev" | "next", totalImages: number) => {
+      e.preventDefault()
+      e.stopPropagation()
+      setCurrentImages((prev) => {
+        const current = prev[propertyId] || 0
+        let newIndex
+        if (direction === "next") {
+          newIndex = (current + 1) % totalImages
+        } else {
+          newIndex = current === 0 ? totalImages - 1 : current - 1
+        }
+        return { ...prev, [propertyId]: newIndex }
+      })
+    },
+    [],
+  )
 
   return (
     <div className="min-h-screen bg-white">
@@ -161,7 +161,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative rounded-3xl overflow-hidden shadow-2xl">
             <div className="absolute inset-0">
-              <Image src="/images/hero-bg.jpg" alt="Ghana coastal cityscape" fill className="object-cover" priority />
+              <Image src="/images/hero-bg.jpg" alt="Ghana coastal cityscape" fill className="object-cover" priority sizes="100vw" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 z-10"></div>
             </div>
 
@@ -330,6 +330,7 @@ export default function HomePage() {
                           src={property.images?.[currentImg] || property.images?.[0] || "/api/placeholder/400/300"}
                           alt={property.title}
                           fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
 
@@ -522,6 +523,7 @@ export default function HomePage() {
                         }
                         alt={property.title}
                         fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
                       />
 
