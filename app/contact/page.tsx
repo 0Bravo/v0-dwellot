@@ -98,14 +98,22 @@ export default function ContactPage() {
             <div className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Contact Information</CardTitle>
+                  <CardTitle>Ghana Office</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-teal-600 mt-1" />
+                    <div>
+                      <p className="font-semibold">Address</p>
+                      <p className="text-muted-foreground">Accra, Ghana</p>
+                    </div>
+                  </div>
                   <div className="flex items-start gap-3">
                     <Phone className="h-5 w-5 text-teal-600 mt-1" />
                     <div>
                       <p className="font-semibold">Phone</p>
-                      <p className="text-muted-foreground">+233 275 577 577</p>
+                      <p className="text-muted-foreground">020 157 8429</p>
+                      <p className="text-muted-foreground">055 259 9185</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -116,25 +124,40 @@ export default function ContactPage() {
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-teal-600 mt-1" />
-                    <div>
-                      <p className="font-semibold">Address</p>
-                      <p className="text-muted-foreground">Accra, Ghana</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
                     <MessageSquare className="h-5 w-5 text-teal-600 mt-1" />
                     <div>
                       <p className="font-semibold">WhatsApp</p>
                       <p className="text-muted-foreground">Chat with us instantly</p>
                       <a
-                        href="https://wa.me/233275577577"
+                        href="https://wa.me/233201578429"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-teal-600 hover:underline"
                       >
                         Start Chat
                       </a>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>UK Office</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-teal-600 mt-1" />
+                    <div>
+                      <p className="font-semibold">Address</p>
+                      <p className="text-muted-foreground">86-90 Paul Street, London EC2A 4NE</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <Phone className="h-5 w-5 text-teal-600 mt-1" />
+                    <div>
+                      <p className="font-semibold">Phone</p>
+                      <p className="text-muted-foreground">+44 7861 932209</p>
                     </div>
                   </div>
                 </CardContent>

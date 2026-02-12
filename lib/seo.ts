@@ -88,8 +88,8 @@ export function generateOrganizationSchema() {
       "Ghana's premier property marketplace connecting buyers, sellers, and renters across Accra, Kumasi, and beyond.",
     url: "https://dwellot.com",
     logo: "https://dwellot.com/icon-512.png",
-    telephone: "+233-XXX-XXX-XXX",
-    email: "info@dwellot.com",
+    telephone: "+233-020-157-8429",
+    email: "support@dwellot.com",
     address: {
       "@type": "PostalAddress",
       addressCountry: "Ghana",

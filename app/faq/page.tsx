@@ -189,7 +189,7 @@ export default function FAQPage() {
                   <Link href="/contact">
                     <Button className="bg-teal-600 hover:bg-teal-700">Contact Support</Button>
                   </Link>
-                  <a href="https://wa.me/233275577577" target="_blank" rel="noopener noreferrer">
+                  <a href="https://wa.me/233201578429" target="_blank" rel="noopener noreferrer">
                     <Button variant="outline">WhatsApp Chat</Button>
                   </a>
                 </div>
