@@ -67,6 +67,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
         email: "support@dwellot.com",
         phone: property.phone || "0302 000000",
       },
+      view_count: property.view_count || 0,
       created_at: property.created_at || new Date().toISOString(),
       updated_at: property.updated_at || new Date().toISOString(),
     }

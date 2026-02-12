@@ -59,6 +59,7 @@ interface Property {
     email: string
     phone: string
   }
+  view_count: number
   created_at: string
   updated_at: string
 }
@@ -143,6 +144,11 @@ export default function PropertyDetailsClient() {
 
       if (data.property) {
         setProperty(data.property)
+        // Initialize view stats from the property's stored view_count
+        // so it shows immediately; the POST tracking call will update with latest
+        if (data.property.view_count) {
+          setViewStats((prev) => ({ ...prev, view_count: data.property.view_count }))
+        }
         console.log("Property loaded:", data.property.title)
       } else {
         throw new Error("Property data not found in response")
