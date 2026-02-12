@@ -106,19 +106,46 @@ export default function Footer() {
           {/* Contact Info */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Contact Info</h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-400">
-                  123 Independence Avenue
-                  <br />
-                  Accra, Ghana
-                </span>
+            <div className="space-y-4 text-sm">
+              {/* Ghana Office */}
+              <div>
+                <p className="text-white font-medium mb-1.5">Ghana Office</p>
+                <div className="space-y-1.5">
+                  <div className="flex items-start space-x-3">
+                    <MapPin className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-400">Accra, Ghana</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Phone className="h-4 w-4 text-green-400 flex-shrink-0" />
+                    <span className="text-gray-400">020 157 8429</span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Phone className="h-4 w-4 text-green-400 flex-shrink-0" />
+                    <span className="text-gray-400">055 259 9185</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center space-x-3">
-                <Phone className="h-4 w-4 text-green-400 flex-shrink-0" />
-                <span className="text-gray-400">+233 24 123 4567</span>
+
+              {/* UK Office */}
+              <div>
+                <p className="text-white font-medium mb-1.5">UK Office</p>
+                <div className="space-y-1.5">
+                  <div className="flex items-start space-x-3">
+                    <MapPin className="h-4 w-4 text-green-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-gray-400">
+                      86-90 Paul Street
+                      <br />
+                      London EC2A 4NE
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Phone className="h-4 w-4 text-green-400 flex-shrink-0" />
+                    <span className="text-gray-400">+44 7861 932209</span>
+                  </div>
+                </div>
               </div>
+
+              {/* Email */}
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-green-400 flex-shrink-0" />
                 <span className="text-gray-400">support@dwellot.com</span>

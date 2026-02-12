@@ -79,21 +79,43 @@ export default function AboutPage() {
       {/* Contact Section */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto text-center">
             <h2 className="text-3xl font-bold mb-8">Get In Touch</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-center gap-3">
-                <Phone className="h-5 w-5 text-teal-600" />
-                <span className="text-lg">+233 275 577 577</span>
+            <div className="grid sm:grid-cols-2 gap-8 text-left max-w-xl mx-auto">
+              <div>
+                <h3 className="font-semibold mb-3">Ghana Office</h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3">
+                    <MapPin className="h-4 w-4 text-teal-600 flex-shrink-0" />
+                    <span className="text-muted-foreground">Accra, Ghana</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 text-teal-600 flex-shrink-0" />
+                    <span className="text-muted-foreground">020 157 8429</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 text-teal-600 flex-shrink-0" />
+                    <span className="text-muted-foreground">055 259 9185</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-3">
-                <Mail className="h-5 w-5 text-teal-600" />
-                <span className="text-lg">support@dwellot.com</span>
+              <div>
+                <h3 className="font-semibold mb-3">UK Office</h3>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-4 w-4 text-teal-600 flex-shrink-0 mt-0.5" />
+                    <span className="text-muted-foreground">86-90 Paul Street, London EC2A 4NE</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-4 w-4 text-teal-600 flex-shrink-0" />
+                    <span className="text-muted-foreground">+44 7861 932209</span>
+                  </div>
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-3">
-                <MapPin className="h-5 w-5 text-teal-600" />
-                <span className="text-lg">Accra, Ghana</span>
-              </div>
+            </div>
+            <div className="flex items-center justify-center gap-3 mt-6">
+              <Mail className="h-5 w-5 text-teal-600" />
+              <span className="text-lg">support@dwellot.com</span>
             </div>
           </div>
         </div>

@@ -31,7 +31,7 @@ export default function HelpPage() {
                 <MessageSquare className="h-12 w-12 text-teal-600 mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Live Chat</h3>
                 <p className="text-sm text-muted-foreground mb-4">Chat with our support team on WhatsApp</p>
-                <a href="https://wa.me/233275577577" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/233201578429" target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" className="w-full bg-transparent">
                     Start Chat
                   </Button>
@@ -44,9 +44,9 @@ export default function HelpPage() {
                 <Phone className="h-12 w-12 text-teal-600 mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Call Us</h3>
                 <p className="text-sm text-muted-foreground mb-4">Speak directly with our team</p>
-                <a href="tel:+233275577577">
+                <a href="tel:+233201578429">
                   <Button variant="outline" className="w-full bg-transparent">
-                    +233 275 577 577
+                    020 157 8429
                   </Button>
                 </a>
               </CardContent>
@@ -81,7 +81,7 @@ export default function HelpPage() {
               <AccordionItem value="item-2">
                 <AccordionTrigger>What are the listing fees?</AccordionTrigger>
                 <AccordionContent>
-                  Contact our support team at support@dwellot.com or call +233 275 577 577 for information about listing
+                  Contact our support team at support@dwellot.com or call 020 157 8429 for information about listing
                   fees and packages.
                 </AccordionContent>
               </AccordionItem>
