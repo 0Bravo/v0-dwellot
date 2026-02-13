@@ -18,7 +18,7 @@ export default function ShareButtons({ url, title, description, imageUrl, onShar
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
     twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${title} - ${url}`)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(`Check out this property on Dwellot:\n\n${title}\n${url}`)}`,
     email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(`Check out this property: ${url}${description ? `\n\n${description}` : ""}`)}`,
   }
 

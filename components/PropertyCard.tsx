@@ -18,6 +18,7 @@ import {
   MapPin,
   Camera,
 } from "lucide-react"
+import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 
 interface Property {
   id: number
@@ -215,21 +216,16 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <button
-              onClick={(e) => {
-                e.preventDefault()
-                e.stopPropagation()
-                window.open(
-                  `https://wa.me/${(property.phone || "0302967150").replace(/[\s\-()]/g, "").replace(/^0/, "233")}`,
-                  "_blank",
-                  "noopener,noreferrer",
-                )
-              }}
+            <a
+              href={generateWhatsAppUrl(property)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="bg-green-500 p-2 rounded hover:bg-green-600 transition"
               title="WhatsApp"
             >
               <MessageCircle className="h-5 w-5 text-white" />
-            </button>
+            </a>
             <button
               onClick={toggleSave}
               className="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"

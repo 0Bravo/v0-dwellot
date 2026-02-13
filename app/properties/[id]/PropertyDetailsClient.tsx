@@ -31,6 +31,7 @@ import {
 import { generateStructuredData } from "@/lib/seo"
 import { analytics } from "@/lib/analytics"
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
+import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 
 // Lazy-load heavy components that are not needed on initial render
 const PropertyPrint = dynamic(() => import("@/components/PropertyPrint"), { ssr: false })
@@ -587,7 +588,16 @@ export default function PropertyDetailsClient() {
                     Send Message
                   </button>
                   <a
-                    href={`https://wa.me/${(property.users?.phone || "0302000000").replace(/[\s\-()]/g, "").replace(/^0/, "233")}`}
+                    href={generateWhatsAppUrl({
+                      id: property.id,
+                      title: property.title,
+                      location: property.location,
+                      price: property.price,
+                      bedrooms: property.bedrooms,
+                      bathrooms: property.bathrooms,
+                      area: property.area,
+                      agent_phone: property.users?.phone,
+                    }, true)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
