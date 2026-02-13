@@ -39,6 +39,14 @@ interface Property {
   view_count?: number
 }
 
+function hasRealImages(images: string[] | null | undefined): images is string[] {
+  if (!images || images.length === 0) return false
+  const firstImage = images[0]
+  if (!firstImage) return false
+  if (firstImage.includes("placeholder") || firstImage.includes("image-coming-soon")) return false
+  return true
+}
+
 export function FeaturedPropertyCard({ property }: { property: Property }) {
   const [currentImg, setCurrentImg] = useState(0)
   const [saved, setSaved] = useState(false)
@@ -88,13 +96,30 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
         </div>
 
         <div className="relative h-80 overflow-hidden">
-          <Image
-            src={property.images?.[currentImg] || property.images?.[0] || "/api/placeholder/400/300"}
-            alt={property.title}
-            fill
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          {hasRealImages(property.images) ? (
+            <Image
+              src={property.images[currentImg] || property.images[0]}
+              alt={property.title}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="absolute inset-0">
+              <Image
+                src="/images/images-coming-soon.jpg"
+                alt={`${property.title} - Images coming soon`}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center">
+                <Camera className="w-12 h-12 text-white/80 mb-3" />
+                <p className="text-white text-lg font-semibold">Images Coming Soon</p>
+                <p className="text-white/70 text-sm mt-1">Professional photography in progress</p>
+              </div>
+            </div>
+          )}
 
           {property.images && property.images.length > 1 && (
             <>
@@ -243,21 +268,28 @@ export function PropertyListCard({ property }: { property: Property }) {
       className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col"
     >
       <div className="relative h-96 flex-shrink-0">
-        <Image
-          src={property.images?.[currentImg] || property.images?.[0] || "/api/placeholder/800/600"}
-          alt={property.title}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
-        />
-
-        {(!property.images ||
-          property.images.length === 0 ||
-          property.images[0]?.includes("placeholder")) && (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 flex flex-col items-center justify-center">
-            <Camera className="w-16 h-16 text-gray-400 mb-4" />
-            <p className="text-white text-xl font-semibold">Photos Coming Soon</p>
-            <p className="text-gray-300 text-sm mt-2">Professional photography in progress</p>
+        {hasRealImages(property.images) ? (
+          <Image
+            src={property.images[currentImg] || property.images[0]}
+            alt={property.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+        ) : (
+          <div className="absolute inset-0">
+            <Image
+              src="/images/images-coming-soon.jpg"
+              alt={`${property.title} - Images coming soon`}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center">
+              <Camera className="w-12 h-12 text-white/80 mb-3" />
+              <p className="text-white text-lg font-semibold">Images Coming Soon</p>
+              <p className="text-white/70 text-sm mt-1">Professional photography in progress</p>
+            </div>
           </div>
         )}
 
