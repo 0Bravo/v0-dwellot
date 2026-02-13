@@ -42,42 +42,21 @@ async function getHomePageData() {
 
   const selectFields = "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, featured, status, agent, phone, view_count"
 
-  const [apolloniaResult, kharisResult, devtracoResult, filtersResult] = await Promise.all([
-    adminClient
-      .from("properties")
-      .select(selectFields)
-      .eq("status", "active")
-      .ilike("location", "%appolonia%")
-      .order("created_at", { ascending: false })
-      .limit(13),
-    adminClient
-      .from("properties")
-      .select(selectFields)
-      .eq("status", "active")
-      .ilike("agent", "%BestWorld%")
-      .order("created_at", { ascending: false })
-      .limit(3),
-    adminClient
-      .from("properties")
-      .select(selectFields)
-      .eq("status", "active")
-      .ilike("agent", "%Devtraco%")
-      .order("created_at", { ascending: false })
-      .limit(2),
-    adminClient
-      .from("properties")
-      .select("price, bedrooms, location")
-      .eq("status", "active")
-      .limit(500),
-  ])
+  // Fetch ALL active properties in a single query
+  const { data: allPropertiesRaw, error } = await adminClient
+    .from("properties")
+    .select(selectFields)
+    .eq("status", "active")
+    .order("created_at", { ascending: false })
+    .limit(500)
 
-  const apolloniaProperties: Property[] = apolloniaResult.data || []
-  const kharisProperties: Property[] = kharisResult.data || []
-  const devtracoProperties: Property[] = devtracoResult.data || []
+  if (error) {
+    console.error("[Homepage] Error fetching properties:", error)
+  }
 
-  const allProperties = [...apolloniaProperties, ...kharisProperties, ...devtracoProperties]
+  const allProperties: Property[] = allPropertiesRaw || []
 
-  // Featured = properties with real images
+  // Featured = properties with real images (not placeholders)
   const featuredProperties = allProperties.filter(
     (prop) =>
       prop.images &&
@@ -94,17 +73,16 @@ async function getHomePageData() {
     locationCount: 15,
   }
 
-  const filterData = filtersResult.data
-  if (filterData && filterData.length > 0) {
-    const prices = filterData.map((p: { price: number }) => p.price).filter(Boolean)
-    const medianPrice = prices.length > 0 ? prices.sort((a: number, b: number) => a - b)[Math.floor(prices.length / 2)] : 500000
+  if (allProperties.length > 0) {
+    const prices = allProperties.map((p) => p.price).filter(Boolean)
+    const medianPrice = prices.length > 0 ? prices.sort((a, b) => a - b)[Math.floor(prices.length / 2)] : 500000
     const priceRange = medianPrice <= 250000 ? "Under $250K" : medianPrice <= 500000 ? "Under $500K" : "Under $1M"
 
-    const bedCounts = filterData.map((p: { bedrooms: number }) => p.bedrooms).filter(Boolean)
-    const avgBeds = bedCounts.length > 0 ? Math.round(bedCounts.reduce((a: number, b: number) => a + b, 0) / bedCounts.length) : 3
+    const bedCounts = allProperties.map((p) => p.bedrooms).filter(Boolean)
+    const avgBeds = bedCounts.length > 0 ? Math.round(bedCounts.reduce((a, b) => a + b, 0) / bedCounts.length) : 3
 
     const locationCounts: Record<string, number> = {}
-    for (const p of filterData) {
+    for (const p of allProperties) {
       if (p.location) {
         locationCounts[p.location] = (locationCounts[p.location] || 0) + 1
       }
@@ -245,17 +223,15 @@ export default async function HomePage() {
             </div>
           )}
 
-          {allProperties.length > 6 && (
-            <div className="text-center mt-12">
-              <Link
-                href="/properties"
-                className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
-              >
-                View All {allProperties.length} Properties
-                <ChevronRight className="w-5 h-5" />
-              </Link>
-            </div>
-          )}
+          <div className="text-center mt-12">
+            <Link
+              href="/properties"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
+            >
+              View All {allProperties.length} Properties
+              <ChevronRight className="w-5 h-5" />
+            </Link>
+          </div>
         </div>
       </section>
 
