@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import {
@@ -9,13 +12,12 @@ import {
   MessageCircle,
   CheckCircle,
 } from "lucide-react"
-import { createAdminClient } from "@/lib/supabase/admin"
+import dynamic from "next/dynamic"
 import HeroSearchBar from "@/components/HeroSearchBar"
 import { FeaturedPropertyCard, PropertyListCard } from "@/components/PropertyCard"
-import RecentlyViewedWidget from "@/components/RecentlyViewedWidget"
-import PWAInstallPrompt from "@/components/PWAInstallPrompt"
 
-export const revalidate = 60
+const RecentlyViewedWidget = dynamic(() => import("@/components/RecentlyViewedWidget"), { ssr: false })
+const PWAInstallPrompt = dynamic(() => import("@/components/PWAInstallPrompt"), { ssr: false })
 
 interface Property {
   id: number
@@ -37,71 +39,70 @@ interface Property {
   view_count?: number
 }
 
-async function getHomePageData() {
-  const adminClient = createAdminClient()
-
-  const selectFields = "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, featured, status, agent, phone, view_count"
-
-  // Fetch ALL active properties in a single query
-  const { data: allPropertiesRaw, error } = await adminClient
-    .from("properties")
-    .select(selectFields)
-    .eq("status", "active")
-    .order("created_at", { ascending: false })
-    .limit(500)
-
-  if (error) {
-    console.error("[Homepage] Error fetching properties:", error)
-  }
-
-  const allProperties: Property[] = allPropertiesRaw || []
-
-  // Featured = properties with real images (not placeholders)
-  const featuredProperties = allProperties.filter(
-    (prop) =>
-      prop.images &&
-      prop.images.length > 0 &&
-      !prop.images[0]?.includes("image-coming-soon") &&
-      !prop.images[0]?.includes("placeholder"),
-  )
-
-  // Compute popular filters from real data
-  let popularFilters = {
+export default function HomePage() {
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([])
+  const [allProperties, setAllProperties] = useState<Property[]>([])
+  const [loading, setLoading] = useState(true)
+  const [popularFilters, setPopularFilters] = useState({
     priceRange: "Under $500K",
     bedrooms: "3",
     location: "East Legon, Accra",
     locationCount: 15,
-  }
+  })
 
-  if (allProperties.length > 0) {
-    const prices = allProperties.map((p) => p.price).filter(Boolean)
-    const medianPrice = prices.length > 0 ? prices.sort((a, b) => a - b)[Math.floor(prices.length / 2)] : 500000
-    const priceRange = medianPrice <= 250000 ? "Under $250K" : medianPrice <= 500000 ? "Under $500K" : "Under $1M"
+  useEffect(() => {
+    const fetchProperties = async () => {
+      try {
+        const [apolloniaRes, kharisRes, devtracoRes, filtersRes] = await Promise.all([
+          fetch("/api/properties?location=appolonia&limit=13"),
+          fetch("/api/properties?agent=BestWorld%20Company&limit=3"),
+          fetch("/api/properties?agent=Devtraco%20Group&limit=2"),
+          fetch("/api/popular-filters"),
+        ])
 
-    const bedCounts = allProperties.map((p) => p.bedrooms).filter(Boolean)
-    const avgBeds = bedCounts.length > 0 ? Math.round(bedCounts.reduce((a, b) => a + b, 0) / bedCounts.length) : 3
+        let apolloniaProperties: Property[] = []
+        let kharisProperties: Property[] = []
+        let devtracoProperties: Property[] = []
 
-    const locationCounts: Record<string, number> = {}
-    for (const p of allProperties) {
-      if (p.location) {
-        locationCounts[p.location] = (locationCounts[p.location] || 0) + 1
+        if (apolloniaRes.ok) {
+          const data = await apolloniaRes.json()
+          apolloniaProperties = data.properties || []
+        }
+        if (kharisRes.ok) {
+          const data = await kharisRes.json()
+          kharisProperties = data.properties || []
+        }
+        if (devtracoRes.ok) {
+          const data = await devtracoRes.json()
+          devtracoProperties = data.properties || []
+        }
+
+        const combined = [...apolloniaProperties, ...kharisProperties, ...devtracoProperties]
+
+        const withRealImages = combined.filter(
+          (prop) =>
+            prop.images &&
+            prop.images.length > 0 &&
+            !prop.images[0]?.includes("image-coming-soon") &&
+            !prop.images[0]?.includes("placeholder"),
+        )
+
+        setFeaturedProperties(withRealImages)
+        setAllProperties(combined)
+
+        if (filtersRes.ok) {
+          const data = await filtersRes.json()
+          setPopularFilters(data)
+        }
+      } catch (error) {
+        console.error("Error fetching properties:", error)
+      } finally {
+        setLoading(false)
       }
     }
-    const topLocation = Object.entries(locationCounts).sort(([, a], [, b]) => (b as number) - (a as number))[0]
 
-    popularFilters = {
-      priceRange,
-      bedrooms: String(avgBeds),
-      location: topLocation ? topLocation[0] : "East Legon, Accra",
-      locationCount: topLocation ? (topLocation[1] as number) : 15,
-    }
-  }
-
-  return { featuredProperties, allProperties, popularFilters }
-}
-
-export default async function HomePage() {
-  const { featuredProperties, allProperties, popularFilters } = await getHomePageData()
+    fetchProperties()
+  }, [])
 
   return (
     <div className="min-h-screen bg-white">
@@ -166,7 +167,12 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {featuredProperties.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-4 text-gray-600">Loading featured properties...</p>
+            </div>
+          ) : featuredProperties.length === 0 ? (
             <div className="text-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
               <HomeIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">No Featured Properties Yet</h3>
@@ -202,7 +208,12 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          {allProperties.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <p className="mt-4 text-gray-600">Loading properties...</p>
+            </div>
+          ) : allProperties.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-lg border-2 border-dashed border-gray-300">
               <HomeIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-gray-900 mb-2">No Properties Yet</h3>
