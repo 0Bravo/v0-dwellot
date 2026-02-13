@@ -47,9 +47,12 @@ function hasRealImages(images: string[] | null | undefined): images is string[] 
   return true
 }
 
+const PLACEHOLDER_IMAGE = "/images/images-coming-soon.jpg"
+
 export function FeaturedPropertyCard({ property }: { property: Property }) {
   const [currentImg, setCurrentImg] = useState(0)
   const [saved, setSaved] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
   const handleImageNav = useCallback(
     (e: React.MouseEvent, direction: "prev" | "next") => {
@@ -96,18 +99,19 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
         </div>
 
         <div className="relative h-80 overflow-hidden">
-          {hasRealImages(property.images) ? (
+          {hasRealImages(property.images) && !imgError ? (
             <Image
               src={property.images[currentImg] || property.images[0]}
               alt={property.title}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={() => setImgError(true)}
             />
           ) : (
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gray-100">
               <Image
-                src="/images/images-coming-soon.jpg"
+                src={PLACEHOLDER_IMAGE}
                 alt={`${property.title} - Images coming soon`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -245,6 +249,7 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
 
 export function PropertyListCard({ property }: { property: Property }) {
   const [currentImg, setCurrentImg] = useState(0)
+  const [imgError, setImgError] = useState(false)
 
   const handleImageNav = useCallback(
     (e: React.MouseEvent, direction: "prev" | "next") => {
@@ -268,18 +273,19 @@ export function PropertyListCard({ property }: { property: Property }) {
       className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col"
     >
       <div className="relative h-96 flex-shrink-0">
-        {hasRealImages(property.images) ? (
+        {hasRealImages(property.images) && !imgError ? (
           <Image
             src={property.images[currentImg] || property.images[0]}
             alt={property.title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-300"
+            onError={() => setImgError(true)}
           />
         ) : (
-          <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gray-100">
             <Image
-              src="/images/images-coming-soon.jpg"
+              src={PLACEHOLDER_IMAGE}
               alt={`${property.title} - Images coming soon`}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
