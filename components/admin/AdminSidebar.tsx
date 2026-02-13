@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import { createBrowserClient } from "@/lib/supabase/client"
 import { 
   LayoutDashboard, 
   Home, 
@@ -15,29 +17,42 @@ import {
   LogOut
 } from "lucide-react"
 
-interface AdminSidebarProps {
-  admin: {
-    id: string
-    email: string
-    full_name: string | null
-    avatar_url: string | null
-  }
-}
-
 const navigation = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Properties", href: "/admin/properties", icon: Home },
-  { name: "Add Property", href: "/admin/properties/add", icon: PlusCircle },
-  { name: "Bulk Upload", href: "/admin/properties/bulk-upload", icon: Upload },
-  { name: "Enquiries", href: "/admin/enquiries", icon: MessageSquare },
-  { name: "Subscribers", href: "/admin/subscribers", icon: Mail },
-  { name: "Agent Applications", href: "/admin/agent-applications", icon: UserPlus },
-  { name: "Users", href: "/admin/users", icon: Users },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Properties", href: "/dashboard/properties", icon: Home },
+  { name: "Add Property", href: "/dashboard/add-property", icon: PlusCircle },
+  { name: "Bulk Upload", href: "/dashboard/bulk-upload", icon: Upload },
+  { name: "Enquiries", href: "/dashboard/enquiries", icon: MessageSquare },
+  { name: "Subscribers", href: "/dashboard/subscribers", icon: Mail },
+  { name: "Agent Applications", href: "/dashboard/agent-applications", icon: UserPlus },
+  { name: "Users", href: "/dashboard/users", icon: Users },
+  { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 
-export default function AdminSidebar({ admin }: AdminSidebarProps) {
+export default function AdminSidebar() {
   const pathname = usePathname()
+  const [admin, setAdmin] = useState<{ email: string; full_name: string | null } | null>(null)
+
+  useEffect(() => {
+    async function fetchUser() {
+      const supabase = createBrowserClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("full_name")
+          .eq("id", user.id)
+          .single()
+        setAdmin({
+          email: user.email || "",
+          full_name: profile?.full_name || null,
+        })
+      }
+    }
+    fetchUser()
+  }, [])
 
   return (
     <>
@@ -48,7 +63,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
       <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 lg:block">
         {/* Logo */}
         <div className="flex h-16 items-center gap-x-4 border-b border-gray-200 px-6">
-          <Link href="/admin" className="flex items-center">
+          <Link href="/dashboard" className="flex items-center">
             <span className="text-2xl font-bold">
               <span className="text-teal-600">Dwell</span>
               <span className="text-gray-900">ot</span>
@@ -62,7 +77,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
         {/* Navigation */}
         <nav className="flex flex-col flex-1 gap-y-1 px-4 py-4">
           {navigation.map((item) => {
-            const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(item.href))
+            const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href))
             
             return (
               <Link
@@ -86,17 +101,27 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
 
         {/* User section */}
         <div className="border-t border-gray-200 p-4">
-          <div className="flex items-center gap-x-3 mb-3">
-            <div className="h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center text-white font-semibold">
-              {admin.full_name?.[0] || admin.email[0].toUpperCase()}
+          {admin ? (
+            <div className="flex items-center gap-x-3 mb-3">
+              <div className="h-10 w-10 rounded-full bg-teal-600 flex items-center justify-center text-white font-semibold">
+                {admin.full_name?.[0] || admin.email[0].toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {admin.full_name || "Admin"}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{admin.email}</p>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-900 truncate">
-                {admin.full_name || "Admin"}
-              </p>
-              <p className="text-xs text-gray-500 truncate">{admin.email}</p>
+          ) : (
+            <div className="flex items-center gap-x-3 mb-3">
+              <div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse"></div>
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="h-3 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-2 bg-gray-200 rounded animate-pulse w-3/4"></div>
+              </div>
             </div>
-          </div>
+          )}
           
           <Link
             href="/api/auth/signout"

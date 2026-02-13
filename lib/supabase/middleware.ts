@@ -36,30 +36,43 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser()
 
-    // Admin routes - check for admin role
-    if (request.nextUrl.pathname.startsWith("/admin")) {
+    // Admin dashboard - check for admin role
+    if (request.nextUrl.pathname.startsWith("/dashboard")) {
+      console.log("[v0] [Middleware] Dashboard access attempt", { hasUser: !!user, path: request.nextUrl.pathname })
+      
       if (!user) {
+        console.log("[v0] [Middleware] No user - redirecting to /")
         const url = request.nextUrl.clone()
         url.pathname = "/"
         return NextResponse.redirect(url)
       }
       
       // Check admin role from profiles table
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single()
       
+      console.log("[v0] [Middleware] Profile check", { 
+        userId: user.id, 
+        profile, 
+        profileError,
+        role: profile?.role 
+      })
+      
       if (!profile || profile.role !== "admin") {
+        console.log("[v0] [Middleware] Not admin - redirecting to /")
         const url = request.nextUrl.clone()
         url.pathname = "/"
         return NextResponse.redirect(url)
       }
+      
+      console.log("[v0] [Middleware] Admin access granted")
     }
 
     // Protected routes - redirect to login if not authenticated
-    const protectedPaths = ["/dashboard", "/profile", "/favorites"]
+    const protectedPaths = ["/profile", "/favorites"]
     const isProtectedPath = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
 
     if (isProtectedPath && !user) {
@@ -71,8 +84,16 @@ export async function updateSession(request: NextRequest) {
 
     // Redirect authenticated users away from auth pages
     if (user && request.nextUrl.pathname.startsWith("/auth/")) {
+      // Check if user is admin first
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single()
+      
       const url = request.nextUrl.clone()
-      url.pathname = "/dashboard"
+      // Redirect admins to dashboard, others to homepage
+      url.pathname = profile?.role === "admin" ? "/dashboard" : "/"
       return NextResponse.redirect(url)
     }
 
