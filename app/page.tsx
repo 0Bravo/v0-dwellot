@@ -285,7 +285,7 @@ export default async function HomePage() {
           <p className="text-gray-600 mb-6">Get instant property alerts and chat with agents directly via WhatsApp</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href={`https://wa.me/233201578429?text=${encodeURIComponent("Hi Dwellot! I'm looking for a property in Ghana. Can you help me find the right one?")}`}
+              href="https://wa.me/233201578429"
               className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-semibold"
             >
               <MessageCircle className="w-5 h-5" />

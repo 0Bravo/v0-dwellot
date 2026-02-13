@@ -129,7 +129,7 @@ export default function ContactPage() {
                       <p className="font-semibold">WhatsApp</p>
                       <p className="text-muted-foreground">Chat with us instantly</p>
                       <a
-                        href={`https://wa.me/233201578429?text=${encodeURIComponent("Hi Dwellot! I'd like to get in touch with your team.")}`}
+                        href="https://wa.me/233201578429"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-teal-600 hover:underline"

@@ -219,10 +219,8 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                const phone = (property.phone || "0302967150").replace(/[\s\-()]/g, "").replace(/^0/, "233")
-                const message = encodeURIComponent(`Hi, I'm interested in this property on Dwellot:\n\n${property.title}\nLocation: ${property.location}\nPrice: $${property.price?.toLocaleString()}\n\nhttps://dwellot.com/properties/${property.id}\n\nCould you please share more details?`)
                 window.open(
-                  `https://wa.me/${phone}?text=${message}`,
+                  `https://wa.me/${(property.phone || "0302967150").replace(/[\s\-()]/g, "").replace(/^0/, "233")}`,
                   "_blank",
                   "noopener,noreferrer",
                 )
