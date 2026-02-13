@@ -1,16 +1,9 @@
 import type { Metadata } from "next"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-
-export const metadata: Metadata = {
-  title: "Help Centre | Dwellot Property Support & FAQs",
-  description: "Get help with buying, selling, or renting property on Dwellot. Live chat, phone support, email assistance. Common questions answered.",
-  alternates: { canonical: "https://dwellot.com/faq" },
-}
 import { Card, CardContent } from "@/components/ui/card"
 import { HelpCircle, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "FAQ - Ghana Property Questions Answered | Dwellot",
@@ -18,6 +11,7 @@ export const metadata: Metadata = {
     "Get answers to common questions about buying, renting, and investing in Ghana property. Learn about property costs, legal requirements, best areas in Accra, and more.",
   keywords:
     "Ghana property FAQ, buy property Ghana, rent apartment Ghana, property costs Ghana, real estate questions Ghana",
+  alternates: { canonical: "https://dwellot.com/faq" },
   openGraph: {
     title: "Frequently Asked Questions - Ghana Property | Dwellot",
     description: "Everything you need to know about buying and renting property in Ghana",
