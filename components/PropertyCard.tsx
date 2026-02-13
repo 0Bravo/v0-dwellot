@@ -19,6 +19,7 @@ import {
   Camera,
 } from "lucide-react"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
+import { trackEnquiry } from "@/lib/utils/track-enquiry"
 
 interface Property {
   id: number
@@ -220,7 +221,10 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
               href={generateWhatsAppUrl(property)}
               target="_blank"
               rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation()
+                trackEnquiry({ property_id: property.id, enquiry_type: "whatsapp", source_page: "homepage" })
+              }}
               className="bg-green-500 p-2 rounded hover:bg-green-600 transition"
               title="WhatsApp"
             >
