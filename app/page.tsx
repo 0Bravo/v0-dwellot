@@ -43,6 +43,7 @@ export default function HomePage() {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([])
   const [allProperties, setAllProperties] = useState<Property[]>([])
   const [totalCount, setTotalCount] = useState(0)
+  const [visibleCount, setVisibleCount] = useState(30)
   const [featuredLoading, setFeaturedLoading] = useState(true)
   const [allLoading, setAllLoading] = useState(true)
   const [popularFilters, setPopularFilters] = useState({
@@ -246,22 +247,38 @@ export default function HomePage() {
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {allProperties.map((property) => (
-                <PropertyListCard key={property.id} property={property} />
-              ))}
-            </div>
-          )}
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {allProperties.slice(0, visibleCount).map((property) => (
+                  <PropertyListCard key={property.id} property={property} />
+                ))}
+              </div>
 
-          <div className="text-center mt-12">
-            <Link
-              href="/properties"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
-            >
-              View All {totalCount} Properties
-              <ChevronRight className="w-5 h-5" />
-            </Link>
-          </div>
+              <div className="text-center mt-8">
+                <p className="text-gray-500 text-sm mb-4">
+                  Showing {Math.min(visibleCount, allProperties.length)} of {totalCount} properties
+                </p>
+
+                {visibleCount < allProperties.length ? (
+                  <button
+                    onClick={() => setVisibleCount((prev) => prev + 30)}
+                    className="inline-flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold transition"
+                  >
+                    Load More Properties
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                ) : (
+                  <Link
+                    href="/properties"
+                    className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
+                  >
+                    Browse All Properties
+                    <ChevronRight className="w-5 h-5" />
+                  </Link>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
