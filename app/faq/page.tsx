@@ -1,4 +1,11 @@
+import type { Metadata } from "next"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+
+export const metadata: Metadata = {
+  title: "Help Centre | Dwellot Property Support & FAQs",
+  description: "Get help with buying, selling, or renting property on Dwellot. Live chat, phone support, email assistance. Common questions answered.",
+  alternates: { canonical: "https://dwellot.com/faq" },
+}
 import { Card, CardContent } from "@/components/ui/card"
 import { HelpCircle, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"

@@ -1,4 +1,11 @@
+import type { Metadata } from "next"
 import { Suspense } from "react"
+
+export const metadata: Metadata = {
+  title: "Properties for Sale & Rent in Ghana | Browse All Listings | Dwellot",
+  description: "Browse verified properties for sale and rent across Ghana. Filter by location, price, bedrooms. Houses, apartments, land, and commercial properties in Accra, Kumasi, and beyond.",
+  alternates: { canonical: "https://dwellot.com/properties" },
+}
 import PropertiesClient from "./PropertiesClient"
 import { createClient } from "@supabase/supabase-js"
 
