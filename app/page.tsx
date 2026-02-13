@@ -42,19 +42,26 @@ async function getHomePageData() {
 
   const selectFields = "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, featured, status, agent, phone, view_count"
 
-  // Fetch ALL active properties in a single query
-  const { data: allPropertiesRaw, error } = await adminClient
-    .from("properties")
-    .select(selectFields)
-    .eq("status", "active")
-    .order("created_at", { ascending: false })
-    .limit(500)
+  // Fetch all active properties + total count in parallel
+  const [propertiesResult, countResult] = await Promise.all([
+    adminClient
+      .from("properties")
+      .select(selectFields)
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(500),
+    adminClient
+      .from("properties")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "active"),
+  ])
 
-  if (error) {
-    console.error("[Homepage] Error fetching properties:", error)
+  if (propertiesResult.error) {
+    console.error("[Homepage] Error fetching properties:", propertiesResult.error)
   }
 
-  const allProperties: Property[] = allPropertiesRaw || []
+  const allProperties: Property[] = propertiesResult.data || []
+  const totalCount: number = countResult.count ?? allProperties.length
 
   // Featured = properties with real images (not placeholders)
   const featuredProperties = allProperties.filter(
@@ -97,11 +104,11 @@ async function getHomePageData() {
     }
   }
 
-  return { featuredProperties, allProperties, popularFilters }
+  return { featuredProperties, allProperties, totalCount, popularFilters }
 }
 
 export default async function HomePage() {
-  const { featuredProperties, allProperties, popularFilters } = await getHomePageData()
+  const { featuredProperties, allProperties, totalCount, popularFilters } = await getHomePageData()
 
   return (
     <div className="min-h-screen bg-white">
@@ -189,7 +196,7 @@ export default async function HomePage() {
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Properties</h2>
               <p className="text-gray-600 mt-2">
-                {allProperties.length} {allProperties.length === 1 ? "property" : "properties"} available
+                {totalCount} {totalCount === 1 ? "property" : "properties"} available
               </p>
             </div>
 
@@ -228,7 +235,7 @@ export default async function HomePage() {
               href="/properties"
               className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
             >
-              View All {allProperties.length} Properties
+              View All {totalCount} Properties
               <ChevronRight className="w-5 h-5" />
             </Link>
           </div>
