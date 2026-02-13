@@ -6,83 +6,106 @@ import {
   Users,
   Building2,
   Home,
-  TrendingUp,
-  BarChart3,
   CheckCircle,
   ChevronRight,
   Phone,
   Landmark,
+  UserPlus,
 } from "lucide-react"
+import { createClient } from "@supabase/supabase-js"
 
-const PLACEHOLDER_AGENTS = [
-  {
-    name: "Kwame Asante",
-    initials: "KA",
-    company: "Appolonia Development",
-    location: "Appolonia City, Accra",
-    specialties: ["Residential", "Land"],
-    listings: 24,
-    phone: "233201578429",
-  },
-  {
-    name: "Ama Mensah",
-    initials: "AM",
-    company: "BestWorld Company",
-    location: "East Legon, Accra",
-    specialties: ["Residential", "Commercial"],
-    listings: 18,
-    phone: "233201578429",
-  },
-  {
-    name: "Kofi Adjei",
-    initials: "KJ",
-    company: "Devtraco Group",
-    location: "Airport Hills, Accra",
-    specialties: ["Residential", "Luxury"],
-    listings: 31,
-    phone: "233201578429",
-  },
-  {
-    name: "Efua Owusu",
-    initials: "EO",
-    company: "Dwellot Realty",
-    location: "Spintex, Accra",
-    specialties: ["Commercial", "Land"],
-    listings: 12,
-    phone: "233201578429",
-  },
-  {
-    name: "Yaw Boateng",
-    initials: "YB",
-    company: "Gold Coast Properties",
-    location: "Cantonments, Accra",
-    specialties: ["Residential", "Luxury"],
-    listings: 27,
-    phone: "233201578429",
-  },
-  {
-    name: "Abena Darko",
-    initials: "AD",
-    company: "Kumasi Estates",
-    location: "Kumasi, Ashanti",
-    specialties: ["Residential", "Land"],
-    listings: 15,
-    phone: "233201578429",
-  },
-]
+export const revalidate = 300
 
-const AREAS = [
-  "East Legon",
-  "Spintex",
-  "Tema",
-  "Airport Hills",
-  "Cantonments",
-  "Kumasi",
-  "Takoradi",
-  "Appolonia City",
-]
+interface AgentProfile {
+  id: string
+  full_name: string
+  phone: string | null
+  bio: string | null
+  avatar_url: string | null
+  email: string | null
+}
 
-export default function AgentsPage() {
+interface AgentWithListings extends AgentProfile {
+  listings: number
+}
+
+async function getAgents(): Promise<{
+  agents: AgentWithListings[]
+  totalProperties: number
+  areas: string[]
+}> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    return { agents: [], totalProperties: 0, areas: [] }
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey)
+
+  // Fetch agent profiles
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("id, full_name, phone, bio, avatar_url, email")
+    .eq("role", "agent")
+    .order("created_at", { ascending: false })
+
+  if (profilesError || !profiles) {
+    console.error("Error fetching agents:", profilesError)
+    return { agents: [], totalProperties: 0, areas: [] }
+  }
+
+  // Fetch all active properties for agent listing counts and stats
+  const { data: properties, error: propsError } = await supabase
+    .from("properties")
+    .select("agent_id, location")
+    .eq("status", "active")
+
+  if (propsError) {
+    console.error("Error fetching properties:", propsError)
+  }
+
+  const activeProperties = properties || []
+
+  // Count listings per agent
+  const listingCounts: Record<string, number> = {}
+  const areaSet = new Set<string>()
+
+  for (const prop of activeProperties) {
+    if (prop.agent_id) {
+      listingCounts[prop.agent_id] = (listingCounts[prop.agent_id] || 0) + 1
+    }
+    if (prop.location) {
+      // Extract area name (take the first part before comma)
+      const area = prop.location.split(",")[0].trim()
+      if (area) areaSet.add(area)
+    }
+  }
+
+  const agents: AgentWithListings[] = profiles.map((profile) => ({
+    ...profile,
+    listings: listingCounts[profile.id] || 0,
+  }))
+
+  return {
+    agents,
+    totalProperties: activeProperties.length,
+    areas: Array.from(areaSet).sort(),
+  }
+}
+
+function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2)
+}
+
+export default async function AgentsPage() {
+  const { agents, totalProperties, areas } = await getAgents()
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
@@ -139,76 +162,114 @@ export default function AgentsPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Our Agent Network</h2>
 
           {/* Stats Bar */}
-          <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
-            <div className="flex items-center gap-2 text-gray-700">
-              <Users className="w-5 h-5 text-teal-600" />
-              <span className="font-semibold">50+ Agents</span>
+          {agents.length > 0 && (
+            <div className="flex flex-wrap items-center justify-center gap-6 mb-12">
+              <div className="flex items-center gap-2 text-gray-700">
+                <Users className="w-5 h-5 text-teal-600" />
+                <span className="font-semibold">
+                  {agents.length} {agents.length === 1 ? "Agent" : "Agents"}
+                </span>
+              </div>
+              {areas.length > 0 && (
+                <>
+                  <span className="text-gray-300 hidden sm:inline">|</span>
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <Building2 className="w-5 h-5 text-teal-600" />
+                    <span className="font-semibold">
+                      {areas.length} {areas.length === 1 ? "Area" : "Areas"}
+                    </span>
+                  </div>
+                </>
+              )}
+              {totalProperties > 0 && (
+                <>
+                  <span className="text-gray-300 hidden sm:inline">|</span>
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <Home className="w-5 h-5 text-teal-600" />
+                    <span className="font-semibold">
+                      {totalProperties} {totalProperties === 1 ? "Property" : "Properties"} Listed
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
-            <span className="text-gray-300 hidden sm:inline">|</span>
-            <div className="flex items-center gap-2 text-gray-700">
-              <Building2 className="w-5 h-5 text-teal-600" />
-              <span className="font-semibold">8 Cities</span>
-            </div>
-            <span className="text-gray-300 hidden sm:inline">|</span>
-            <div className="flex items-center gap-2 text-gray-700">
-              <Home className="w-5 h-5 text-teal-600" />
-              <span className="font-semibold">200+ Properties Listed</span>
-            </div>
-          </div>
+          )}
 
           {/* Agent Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PLACEHOLDER_AGENTS.map((agent) => (
-              <div
-                key={agent.name}
-                className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition"
-              >
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold text-lg">{agent.initials}</span>
+          {agents.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {agents.map((agent) => (
+                <div
+                  key={agent.id}
+                  className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition"
+                >
+                  <div className="flex items-center gap-4 mb-4">
+                    {agent.avatar_url ? (
+                      <img
+                        src={agent.avatar_url}
+                        alt={`${agent.full_name} profile photo`}
+                        className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-teal-600 rounded-full flex items-center justify-center flex-shrink-0">
+                        <span className="text-white font-bold text-lg">
+                          {getInitials(agent.full_name)}
+                        </span>
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-lg">{agent.full_name}</h3>
+                      {agent.bio && (
+                        <p className="text-gray-600 text-sm line-clamp-2">{agent.bio}</p>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 text-lg">{agent.name}</h3>
-                    <p className="text-gray-600 text-sm">{agent.company}</p>
-                    <p className="text-gray-500 text-sm flex items-center gap-1 mt-1">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {agent.location}
-                    </p>
+
+                  <p className="text-gray-600 text-sm mb-5">
+                    <span className="font-semibold text-gray-900">{agent.listings}</span>{" "}
+                    active {agent.listings === 1 ? "listing" : "listings"}
+                  </p>
+
+                  <div className="flex gap-3">
+                    <Link
+                      href={`/properties?agent_id=${agent.id}`}
+                      className="flex-1 text-center bg-gray-100 text-gray-800 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium text-sm"
+                    >
+                      View Listings
+                    </Link>
+                    {agent.phone && (
+                      <a
+                        href={`https://wa.me/${agent.phone.replace(/[^0-9]/g, "")}?text=${encodeURIComponent(`Hi ${agent.full_name}, I found your profile on Dwellot and I'd like to discuss property options.`)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 text-center bg-green-600 text-white py-2.5 px-4 rounded-lg hover:bg-green-700 transition font-medium text-sm flex items-center justify-center gap-1.5"
+                      >
+                        <Phone className="w-4 h-4" />
+                        WhatsApp
+                      </a>
+                    )}
                   </div>
                 </div>
-
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {agent.specialties.map((s) => (
-                    <span key={s} className="bg-teal-50 text-teal-700 text-xs font-medium px-2.5 py-1 rounded-full">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-
-                <p className="text-gray-600 text-sm mb-5">
-                  <span className="font-semibold text-gray-900">{agent.listings}</span> active listings
-                </p>
-
-                <div className="flex gap-3">
-                  <Link
-                    href="/properties"
-                    className="flex-1 text-center bg-gray-100 text-gray-800 py-2.5 px-4 rounded-lg hover:bg-gray-200 transition font-medium text-sm"
-                  >
-                    View Profile
-                  </Link>
-                  <a
-                    href={`https://wa.me/${agent.phone}?text=${encodeURIComponent(`Hi ${agent.name}, I found your profile on Dwellot and I'd like to discuss property options.`)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-1 text-center bg-green-600 text-white py-2.5 px-4 rounded-lg hover:bg-green-700 transition font-medium text-sm flex items-center justify-center gap-1.5"
-                  >
-                    <Phone className="w-4 h-4" />
-                    WhatsApp
-                  </a>
-                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <UserPlus className="w-10 h-10 text-gray-400" />
               </div>
-            ))}
-          </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">No agents yet</h3>
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                We are actively onboarding verified agents across Ghana. Be among the first to join our network.
+              </p>
+              <Link
+                href="/agent-collection-form"
+                className="inline-flex items-center gap-2 bg-teal-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-teal-700 transition"
+              >
+                Sign Up as Agent
+                <ChevronRight className="w-5 h-5" />
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -246,27 +307,29 @@ export default function AgentsPage() {
         </div>
       </section>
 
-      {/* Areas We Cover */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Areas We Cover</h2>
-          <p className="text-gray-600 text-center mb-10 max-w-xl mx-auto">
-            Our agents operate across major cities and neighborhoods in Ghana
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {AREAS.map((area) => (
-              <Link
-                key={area}
-                href={`/properties?location=${encodeURIComponent(area)}`}
-                className="flex items-center gap-3 bg-gray-50 hover:bg-teal-50 border border-gray-200 hover:border-teal-200 p-4 rounded-lg transition"
-              >
-                <Landmark className="w-5 h-5 text-teal-600 flex-shrink-0" />
-                <span className="font-medium text-gray-900">{area}</span>
-              </Link>
-            ))}
+      {/* Areas We Cover - only show if there are real areas from properties */}
+      {areas.length > 0 && (
+        <section className="py-16 bg-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4 text-center">Areas We Cover</h2>
+            <p className="text-gray-600 text-center mb-10 max-w-xl mx-auto">
+              Our agents operate across major cities and neighborhoods in Ghana
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {areas.map((area) => (
+                <Link
+                  key={area}
+                  href={`/properties?location=${encodeURIComponent(area)}`}
+                  className="flex items-center gap-3 bg-gray-50 hover:bg-teal-50 border border-gray-200 hover:border-teal-200 p-4 rounded-lg transition"
+                >
+                  <Landmark className="w-5 h-5 text-teal-600 flex-shrink-0" />
+                  <span className="font-medium text-gray-900">{area}</span>
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }
