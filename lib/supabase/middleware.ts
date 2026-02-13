@@ -36,8 +36,8 @@ export async function updateSession(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser()
 
-    // Admin routes - check for admin role
-    if (request.nextUrl.pathname.startsWith("/admin")) {
+    // Admin dashboard - check for admin role
+    if (request.nextUrl.pathname.startsWith("/dashboard")) {
       if (!user) {
         const url = request.nextUrl.clone()
         url.pathname = "/"
@@ -59,7 +59,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Protected routes - redirect to login if not authenticated
-    const protectedPaths = ["/dashboard", "/profile", "/favorites"]
+    const protectedPaths = ["/profile", "/favorites"]
     const isProtectedPath = protectedPaths.some((path) => request.nextUrl.pathname.startsWith(path))
 
     if (isProtectedPath && !user) {

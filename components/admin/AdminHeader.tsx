@@ -4,15 +4,7 @@ import { Bell, Menu, X } from "lucide-react"
 import { useState } from "react"
 import Link from "next/link"
 
-interface AdminHeaderProps {
-  admin: {
-    id: string
-    email: string
-    full_name: string | null
-  }
-}
-
-export default function AdminHeader({ admin }: AdminHeaderProps) {
+export default function AdminHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
