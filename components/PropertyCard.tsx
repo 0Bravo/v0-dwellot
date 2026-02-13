@@ -47,12 +47,9 @@ function hasRealImages(images: string[] | null | undefined): images is string[] 
   return true
 }
 
-const PLACEHOLDER_IMAGE = "/images/images-coming-soon.jpg"
-
 export function FeaturedPropertyCard({ property }: { property: Property }) {
   const [currentImg, setCurrentImg] = useState(0)
   const [saved, setSaved] = useState(false)
-  const [imgError, setImgError] = useState(false)
 
   const handleImageNav = useCallback(
     (e: React.MouseEvent, direction: "prev" | "next") => {
@@ -99,19 +96,18 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
         </div>
 
         <div className="relative h-80 overflow-hidden">
-          {hasRealImages(property.images) && !imgError ? (
+          {hasRealImages(property.images) ? (
             <Image
               src={property.images[currentImg] || property.images[0]}
               alt={property.title}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              onError={() => setImgError(true)}
             />
           ) : (
-            <div className="absolute inset-0 bg-gray-100">
+            <div className="absolute inset-0">
               <Image
-                src={PLACEHOLDER_IMAGE}
+                src="/images/images-coming-soon.jpg"
                 alt={`${property.title} - Images coming soon`}
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -223,8 +219,10 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
+                const phone = (property.phone || "0302967150").replace(/[\s\-()]/g, "").replace(/^0/, "233")
+                const message = encodeURIComponent(`Hi, I'm interested in this property on Dwellot:\n\n${property.title}\nLocation: ${property.location}\nPrice: $${property.price?.toLocaleString()}\n\nhttps://dwellot.com/properties/${property.id}\n\nCould you please share more details?`)
                 window.open(
-                  `https://wa.me/${(property.phone || "0302967150").replace(/[\s\-()]/g, "").replace(/^0/, "233")}`,
+                  `https://wa.me/${phone}?text=${message}`,
                   "_blank",
                   "noopener,noreferrer",
                 )
@@ -249,7 +247,6 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
 
 export function PropertyListCard({ property }: { property: Property }) {
   const [currentImg, setCurrentImg] = useState(0)
-  const [imgError, setImgError] = useState(false)
 
   const handleImageNav = useCallback(
     (e: React.MouseEvent, direction: "prev" | "next") => {
@@ -273,19 +270,18 @@ export function PropertyListCard({ property }: { property: Property }) {
       className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col"
     >
       <div className="relative h-96 flex-shrink-0">
-        {hasRealImages(property.images) && !imgError ? (
+        {hasRealImages(property.images) ? (
           <Image
             src={property.images[currentImg] || property.images[0]}
             alt={property.title}
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             className="object-cover group-hover:scale-105 transition-transform duration-300"
-            onError={() => setImgError(true)}
           />
         ) : (
-          <div className="absolute inset-0 bg-gray-100">
+          <div className="absolute inset-0">
             <Image
-              src={PLACEHOLDER_IMAGE}
+              src="/images/images-coming-soon.jpg"
               alt={`${property.title} - Images coming soon`}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
