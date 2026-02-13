@@ -353,34 +353,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Popular Areas */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">Popular Areas in Ghana</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { name: "East Legon", count: 1070 },
-              { name: "Spintex", count: 525 },
-              { name: "Tema", count: 159 },
-              { name: "East Legon Hills", count: 140 },
-              { name: "Adjiringanor", count: 126 },
-              { name: "Airport Hills", count: 110 },
-              { name: "Ashaley Botwe", count: 104 },
-              { name: "Cantonments", count: 81 },
-            ].map((area) => (
-              <Link
-                key={area.name}
-                href={`/properties?location=${area.name}`}
-                className="bg-gray-50 hover:bg-teal-50 border border-gray-200 hover:border-teal-200 p-4 rounded-lg transition text-center"
-              >
-                <h3 className="font-semibold text-gray-900">{area.name}</h3>
-                <p className="text-gray-600 text-sm">{area.count} Properties</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Why Choose Dwellot */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -18,6 +18,10 @@ import {
   Car,
   SlidersHorizontal,
   Loader2,
+  ShieldCheck,
+  DollarSign,
+  MessageCircle,
+  Home,
 } from "lucide-react"
 
 interface Property {
@@ -42,7 +46,6 @@ interface Property {
 interface Filters {
   search: string
   location: string
-  listing_type: string
   property_type: string
   bedrooms: string
   min_price: string
@@ -66,11 +69,10 @@ function hasRealImages(images: string[] | null | undefined): images is string[] 
 
 const PROPERTY_TYPES = [
   { value: "", label: "All Types" },
-  { value: "house", label: "House" },
   { value: "apartment", label: "Apartment" },
-  { value: "townhouse", label: "Townhouse" },
-  { value: "land", label: "Land" },
+  { value: "house", label: "House" },
   { value: "commercial", label: "Commercial" },
+  { value: "townhouse", label: "Townhouse" },
 ]
 
 const BEDROOM_OPTIONS = [
@@ -84,13 +86,13 @@ const BEDROOM_OPTIONS = [
 
 const SORT_OPTIONS = [
   { value: "newest", label: "Newest First" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
+  { value: "price_asc", label: "Rent: Low to High" },
+  { value: "price_desc", label: "Rent: High to Low" },
 ]
 
 const ITEMS_PER_PAGE = 24
 
-function PropertyCard({ property }: { property: Property }) {
+function RentalPropertyCard({ property }: { property: Property }) {
   const [saved, setSaved] = useState(false)
   const [imgError, setImgError] = useState(false)
 
@@ -125,13 +127,9 @@ function PropertyCard({ property }: { property: Property }) {
           </div>
         )}
 
-        <div className="absolute top-3 left-3 flex gap-2">
-          <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${
-            property.listing_type === "rent"
-              ? "bg-blue-600 text-white"
-              : "bg-teal-600 text-white"
-          }`}>
-            {property.listing_type === "rent" ? "For Rent" : "For Sale"}
+        <div className="absolute top-3 left-3">
+          <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-600 text-white">
+            For Rent
           </span>
         </div>
 
@@ -193,9 +191,7 @@ function PropertyCard({ property }: { property: Property }) {
         <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
           <span className="text-xl font-bold text-gray-900">
             ${property.price.toLocaleString()}
-            {property.listing_type === "rent" && (
-              <span className="text-sm font-normal text-gray-500">/mo</span>
-            )}
+            <span className="text-sm font-normal text-gray-500">/mo</span>
           </span>
           <span className="text-xs text-gray-400">
             {property.agent || "Dwellot Estates"}
@@ -206,26 +202,23 @@ function PropertyCard({ property }: { property: Property }) {
   )
 }
 
-export default function PropertiesClient({ initialProperties, initialTotal, initialFilters }: Props) {
+export default function RentClient({ initialProperties, initialTotal, initialFilters }: Props) {
   const router = useRouter()
   const pathname = usePathname()
 
   const [properties, setProperties] = useState<Property[]>(initialProperties)
   const [total, setTotal] = useState(initialTotal)
   const [filters, setFilters] = useState<Filters>(initialFilters)
-  const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   const hasMore = properties.length < total
 
-  // Sync filters to URL and refetch from server
   const applyFilters = useCallback(
     (newFilters: Filters) => {
       const params = new URLSearchParams()
       if (newFilters.search) params.set("search", newFilters.search)
       if (newFilters.location) params.set("location", newFilters.location)
-      if (newFilters.listing_type && newFilters.listing_type !== "all") params.set("listing_type", newFilters.listing_type)
       if (newFilters.property_type) params.set("property_type", newFilters.property_type)
       if (newFilters.bedrooms) params.set("bedrooms", newFilters.bedrooms)
       if (newFilters.min_price) params.set("min_price", newFilters.min_price)
@@ -251,7 +244,6 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
     const empty: Filters = {
       search: "",
       location: "",
-      listing_type: "all",
       property_type: "",
       bedrooms: "",
       min_price: "",
@@ -263,21 +255,18 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
   }, [applyFilters])
 
   const hasActiveFilters =
-    filters.search || filters.location || (filters.listing_type && filters.listing_type !== "all") ||
-    filters.property_type || filters.bedrooms || filters.min_price || filters.max_price
+    filters.search || filters.location || filters.property_type ||
+    filters.bedrooms || filters.min_price || filters.max_price
 
   const loadMore = useCallback(async () => {
     setLoadingMore(true)
     try {
       const params = new URLSearchParams()
+      params.set("listing_type", "rent")
       params.set("limit", ITEMS_PER_PAGE.toString())
       params.set("offset", properties.length.toString())
       if (filters.search) params.set("search", filters.search)
       if (filters.location) params.set("location", filters.location)
-      if (filters.listing_type && filters.listing_type !== "all") {
-        // Map listing_type filter to match API expectations
-        params.set("listing_type", filters.listing_type)
-      }
       if (filters.property_type) params.set("property_type", filters.property_type)
       if (filters.bedrooms) params.set("bedrooms", filters.bedrooms)
       if (filters.min_price) params.set("min_price", filters.min_price)
@@ -291,7 +280,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
         if (data.total) setTotal(data.total)
       }
     } catch (error) {
-      console.error("Error loading more properties:", error)
+      console.error("Error loading more rental properties:", error)
     } finally {
       setLoadingMore(false)
     }
@@ -307,74 +296,52 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 text-balance">
-            Properties for Sale & Rent in Ghana
+      {/* Hero */}
+      <section className="bg-gradient-to-b from-blue-50 to-gray-50 py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-3 text-balance">
+            Properties for Rent in Ghana
           </h1>
-          <p className="text-gray-600 mt-2">
-            Showing {properties.length} of {total} {total === 1 ? "property" : "properties"}
+          <p className="text-lg text-gray-600 mb-8">
+            Find apartments, houses, and commercial spaces for rent
           </p>
-        </div>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="mb-6">
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by location, title, or keyword..."
-                value={filters.search}
-                onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-                className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              />
+          {/* Search Bar */}
+          <form onSubmit={handleSearchSubmit} className="max-w-2xl mx-auto">
+            <div className="flex gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search by location, title, or keyword..."
+                  value={filters.search}
+                  onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
+                  className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                />
+              </div>
+              <button
+                type="submit"
+                className="px-6 py-3.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition whitespace-nowrap shadow-sm"
+              >
+                Search
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowMobileFilters(!showMobileFilters)}
+                className="lg:hidden px-4 py-3.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
+                aria-label="Toggle filters"
+              >
+                <SlidersHorizontal className="w-5 h-5 text-gray-600" />
+              </button>
             </div>
-            <button
-              type="submit"
-              className="px-6 py-3.5 bg-teal-600 text-white rounded-xl font-semibold hover:bg-teal-700 transition whitespace-nowrap"
-            >
-              Search
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="lg:hidden px-4 py-3.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition"
-              aria-label="Toggle filters"
-            >
-              <SlidersHorizontal className="w-5 h-5 text-gray-600" />
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
+      </section>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filter Bar */}
         <div className={`bg-white border border-gray-200 rounded-xl p-4 mb-8 ${showMobileFilters ? "block" : "hidden lg:block"}`}>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {/* Listing Type */}
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Listing Type</label>
-              <div className="flex rounded-lg overflow-hidden border border-gray-200">
-                {[
-                  { value: "all", label: "All" },
-                  { value: "sale", label: "Buy" },
-                  { value: "rent", label: "Rent" },
-                ].map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleFilterChange("listing_type", opt.value)}
-                    className={`flex-1 py-2 text-sm font-medium transition ${
-                      filters.listing_type === opt.value
-                        ? "bg-teal-600 text-white"
-                        : "bg-white text-gray-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {/* Property Type */}
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Property Type</label>
@@ -382,7 +349,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
                 <select
                   value={filters.property_type}
                   onChange={(e) => handleFilterChange("property_type", e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {PROPERTY_TYPES.map((t) => (
                     <option key={t.value} value={t.value}>{t.label}</option>
@@ -402,7 +369,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
                     onClick={() => handleFilterChange("bedrooms", opt.value)}
                     className={`flex-1 py-2 text-sm font-medium transition ${
                       filters.bedrooms === opt.value
-                        ? "bg-teal-600 text-white"
+                        ? "bg-blue-600 text-white"
                         : "bg-white text-gray-600 hover:bg-gray-50"
                     }`}
                   >
@@ -412,29 +379,29 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
               </div>
             </div>
 
-            {/* Min Price */}
+            {/* Min Rent */}
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Min Price ($)</label>
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Min Rent ($/mo)</label>
               <input
                 type="number"
                 placeholder="No min"
                 value={filters.min_price}
                 onChange={(e) => setFilters((f) => ({ ...f, min_price: e.target.value }))}
                 onBlur={() => applyFilters(filters)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
-            {/* Max Price */}
+            {/* Max Rent */}
             <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1.5">Max Price ($)</label>
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Max Rent ($/mo)</label>
               <input
                 type="number"
                 placeholder="No max"
                 value={filters.max_price}
                 onChange={(e) => setFilters((f) => ({ ...f, max_price: e.target.value }))}
                 onBlur={() => applyFilters(filters)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
 
@@ -445,7 +412,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
                 <select
                   value={filters.sort}
                   onChange={(e) => handleFilterChange("sort", e.target.value)}
-                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-teal-500"
+                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {SORT_OPTIONS.map((s) => (
                     <option key={s.value} value={s.value}>{s.label}</option>
@@ -456,7 +423,6 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
             </div>
           </div>
 
-          {/* Reset */}
           {hasActiveFilters && (
             <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end">
               <button
@@ -470,37 +436,54 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
           )}
         </div>
 
+        {/* Results Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">Available for Rent</h2>
+          <p className="text-gray-500 text-sm">
+            {total} {total === 1 ? "property" : "properties"} found
+          </p>
+        </div>
+
         {/* Properties Grid */}
         {properties.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-xl border border-gray-200">
-            <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No properties match your filters</h3>
-            <p className="text-gray-600 mb-6">Try adjusting your search or filters to find what you are looking for.</p>
-            <button
-              onClick={resetFilters}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium transition"
-            >
-              Reset Filters
-            </button>
+            <Home className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-gray-900 mb-2">No rental properties listed yet</h3>
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              Are you a landlord? List your property for free and reach thousands of potential tenants.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/agent-collection-form"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
+              >
+                List Your Property
+              </Link>
+              <Link
+                href="/properties?listing_type=sale"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition"
+              >
+                Looking to buy instead?
+              </Link>
+            </div>
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <RentalPropertyCard key={property.id} property={property} />
               ))}
             </div>
 
-            {/* Load More / Count */}
             <div className="text-center mt-10">
               <p className="text-sm text-gray-500 mb-4">
-                Showing {properties.length} of {total} properties
+                Showing {properties.length} of {total} rental properties
               </p>
               {hasMore && (
                 <button
                   onClick={loadMore}
                   disabled={loadingMore}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-teal-600 text-white rounded-xl font-semibold hover:bg-teal-700 transition disabled:opacity-60"
+                  className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-60"
                 >
                   {loadingMore ? (
                     <>
@@ -508,7 +491,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
                       Loading...
                     </>
                   ) : (
-                    "Load More Properties"
+                    "Load More Rentals"
                   )}
                 </button>
               )}
@@ -516,6 +499,44 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
           </>
         )}
       </div>
+
+      {/* Why Rent with Dwellot */}
+      <section className="bg-white border-t border-gray-100 py-16 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 text-center mb-10">
+            Why Rent with Dwellot
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <ShieldCheck className="w-7 h-7 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Verified Listings</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Every rental listing is reviewed for accuracy. Browse with confidence knowing properties are real and available.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <DollarSign className="w-7 h-7 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">No Hidden Fees</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Transparent pricing with no surprises. See the full rental cost upfront before you enquire.
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <MessageCircle className="w-7 h-7 text-blue-600" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Direct Landlord Contact</h3>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Message landlords and agents directly via WhatsApp or phone. No middlemen, no delays.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
