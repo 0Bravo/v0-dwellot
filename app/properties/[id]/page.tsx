@@ -14,7 +14,7 @@ async function getProperty(id: string) {
     const adminClient = createAdminClient()
     const { data, error } = await adminClient
       .from("properties")
-      .select("id, title, description, price, location, property_type, listing_type, bedrooms, bathrooms, area, parking, images, amenities, featured, status, agent, phone, view_count, created_at, updated_at")
+      .select("id, title, description, price, location, property_type, listing_type, bedrooms, bathrooms, area, parking, images, amenities, featured, status, agent, phone, view_count, enquiry_count, created_at, updated_at")
       .eq("id", Number.parseInt(id))
       .single()
 

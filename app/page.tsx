@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import dynamic from "next/dynamic"
 import HeroSearchBar from "@/components/HeroSearchBar"
+import { generateGeneralWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { FeaturedPropertyCard, PropertyListCard } from "@/components/PropertyCard"
 
 const RecentlyViewedWidget = dynamic(() => import("@/components/RecentlyViewedWidget"), { ssr: false })
@@ -332,7 +333,9 @@ export default function HomePage() {
           <p className="text-gray-600 mb-6">Get instant property alerts and chat with agents directly via WhatsApp</p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
-              href="https://wa.me/233201578429"
+              href={generateGeneralWhatsAppUrl("Hi Dwellot! I'm looking for a property in Ghana. Can you help me find the right one?")}
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex items-center gap-2 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition font-semibold"
             >
               <MessageCircle className="w-5 h-5" />

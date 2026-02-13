@@ -31,6 +31,8 @@ import {
 import { generateStructuredData } from "@/lib/seo"
 import { analytics } from "@/lib/analytics"
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
+import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
+import { trackEnquiry } from "@/lib/utils/track-enquiry"
 
 // Lazy-load heavy components that are not needed on initial render
 const PropertyPrint = dynamic(() => import("@/components/PropertyPrint"), { ssr: false })
@@ -587,12 +589,22 @@ export default function PropertyDetailsClient() {
                     Send Message
                   </button>
                   <a
-                    href={`https://wa.me/${(property.users?.phone || "0302000000").replace(/[\s\-()]/g, "").replace(/^0/, "233")}`}
+                    href={generateWhatsAppUrl({
+                      id: property.id,
+                      title: property.title,
+                      location: property.location,
+                      price: property.price,
+                      bedrooms: property.bedrooms,
+                      bathrooms: property.bathrooms,
+                      area: property.area,
+                      agent_phone: property.users?.phone,
+                    }, true)}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
                       if (property) {
                         analytics.trackAgentContact(property.users?.id || "unknown", "whatsapp")
+                        trackEnquiry({ property_id: property.id, enquiry_type: "whatsapp", source_page: "property_detail" })
                       }
                     }}
                     className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center"
@@ -605,6 +617,7 @@ export default function PropertyDetailsClient() {
                     onClick={() => {
                       if (property) {
                         analytics.trackAgentContact(property.users?.id || "unknown", "phone")
+                        trackEnquiry({ property_id: property.id, enquiry_type: "phone_call", source_page: "property_detail" })
                       }
                     }}
                     className="w-full border-2 border-blue-600 text-blue-600 py-3 px-4 rounded-lg hover:bg-blue-50 transition font-medium flex items-center justify-center"
@@ -612,7 +625,14 @@ export default function PropertyDetailsClient() {
                     <Phone className="w-5 h-5 mr-2" />
                     Call Now
                   </a>
-                  <button className="w-full border-2 border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition font-medium flex items-center justify-center">
+                  <button
+                    onClick={() => {
+                      if (property) {
+                        trackEnquiry({ property_id: property.id, enquiry_type: "schedule_viewing", source_page: "property_detail" })
+                      }
+                    }}
+                    className="w-full border-2 border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition font-medium flex items-center justify-center"
+                  >
                     <Calendar className="w-5 h-5 mr-2" />
                     Schedule Visit
                   </button>
@@ -635,6 +655,13 @@ export default function PropertyDetailsClient() {
                       Total Views
                     </span>
                     <span className="font-semibold">{viewStats.view_count}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600 flex items-center">
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Enquiries
+                    </span>
+                    <span className="font-semibold">{property.enquiry_count || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600 flex items-center">

@@ -31,7 +31,7 @@ export default function HelpPage() {
                 <MessageSquare className="h-12 w-12 text-teal-600 mx-auto mb-4" />
                 <h3 className="font-semibold mb-2">Live Chat</h3>
                 <p className="text-sm text-muted-foreground mb-4">Chat with our support team on WhatsApp</p>
-                <a href="https://wa.me/233201578429" target="_blank" rel="noopener noreferrer">
+                <a href="https://wa.me/233201578429?text=Hi%20Dwellot!%20I%20need%20help%20with%20something%20on%20your%20platform." target="_blank" rel="noopener noreferrer">
                   <Button variant="outline" className="w-full bg-transparent">
                     Start Chat
                   </Button>

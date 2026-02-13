@@ -58,6 +58,7 @@
     "react-dom": "19.1.2",
     "react-hook-form": "^7.63.0",
     "recharts": "^3.2.1",
+    "resend": "^6.9.2",
     "sharp": "^0.34.4",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "1.0.7",

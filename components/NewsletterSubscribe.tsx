@@ -7,10 +7,11 @@ import { Mail, CheckCircle2, Loader2 } from "lucide-react"
 
 interface NewsletterSubscribeProps {
   variant?: "default" | "minimal" | "footer"
+  source?: string
   className?: string
 }
 
-export default function NewsletterSubscribe({ variant = "default", className = "" }: NewsletterSubscribeProps) {
+export default function NewsletterSubscribe({ variant = "default", source, className = "" }: NewsletterSubscribeProps) {
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
@@ -32,7 +33,7 @@ export default function NewsletterSubscribe({ variant = "default", className = "
       const response = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name: name || null }),
+        body: JSON.stringify({ email, name: name || null, source: source || variant }),
       })
 
       const data = await response.json()
