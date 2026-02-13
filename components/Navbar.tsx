@@ -48,12 +48,6 @@ export default function Navbar() {
                 Properties
               </Link>
               <Link
-                href="/agents"
-                className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-              >
-                Agents
-              </Link>
-              <Link
                 href="/sell"
                 className="text-gray-700 hover:text-green-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
@@ -190,13 +184,6 @@ export default function Navbar() {
               onClick={toggleMenu}
             >
               Properties
-            </Link>
-            <Link
-              href="/agents"
-              className="text-gray-700 hover:text-green-600 block px-3 py-2 rounded-md text-base font-medium"
-              onClick={toggleMenu}
-            >
-              Agents
             </Link>
             <Link
               href="/sell"
