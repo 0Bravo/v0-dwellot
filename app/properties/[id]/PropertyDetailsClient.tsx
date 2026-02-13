@@ -587,7 +587,7 @@ export default function PropertyDetailsClient() {
                     Send Message
                   </button>
                   <a
-                    href={`https://wa.me/${(property.users?.phone || "0302000000").replace(/[\s\-()]/g, "").replace(/^0/, "233")}`}
+                    href={`https://wa.me/${(property.users?.phone || "0302000000").replace(/[\s\-()]/g, "").replace(/^0/, "233")}?text=${encodeURIComponent(`Hi, I'm interested in this property on Dwellot:\n\n${property.title}\nLocation: ${property.location}\nPrice: $${property.price?.toLocaleString()}\n\nhttps://dwellot.com/properties/${property.id}\n\nCould you please share more details?`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => {
