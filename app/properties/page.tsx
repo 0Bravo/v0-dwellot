@@ -1,17 +1,43 @@
 import type { Metadata } from "next"
-import { Suspense } from "react"
-
-export const metadata: Metadata = {
-  title: "Properties for Sale & Rent in Ghana | Browse All Listings | Dwellot",
-  description: "Browse verified properties for sale and rent across Ghana. Filter by location, price, bedrooms. Houses, apartments, land, and commercial properties in Accra, Kumasi, and beyond.",
-  alternates: { canonical: "https://dwellot.com/properties" },
-}
-import PropertiesClient from "./PropertiesClient"
 import { createClient } from "@supabase/supabase-js"
+import PropertiesClient from "./PropertiesClient"
 
-async function getInitialProperties(searchQuery?: string) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+export const revalidate = 60
+
+const SELECT_FIELDS =
+  "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, agent, phone, view_count, created_at"
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>
+}): Promise<Metadata> {
+  const params = await searchParams
+  const location = params.location
+  const listing_type = params.listing_type
+  const property_type = params.property_type
+
+  const parts: string[] = []
+  if (property_type) parts.push(property_type.charAt(0).toUpperCase() + property_type.slice(1) + "s")
+  if (listing_type === "sale") parts.push("for Sale")
+  else if (listing_type === "rent") parts.push("for Rent")
+  else parts.push("for Sale & Rent")
+  if (location) parts.push(`in ${location}`)
+  parts.push("Ghana")
+
+  const title = parts.length > 1 ? `${parts.join(" ")} | Dwellot` : "Properties for Sale & Rent in Ghana | Dwellot"
+  const description = `Browse verified properties ${parts.join(" ").toLowerCase()}. Filter by location, price, bedrooms. Houses, apartments, land, and commercial properties on Dwellot.`
+
+  return {
+    title,
+    description,
+    alternates: { canonical: "https://dwellot.com/properties" },
+  }
+}
+
+async function getInitialProperties(params: Record<string, string | undefined>) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey) {
     return { properties: [], total: 0 }
@@ -21,19 +47,51 @@ async function getInitialProperties(searchQuery?: string) {
 
   let query = supabase
     .from("properties")
-    .select(
-      "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, agent, phone",
-      { count: "exact" },
-    )
+    .select(SELECT_FIELDS, { count: "exact" })
     .eq("status", "active")
 
-  if (searchQuery && searchQuery.trim()) {
-    query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,location.ilike.%${searchQuery}%`)
-  } else {
-    query = query.ilike("location", "%appolonia%")
+  // Apply filters from URL search params
+  if (params.listing_type && params.listing_type !== "all") {
+    query = query.eq("listing_type", params.listing_type)
+  }
+  if (params.property_type) {
+    query = query.ilike("property_type", params.property_type)
+  }
+  if (params.bedrooms) {
+    const beds = parseInt(params.bedrooms)
+    if (beds >= 5) {
+      query = query.gte("bedrooms", 5)
+    } else if (beds > 0) {
+      query = query.eq("bedrooms", beds)
+    }
+  }
+  if (params.min_price) {
+    query = query.gte("price", parseInt(params.min_price))
+  }
+  if (params.max_price) {
+    query = query.lte("price", parseInt(params.max_price))
+  }
+  if (params.location) {
+    query = query.ilike("location", `%${params.location}%`)
+  }
+  if (params.search) {
+    query = query.or(
+      `title.ilike.%${params.search}%,description.ilike.%${params.search}%,location.ilike.%${params.search}%`
+    )
   }
 
-  query = query.order("created_at", { ascending: false }).range(0, 19)
+  // Sort
+  const sort = params.sort || "newest"
+  if (sort === "price_asc") {
+    query = query.order("price", { ascending: true })
+  } else if (sort === "price_desc") {
+    query = query.order("price", { ascending: false })
+  } else {
+    query = query.order("created_at", { ascending: false })
+  }
+
+  // Initial page of 24
+  query = query.range(0, 23)
 
   const { data, error, count } = await query
 
@@ -48,20 +106,25 @@ async function getInitialProperties(searchQuery?: string) {
 export default async function PropertiesPage({
   searchParams,
 }: {
-  searchParams: { search?: string; query?: string }
+  searchParams: Promise<Record<string, string | undefined>>
 }) {
-  const searchQuery = searchParams.search || searchParams.query
-  const { properties, total } = await getInitialProperties(searchQuery)
+  const params = await searchParams
+  const { properties, total } = await getInitialProperties(params)
 
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      }
-    >
-      <PropertiesClient initialProperties={properties} initialTotal={total} />
-    </Suspense>
+    <PropertiesClient
+      initialProperties={properties}
+      initialTotal={total}
+      initialFilters={{
+        search: params.search || "",
+        location: params.location || "",
+        listing_type: params.listing_type || "all",
+        property_type: params.property_type || "",
+        bedrooms: params.bedrooms || "",
+        min_price: params.min_price || "",
+        max_price: params.max_price || "",
+        sort: params.sort || "newest",
+      }}
+    />
   )
 }

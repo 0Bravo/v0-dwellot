@@ -13,6 +13,12 @@ export async function GET(request: Request) {
     const locationParam = searchParams.get("location")
     const searchQuery = searchParams.get("search") || searchParams.get("query")
     const agentParam = searchParams.get("agent")
+    const listingTypeParam = searchParams.get("listing_type")
+    const propertyTypeParam = searchParams.get("property_type")
+    const bedroomsParam = searchParams.get("bedrooms")
+    const minPriceParam = searchParams.get("min_price")
+    const maxPriceParam = searchParams.get("max_price")
+    const sortParam = searchParams.get("sort")
 
     const isFeaturedFilter = featuredParam === "true"
     const limit = limitParam ? Number.parseInt(limitParam) : 20
@@ -53,7 +59,41 @@ export async function GET(request: Request) {
       )
     }
 
-    query = query.range(offset, offset + limit - 1).order("created_at", { ascending: false })
+    if (listingTypeParam && listingTypeParam !== "all") {
+      query = query.eq("listing_type", listingTypeParam)
+    }
+
+    if (propertyTypeParam) {
+      query = query.ilike("property_type", propertyTypeParam)
+    }
+
+    if (bedroomsParam) {
+      const beds = parseInt(bedroomsParam)
+      if (beds >= 5) {
+        query = query.gte("bedrooms", 5)
+      } else if (beds > 0) {
+        query = query.eq("bedrooms", beds)
+      }
+    }
+
+    if (minPriceParam) {
+      query = query.gte("price", parseInt(minPriceParam))
+    }
+
+    if (maxPriceParam) {
+      query = query.lte("price", parseInt(maxPriceParam))
+    }
+
+    // Sort
+    if (sortParam === "price_asc") {
+      query = query.order("price", { ascending: true })
+    } else if (sortParam === "price_desc") {
+      query = query.order("price", { ascending: false })
+    } else {
+      query = query.order("created_at", { ascending: false })
+    }
+
+    query = query.range(offset, offset + limit - 1)
 
     const { data, error, count } = await query
 
