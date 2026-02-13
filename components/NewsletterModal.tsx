@@ -207,7 +207,7 @@ export default function NewsletterModal() {
       const response = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name: name || null }),
+        body: JSON.stringify({ email, name: name || null, source: `modal_${stage}` }),
       })
 
       const data = await response.json()

@@ -7,7 +7,7 @@ export default function Footer() {
     <footer className="bg-gray-900 text-white">
       <div className="bg-gray-800 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <NewsletterSubscribe variant="footer" />
+          <NewsletterSubscribe variant="footer" source="footer" />
         </div>
       </div>
 
