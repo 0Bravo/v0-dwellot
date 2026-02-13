@@ -42,7 +42,9 @@ interface Property {
 export default function HomePage() {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([])
   const [allProperties, setAllProperties] = useState<Property[]>([])
-  const [loading, setLoading] = useState(true)
+  const [totalCount, setTotalCount] = useState(0)
+  const [featuredLoading, setFeaturedLoading] = useState(true)
+  const [allLoading, setAllLoading] = useState(true)
   const [popularFilters, setPopularFilters] = useState({
     priceRange: "Under $500K",
     bedrooms: "3",
@@ -51,7 +53,8 @@ export default function HomePage() {
   })
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    // Fetch featured properties (unchanged)
+    const fetchFeatured = async () => {
       try {
         const [apolloniaRes, kharisRes, devtracoRes, filtersRes] = await Promise.all([
           fetch("/api/properties?location=appolonia&limit=13"),
@@ -88,20 +91,36 @@ export default function HomePage() {
         )
 
         setFeaturedProperties(withRealImages)
-        setAllProperties(combined)
 
         if (filtersRes.ok) {
           const data = await filtersRes.json()
           setPopularFilters(data)
         }
       } catch (error) {
-        console.error("Error fetching properties:", error)
+        console.error("Error fetching featured properties:", error)
       } finally {
-        setLoading(false)
+        setFeaturedLoading(false)
       }
     }
 
-    fetchProperties()
+    // Fetch ALL properties for the Properties section
+    const fetchAllProperties = async () => {
+      try {
+        const res = await fetch("/api/properties?limit=500")
+        if (res.ok) {
+          const data = await res.json()
+          setAllProperties(data.properties || [])
+          setTotalCount(data.total || data.properties?.length || 0)
+        }
+      } catch (error) {
+        console.error("Error fetching all properties:", error)
+      } finally {
+        setAllLoading(false)
+      }
+    }
+
+    fetchFeatured()
+    fetchAllProperties()
   }, [])
 
   return (
@@ -167,7 +186,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {loading ? (
+          {featuredLoading ? (
             <div className="text-center py-12">
               <div className="inline-block w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
               <p className="mt-4 text-gray-600">Loading featured properties...</p>
@@ -195,7 +214,7 @@ export default function HomePage() {
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Properties</h2>
               <p className="text-gray-600 mt-2">
-                {allProperties.length} {allProperties.length === 1 ? "property" : "properties"} available
+                {totalCount} {totalCount === 1 ? "property" : "properties"} available
               </p>
             </div>
 
@@ -208,7 +227,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {loading ? (
+          {allLoading ? (
             <div className="text-center py-12">
               <div className="inline-block w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
               <p className="mt-4 text-gray-600">Loading properties...</p>
@@ -239,7 +258,7 @@ export default function HomePage() {
               href="/properties"
               className="inline-flex items-center gap-2 px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition"
             >
-              View All {allProperties.length} Properties
+              View All {totalCount} Properties
               <ChevronRight className="w-5 h-5" />
             </Link>
           </div>
