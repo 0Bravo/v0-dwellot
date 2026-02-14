@@ -55,15 +55,23 @@ export default function AdminLoginForm() {
       }
 
       // Check if user has admin role
+      console.log("[v0] Checking admin role for user:", data.user.id)
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", data.user.id)
         .single()
 
+      console.log("[v0] Profile query result:", { profile, profileError })
+
       if (profileError || !profile || profile.role !== "admin") {
+        console.log("[v0] Admin check failed:", { 
+          profileError: profileError?.message, 
+          profile, 
+          role: profile?.role 
+        })
         await supabase.auth.signOut()
-        setError("You do not have admin access.")
+        setError(`You do not have admin access. Debug: role=${profile?.role || "null"}, error=${profileError?.message || "none"}`)
         setLoading(false)
         return
       }
