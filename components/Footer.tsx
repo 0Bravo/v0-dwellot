@@ -49,11 +49,6 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/agents" className="text-gray-400 hover:text-white transition-colors">
-                  Find Agents
-                </Link>
-              </li>
-              <li>
                 <Link href="/sell" className="text-gray-400 hover:text-white transition-colors">
                   Sell Property
                 </Link>
