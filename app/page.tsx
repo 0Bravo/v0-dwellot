@@ -55,44 +55,29 @@ export default function HomePage() {
   })
 
   useEffect(() => {
-    // Fetch featured properties (unchanged)
+    // Fetch all properties marked as featured
     const fetchFeatured = async () => {
       try {
-        const [apolloniaRes, kharisRes, devtracoRes, filtersRes] = await Promise.all([
-          fetch("/api/properties?location=appolonia&limit=13"),
-          fetch("/api/properties?agent=BestWorld%20Company&limit=3"),
-          fetch("/api/properties?agent=Devtraco%20Group&limit=2"),
+        const [featuredRes, filtersRes] = await Promise.all([
+          fetch("/api/properties?featured=true&limit=100"),
           fetch("/api/popular-filters"),
         ])
 
-        let apolloniaProperties: Property[] = []
-        let kharisProperties: Property[] = []
-        let devtracoProperties: Property[] = []
+        if (featuredRes.ok) {
+          const data = await featuredRes.json()
+          const properties: Property[] = data.properties || []
 
-        if (apolloniaRes.ok) {
-          const data = await apolloniaRes.json()
-          apolloniaProperties = data.properties || []
+          // Filter out properties without real images
+          const withRealImages = properties.filter(
+            (prop) =>
+              prop.images &&
+              prop.images.length > 0 &&
+              !prop.images[0]?.includes("image-coming-soon") &&
+              !prop.images[0]?.includes("placeholder"),
+          )
+
+          setFeaturedProperties(withRealImages)
         }
-        if (kharisRes.ok) {
-          const data = await kharisRes.json()
-          kharisProperties = data.properties || []
-        }
-        if (devtracoRes.ok) {
-          const data = await devtracoRes.json()
-          devtracoProperties = data.properties || []
-        }
-
-        const combined = [...apolloniaProperties, ...kharisProperties, ...devtracoProperties]
-
-        const withRealImages = combined.filter(
-          (prop) =>
-            prop.images &&
-            prop.images.length > 0 &&
-            !prop.images[0]?.includes("image-coming-soon") &&
-            !prop.images[0]?.includes("placeholder"),
-        )
-
-        setFeaturedProperties(withRealImages)
 
         if (filtersRes.ok) {
           const data = await filtersRes.json()
