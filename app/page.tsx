@@ -65,18 +65,7 @@ export default function HomePage() {
 
         if (featuredRes.ok) {
           const data = await featuredRes.json()
-          const properties: Property[] = data.properties || []
-
-          // Filter out properties without real images
-          const withRealImages = properties.filter(
-            (prop) =>
-              prop.images &&
-              prop.images.length > 0 &&
-              !prop.images[0]?.includes("image-coming-soon") &&
-              !prop.images[0]?.includes("placeholder"),
-          )
-
-          setFeaturedProperties(withRealImages)
+          setFeaturedProperties(data.properties || [])
         }
 
         if (filtersRes.ok) {

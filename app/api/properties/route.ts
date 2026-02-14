@@ -19,6 +19,8 @@ export async function GET(request: Request) {
     const minPriceParam = searchParams.get("min_price")
     const maxPriceParam = searchParams.get("max_price")
     const sortParam = searchParams.get("sort")
+    const includeInactive = searchParams.get("include_inactive")
+    const statusParam = searchParams.get("status")
 
     const isFeaturedFilter = featuredParam === "true"
     const limit = limitParam ? Number.parseInt(limitParam) : 20
@@ -39,7 +41,15 @@ export async function GET(request: Request) {
         "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, featured, status, agent, phone, view_count, created_at",
         { count: "exact" },
       )
-      .eq("status", "active")
+    // Admin can see all statuses or filter by specific status
+    if (includeInactive === "true") {
+      if (statusParam) {
+        query = query.eq("status", statusParam)
+      }
+      // No status filter = show all
+    } else {
+      query = query.eq("status", "active")
+    }
 
     if (isFeaturedFilter) {
       query = query.eq("featured", true)
