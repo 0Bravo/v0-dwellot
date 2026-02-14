@@ -1,26 +1,22 @@
 "use client"
 
-import { Bell, Menu, X } from "lucide-react"
-import { useState } from "react"
+import { Bell, Menu } from "lucide-react"
 import Link from "next/link"
+import { useSidebarToggle } from "./AdminSidebar"
 
 export default function AdminHeader() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const toggleSidebar = useSidebarToggle()
 
   return (
-    <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+    <div className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
       {/* Mobile menu button */}
       <button
         type="button"
         className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        onClick={toggleSidebar}
       >
         <span className="sr-only">Open sidebar</span>
-        {mobileMenuOpen ? (
-          <X className="h-6 w-6" aria-hidden="true" />
-        ) : (
-          <Menu className="h-6 w-6" aria-hidden="true" />
-        )}
+        <Menu className="h-6 w-6" aria-hidden="true" />
       </button>
 
       {/* Separator */}
