@@ -38,40 +38,26 @@ export async function updateSession(request: NextRequest) {
 
     // Admin dashboard - check for admin role
     if (request.nextUrl.pathname.startsWith("/dashboard")) {
-      console.log("[v0] [Middleware] Dashboard access attempt", { hasUser: !!user, path: request.nextUrl.pathname })
-      
       if (!user) {
-        console.log("[v0] [Middleware] No user - redirecting to /admin-login")
         const url = request.nextUrl.clone()
         url.pathname = "/admin-login"
         return NextResponse.redirect(url)
       }
       
       // Check admin role from profiles table
-      const { data: profile, error: profileError } = await supabase
+      const { data: profile } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single()
       
-      console.log("[v0] [Middleware] Profile check", { 
-        userId: user.id, 
-        profile, 
-        profileError,
-        role: profile?.role 
-      })
-      
       if (!profile || profile.role !== "admin") {
-        console.log("[v0] [Middleware] Not admin - redirecting to /admin-login with error")
-        // Sign out the non-admin user
         await supabase.auth.signOut()
         const url = request.nextUrl.clone()
         url.pathname = "/admin-login"
         url.searchParams.set("error", "unauthorized")
         return NextResponse.redirect(url)
       }
-      
-      console.log("[v0] [Middleware] Admin access granted")
     }
 
     // Protected routes - redirect to login if not authenticated
