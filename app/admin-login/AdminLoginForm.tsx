@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Eye, EyeOff } from "lucide-react"
 
+// Admin login form with Supabase authentication and role check
 export default function AdminLoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")

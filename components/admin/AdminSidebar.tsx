@@ -36,6 +36,7 @@ export default function AdminSidebar() {
   useEffect(() => {
     async function fetchUser() {
       const supabase = createBrowserClient()
+      if (!supabase) return
       const {
         data: { user },
       } = await supabase.auth.getUser()
