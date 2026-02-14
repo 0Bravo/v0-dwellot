@@ -21,8 +21,8 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Properties", href: "/dashboard/properties", icon: Home },
-  { name: "Add Property", href: "/dashboard/add-property", icon: PlusCircle },
-  { name: "Bulk Upload", href: "/dashboard/bulk-upload", icon: Upload },
+  { name: "Add Property", href: "/dashboard/properties/new", icon: PlusCircle },
+  { name: "Bulk Upload", href: "/dashboard/properties/bulk", icon: Upload },
   { name: "Enquiries", href: "/dashboard/enquiries", icon: MessageSquare },
   { name: "Subscribers", href: "/dashboard/subscribers", icon: Mail },
   { name: "Agent Applications", href: "/dashboard/agent-applications", icon: UserPlus },
