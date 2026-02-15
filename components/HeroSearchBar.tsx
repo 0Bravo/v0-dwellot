@@ -2,7 +2,8 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
-import { Search, MapPin, Building2, Home, TrendingUp } from "lucide-react"
+import useSWR from "swr"
+import { Search, MapPin, Building2, Home, Landmark } from "lucide-react"
 
 interface PopularFilters {
   priceRange: string
@@ -11,54 +12,40 @@ interface PopularFilters {
   locationCount: number
 }
 
-const SUGGESTIONS = [
-  // Locations
-  { label: "Cantonments", type: "location" as const, icon: "location" },
-  { label: "East Legon", type: "location" as const, icon: "location" },
-  { label: "Labone", type: "location" as const, icon: "location" },
-  { label: "Dzorwulu", type: "location" as const, icon: "location" },
-  { label: "Tse Addo", type: "location" as const, icon: "location" },
-  { label: "Airport Residential", type: "location" as const, icon: "location" },
-  { label: "North Ridge", type: "location" as const, icon: "location" },
-  { label: "Roman Ridge", type: "location" as const, icon: "location" },
-  { label: "Spintex", type: "location" as const, icon: "location" },
-  { label: "Appolonia City", type: "location" as const, icon: "location" },
-  { label: "East Legon Hills", type: "location" as const, icon: "location" },
-  { label: "Adenta", type: "location" as const, icon: "location" },
-  { label: "Tema", type: "location" as const, icon: "location" },
-  // Developers
-  { label: "Devtraco Plus", type: "developer" as const, icon: "building" },
-  { label: "Denya Developers", type: "developer" as const, icon: "building" },
-  { label: "Lakeside Estate", type: "developer" as const, icon: "building" },
-  { label: "Goldkey Properties", type: "developer" as const, icon: "building" },
-  // Property Types
-  { label: "Apartment", type: "property_type" as const, icon: "home" },
-  { label: "House", type: "property_type" as const, icon: "home" },
-  { label: "Townhouse", type: "property_type" as const, icon: "home" },
-  { label: "Studio", type: "property_type" as const, icon: "home" },
-  { label: "Villa", type: "property_type" as const, icon: "home" },
-  // Popular Searches
-  { label: "3 bedroom house", type: "search" as const, icon: "trending" },
-  { label: "Affordable apartments", type: "search" as const, icon: "trending" },
-  { label: "Luxury villa", type: "search" as const, icon: "trending" },
-]
+interface Suggestion {
+  label: string
+  type: "location" | "developer" | "property_type" | "estate"
+  count: number
+}
 
-function getSuggestionIcon(icon: string) {
-  switch (icon) {
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
+
+function getSuggestionIcon(type: string) {
+  switch (type) {
     case "location": return <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
-    case "building": return <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" />
-    case "home": return <Home className="w-4 h-4 text-gray-400 flex-shrink-0" />
-    case "trending": return <TrendingUp className="w-4 h-4 text-gray-400 flex-shrink-0" />
+    case "developer": return <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" />
+    case "property_type": return <Home className="w-4 h-4 text-gray-400 flex-shrink-0" />
+    case "estate": return <Landmark className="w-4 h-4 text-gray-400 flex-shrink-0" />
     default: return <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
   }
 }
 
-function getSuggestionUrl(suggestion: typeof SUGGESTIONS[0]) {
+function getSuggestionTypeLabel(type: string) {
+  switch (type) {
+    case "location": return "Location"
+    case "developer": return "Developer"
+    case "property_type": return "Type"
+    case "estate": return "Estate"
+    default: return type
+  }
+}
+
+function getSuggestionUrl(suggestion: Suggestion) {
   switch (suggestion.type) {
     case "location": return `/properties?location=${encodeURIComponent(suggestion.label)}`
     case "developer": return `/properties?search=${encodeURIComponent(suggestion.label)}`
     case "property_type": return `/properties?property_type=${encodeURIComponent(suggestion.label.toLowerCase())}`
-    case "search": return `/properties?search=${encodeURIComponent(suggestion.label)}`
+    case "estate": return `/properties?search=${encodeURIComponent(suggestion.label)}`
     default: return `/properties?search=${encodeURIComponent(suggestion.label)}`
   }
 }
@@ -70,9 +57,16 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const { data } = useSWR<{ suggestions: Suggestion[] }>("/api/search-suggestions", fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 600000,
+  })
+
+  const allSuggestions = data?.suggestions || []
+
   const filtered = searchQuery.trim().length > 0
-    ? SUGGESTIONS.filter((s) => s.label.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 8)
-    : SUGGESTIONS.slice(0, 6)
+    ? allSuggestions.filter((s) => s.label.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 8)
+    : allSuggestions.slice(0, 8)
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -84,7 +78,7 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  function navigateToSuggestion(suggestion: typeof SUGGESTIONS[0]) {
+  function navigateToSuggestion(suggestion: Suggestion) {
     setShowSuggestions(false)
     window.location.href = getSuggestionUrl(suggestion)
   }
@@ -155,16 +149,14 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
               />
             </div>
 
-            {showSuggestions && filtered.length > 0 && (
+            {showSuggestions && (filtered.length > 0 || searchQuery.trim().length > 0) && (
               <div
                 className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 z-50 overflow-hidden"
                 role="listbox"
               >
-                {searchQuery.trim().length === 0 && (
-                  <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50">
-                    Popular searches
-                  </div>
-                )}
+                <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50">
+                  {searchQuery.trim().length === 0 ? "Browse by" : `Results for "${searchQuery}"`}
+                </div>
                 {filtered.map((suggestion, index) => (
                   <button
                     key={`${suggestion.type}-${suggestion.label}`}
@@ -178,11 +170,17 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
                     role="option"
                     aria-selected={index === selectedIndex}
                   >
-                    {getSuggestionIcon(suggestion.icon)}
+                    {getSuggestionIcon(suggestion.type)}
                     <span className="flex-1">{suggestion.label}</span>
-                    <span className="text-xs text-gray-400 capitalize">{suggestion.type === "property_type" ? "Type" : suggestion.type}</span>
+                    <span className="text-xs text-gray-400">{suggestion.count} {suggestion.count === 1 ? "listing" : "listings"}</span>
+                    <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{getSuggestionTypeLabel(suggestion.type)}</span>
                   </button>
                 ))}
+                {filtered.length === 0 && searchQuery.trim().length > 0 && (
+                  <div className="px-4 py-4 text-sm text-gray-500 text-center">
+                    No suggestions found. Press Enter to search for &ldquo;{searchQuery}&rdquo;
+                  </div>
+                )}
               </div>
             )}
           </div>
