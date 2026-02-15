@@ -291,6 +291,27 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
+  const hasMore = properties.length < total
+
+  // Sync filters to URL and refetch from server
+  const applyFilters = useCallback(
+    (newFilters: Filters) => {
+      const params = new URLSearchParams()
+      if (newFilters.search) params.set("search", newFilters.search)
+      if (newFilters.location) params.set("location", newFilters.location)
+      if (newFilters.listing_type && newFilters.listing_type !== "all") params.set("listing_type", newFilters.listing_type)
+      if (newFilters.property_type) params.set("property_type", newFilters.property_type)
+      if (newFilters.bedrooms) params.set("bedrooms", newFilters.bedrooms)
+      if (newFilters.min_price) params.set("min_price", newFilters.min_price)
+      if (newFilters.max_price) params.set("max_price", newFilters.max_price)
+      if (newFilters.sort && newFilters.sort !== "newest") params.set("sort", newFilters.sort)
+
+      const qs = params.toString()
+      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+    },
+    [router, pathname],
+  )
+
   const applySuggestion = useCallback(
     (suggestion: Suggestion) => {
       setShowSuggestions(false)
@@ -344,27 +365,6 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
       }
     },
     [showSuggestions, selectedSuggestionIndex, filteredSuggestions, applySuggestion],
-  )
-
-  const hasMore = properties.length < total
-
-  // Sync filters to URL and refetch from server
-  const applyFilters = useCallback(
-    (newFilters: Filters) => {
-      const params = new URLSearchParams()
-      if (newFilters.search) params.set("search", newFilters.search)
-      if (newFilters.location) params.set("location", newFilters.location)
-      if (newFilters.listing_type && newFilters.listing_type !== "all") params.set("listing_type", newFilters.listing_type)
-      if (newFilters.property_type) params.set("property_type", newFilters.property_type)
-      if (newFilters.bedrooms) params.set("bedrooms", newFilters.bedrooms)
-      if (newFilters.min_price) params.set("min_price", newFilters.min_price)
-      if (newFilters.max_price) params.set("max_price", newFilters.max_price)
-      if (newFilters.sort && newFilters.sort !== "newest") params.set("sort", newFilters.sort)
-
-      const qs = params.toString()
-      router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
-    },
-    [router, pathname],
   )
 
   const handleFilterChange = useCallback(
