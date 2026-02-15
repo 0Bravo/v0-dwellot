@@ -48,10 +48,10 @@ export default function HomePage() {
   const [featuredLoading, setFeaturedLoading] = useState(true)
   const [allLoading, setAllLoading] = useState(true)
   const [popularFilters, setPopularFilters] = useState({
-    priceRange: "Under $500K",
+    priceRange: "Under $300K",
     bedrooms: "3",
-    location: "East Legon, Accra",
-    locationCount: 15,
+    location: "Cantonments",
+    locationCount: 20,
   })
 
   useEffect(() => {

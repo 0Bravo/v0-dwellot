@@ -57,11 +57,11 @@ async function getInitialProperties(params: Record<string, string | undefined>) 
   if (params.property_type) {
     query = query.ilike("property_type", params.property_type)
   }
-  if (params.bedrooms) {
+  if (params.bedrooms !== undefined && params.bedrooms !== "") {
     const beds = parseInt(params.bedrooms)
     if (beds >= 5) {
       query = query.gte("bedrooms", 5)
-    } else if (beds > 0) {
+    } else {
       query = query.eq("bedrooms", beds)
     }
   }

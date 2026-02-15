@@ -77,11 +77,11 @@ export async function GET(request: Request) {
       query = query.ilike("property_type", propertyTypeParam)
     }
 
-    if (bedroomsParam) {
+    if (bedroomsParam !== null && bedroomsParam !== undefined && bedroomsParam !== "") {
       const beds = parseInt(bedroomsParam)
       if (beds >= 5) {
         query = query.gte("bedrooms", 5)
-      } else if (beds > 0) {
+      } else {
         query = query.eq("bedrooms", beds)
       }
     }

@@ -20,24 +20,28 @@ import {
   Loader2,
 } from "lucide-react"
 
-const PROPERTY_TYPES = ["House", "Apartment", "Townhouse", "Land", "Commercial"]
+const PROPERTY_TYPES = ["House", "Apartment", "Townhouse", "Studio", "Villa", "Land", "Commercial"]
 const LISTING_TYPES = ["sale", "rent"]
 
 const LOCATION_SUGGESTIONS = [
-  "East Legon",
-  "Spintex",
-  "Tema",
-  "Airport Residential",
   "Cantonments",
+  "East Legon",
   "Labone",
-  "Osu",
-  "Adjiringanor",
-  "Trasacco",
-  "Ashaley Botwe",
-  "Kumasi",
-  "Takoradi",
+  "Dzorwulu",
+  "Tse Addo",
+  "Airport Residential",
+  "North Ridge",
+  "Roman Ridge",
+  "Spintex",
   "Appolonia City",
   "East Legon Hills",
+  "Ashaley Botwe",
+  "Adenta",
+  "Tema",
+  "Osu",
+  "Trasacco",
+  "Kumasi",
+  "Takoradi",
   "Achimota",
   "Kasoa",
 ]
