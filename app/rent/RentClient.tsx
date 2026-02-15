@@ -71,12 +71,31 @@ const PROPERTY_TYPES = [
   { value: "", label: "All Types" },
   { value: "apartment", label: "Apartment" },
   { value: "house", label: "House" },
-  { value: "commercial", label: "Commercial" },
   { value: "townhouse", label: "Townhouse" },
+  { value: "studio", label: "Studio" },
+  { value: "villa", label: "Villa" },
+  { value: "commercial", label: "Commercial" },
+]
+
+const LOCATIONS = [
+  { value: "", label: "All Locations" },
+  { value: "Cantonments", label: "Cantonments" },
+  { value: "East Legon", label: "East Legon" },
+  { value: "Labone", label: "Labone" },
+  { value: "Dzorwulu", label: "Dzorwulu" },
+  { value: "Tse Addo", label: "Tse Addo" },
+  { value: "Airport", label: "Airport Area" },
+  { value: "North Ridge", label: "North Ridge" },
+  { value: "Roman Ridge", label: "Roman Ridge" },
+  { value: "Spintex", label: "Spintex" },
+  { value: "Appolonia", label: "Appolonia City" },
+  { value: "Adenta", label: "Adenta" },
+  { value: "Tema", label: "Tema" },
 ]
 
 const BEDROOM_OPTIONS = [
   { value: "", label: "Any" },
+  { value: "0", label: "Studio" },
   { value: "1", label: "1" },
   { value: "2", label: "2" },
   { value: "3", label: "3" },
@@ -313,7 +332,7 @@ export default function RentClient({ initialProperties, initialTotal, initialFil
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search by location, title, or keyword..."
+                  placeholder="Search by name, developer, or keyword..."
                   value={filters.search}
                   onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
                   className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
@@ -341,7 +360,24 @@ export default function RentClient({ initialProperties, initialTotal, initialFil
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filter Bar */}
         <div className={`bg-white border border-gray-200 rounded-xl p-4 mb-8 ${showMobileFilters ? "block" : "hidden lg:block"}`}>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            {/* Location */}
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Location</label>
+              <div className="relative">
+                <select
+                  value={filters.location}
+                  onChange={(e) => handleFilterChange("location", e.target.value)}
+                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {LOCATIONS.map((l) => (
+                    <option key={l.value} value={l.value}>{l.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+
             {/* Property Type */}
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Property Type</label>
@@ -362,47 +398,60 @@ export default function RentClient({ initialProperties, initialTotal, initialFil
             {/* Bedrooms */}
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Bedrooms</label>
-              <div className="flex rounded-lg overflow-hidden border border-gray-200">
-                {BEDROOM_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => handleFilterChange("bedrooms", opt.value)}
-                    className={`flex-1 py-2 text-sm font-medium transition ${
-                      filters.bedrooms === opt.value
-                        ? "bg-blue-600 text-white"
-                        : "bg-white text-gray-600 hover:bg-gray-50"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+              <div className="relative">
+                <select
+                  value={filters.bedrooms}
+                  onChange={(e) => handleFilterChange("bedrooms", e.target.value)}
+                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {BEDROOM_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                  ))}
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
               </div>
             </div>
 
             {/* Min Rent */}
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Min Rent ($/mo)</label>
-              <input
-                type="number"
-                placeholder="No min"
-                value={filters.min_price}
-                onChange={(e) => setFilters((f) => ({ ...f, min_price: e.target.value }))}
-                onBlur={() => applyFilters(filters)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <select
+                  value={filters.min_price}
+                  onChange={(e) => handleFilterChange("min_price", e.target.value)}
+                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">No min</option>
+                  <option value="500">$500</option>
+                  <option value="1000">$1,000</option>
+                  <option value="1500">$1,500</option>
+                  <option value="2000">$2,000</option>
+                  <option value="2500">$2,500</option>
+                  <option value="3000">$3,000</option>
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
             </div>
 
             {/* Max Rent */}
             <div>
               <label className="block text-xs font-medium text-gray-500 mb-1.5">Max Rent ($/mo)</label>
-              <input
-                type="number"
-                placeholder="No max"
-                value={filters.max_price}
-                onChange={(e) => setFilters((f) => ({ ...f, max_price: e.target.value }))}
-                onBlur={() => applyFilters(filters)}
-                className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+              <div className="relative">
+                <select
+                  value={filters.max_price}
+                  onChange={(e) => handleFilterChange("max_price", e.target.value)}
+                  className="w-full appearance-none bg-white border border-gray-200 rounded-lg px-3 py-2 pr-8 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">No max</option>
+                  <option value="1000">$1,000</option>
+                  <option value="1500">$1,500</option>
+                  <option value="2000">$2,000</option>
+                  <option value="2500">$2,500</option>
+                  <option value="3000">$3,000</option>
+                  <option value="5000">$5,000</option>
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+              </div>
             </div>
 
             {/* Sort */}

@@ -19,16 +19,16 @@ export async function GET() {
       .from("properties")
       .select("price, bedrooms, location")
       .eq("status", "active")
-      .ilike("location", "%appolonia%")
-      .limit(100)
+      .gt("price", 0)
+      .limit(500)
 
     if (error) throw error
 
     if (!properties || properties.length === 0) {
       return NextResponse.json({
-        priceRange: "Under $500K",
+        priceRange: "Under $300K",
         bedrooms: "3",
-        location: "Appolonia City",
+        location: "Cantonments",
         locationCount: 0,
       })
     }
@@ -56,10 +56,14 @@ export async function GET() {
 
     const topBedrooms = Object.entries(bedroomCounts).sort(([, a], [, b]) => b - a)[0]
 
+    // Group locations by key area name for better popular filter display
+    const locationKeywords = ["Cantonments", "East Legon", "Airport", "Labone", "Dzorwulu", "Tse Addo", "North Ridge", "Roman Ridge", "Spintex", "Appolonia", "Tema", "Adenta"]
     const locationCounts: Record<string, number> = {}
     properties.forEach((p) => {
       if (p.location) {
-        locationCounts[p.location] = (locationCounts[p.location] || 0) + 1
+        const matched = locationKeywords.find((kw) => p.location.toLowerCase().includes(kw.toLowerCase()))
+        const key = matched || p.location
+        locationCounts[key] = (locationCounts[key] || 0) + 1
       }
     })
 
@@ -82,10 +86,10 @@ export async function GET() {
     console.error("Error fetching popular filters:", error)
     return NextResponse.json(
       {
-        priceRange: "Under $500K",
+        priceRange: "Under $300K",
         bedrooms: "3",
-        location: "Appolonia City",
-        locationCount: 13,
+        location: "Cantonments",
+        locationCount: 15,
       },
       { status: 200 },
     )

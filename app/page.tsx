@@ -48,10 +48,10 @@ export default function HomePage() {
   const [featuredLoading, setFeaturedLoading] = useState(true)
   const [allLoading, setAllLoading] = useState(true)
   const [popularFilters, setPopularFilters] = useState({
-    priceRange: "Under $500K",
+    priceRange: "Under $300K",
     bedrooms: "3",
-    location: "East Legon, Accra",
-    locationCount: 15,
+    location: "Cantonments",
+    locationCount: 20,
   })
 
   useEffect(() => {
@@ -65,18 +65,7 @@ export default function HomePage() {
 
         if (featuredRes.ok) {
           const data = await featuredRes.json()
-          const properties: Property[] = data.properties || []
-
-          // Filter out properties without real images
-          const withRealImages = properties.filter(
-            (prop) =>
-              prop.images &&
-              prop.images.length > 0 &&
-              !prop.images[0]?.includes("image-coming-soon") &&
-              !prop.images[0]?.includes("placeholder"),
-          )
-
-          setFeaturedProperties(withRealImages)
+          setFeaturedProperties(data.properties || [])
         }
 
         if (filtersRes.ok) {

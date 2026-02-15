@@ -17,13 +17,13 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
     <div className="max-w-4xl mx-auto">
       <div className="bg-[#0A1F44] rounded-2xl p-6 shadow-2xl">
         <h2 className="text-white text-base md:text-lg font-semibold mb-4">
-          Search properties for sale and to rent
+          Find your next home in Ghana
         </h2>
 
         <div className="flex flex-col md:flex-row gap-3">
           <input
             type="text"
-            placeholder="e.g. East Legon, Accra, or Airport Hills"
+            placeholder="Search by location, developer, or property name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -58,7 +58,7 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
         <div className="flex flex-wrap gap-2 mt-4">
           <span className="text-white text-sm">Popular:</span>
           <Link
-            href={`/properties?price_max=${popularFilters.priceRange === "Under $250K" ? "250000" : popularFilters.priceRange === "Under $500K" ? "500000" : "1000000"}`}
+            href={`/properties?max_price=${popularFilters.priceRange === "Under $100K" ? "100000" : popularFilters.priceRange === "Under $250K" ? "250000" : popularFilters.priceRange === "Under $300K" ? "300000" : popularFilters.priceRange === "Under $500K" ? "500000" : "1000000"}`}
             className="bg-white/20 text-white px-3 py-1 rounded-full text-sm hover:bg-white/30 transition"
           >
             {popularFilters.priceRange}
@@ -76,7 +76,7 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
             {popularFilters.location} ({popularFilters.locationCount})
           </Link>
           <Link
-            href="/properties?new=true"
+            href="/properties?sort=newest"
             className="bg-white/20 text-white px-3 py-1 rounded-full text-sm hover:bg-white/30 transition"
           >
             New listings
