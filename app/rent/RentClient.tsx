@@ -1,10 +1,11 @@
 "use client"
 
 import type React from "react"
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import useSWR from "swr"
 import {
   MapPin,
   Bed,
@@ -22,7 +23,37 @@ import {
   DollarSign,
   MessageCircle,
   Home,
+  Building2,
+  Landmark,
 } from "lucide-react"
+
+interface Suggestion {
+  label: string
+  type: "location" | "developer" | "property_type" | "estate"
+  count: number
+}
+
+const suggestionFetcher = (url: string) => fetch(url).then((res) => res.json())
+
+function getSuggestionIcon(type: string) {
+  switch (type) {
+    case "location": return <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0" />
+    case "developer": return <Building2 className="w-4 h-4 text-gray-400 flex-shrink-0" />
+    case "property_type": return <Home className="w-4 h-4 text-gray-400 flex-shrink-0" />
+    case "estate": return <Landmark className="w-4 h-4 text-gray-400 flex-shrink-0" />
+    default: return <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+  }
+}
+
+function getSuggestionTypeLabel(type: string) {
+  switch (type) {
+    case "location": return "Location"
+    case "developer": return "Developer"
+    case "property_type": return "Type"
+    case "estate": return "Estate"
+    default: return type
+  }
+}
 
 interface Property {
   id: number
@@ -230,6 +261,29 @@ export default function RentClient({ initialProperties, initialTotal, initialFil
   const [filters, setFilters] = useState<Filters>(initialFilters)
   const [loadingMore, setLoadingMore] = useState(false)
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
+  const searchWrapperRef = useRef<HTMLDivElement>(null)
+
+  const { data: suggestionsData } = useSWR<{ suggestions: Suggestion[] }>("/api/search-suggestions", suggestionFetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 600000,
+  })
+
+  const allSuggestions = suggestionsData?.suggestions || []
+  const filteredSuggestions = filters.search.trim().length > 0
+    ? allSuggestions.filter((s) => s.label.toLowerCase().includes(filters.search.toLowerCase())).slice(0, 8)
+    : allSuggestions.slice(0, 8)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const hasMore = properties.length < total
 
@@ -308,9 +362,64 @@ export default function RentClient({ initialProperties, initialTotal, initialFil
   const handleSearchSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault()
+      setShowSuggestions(false)
       applyFilters(filters)
     },
     [filters, applyFilters],
+  )
+
+  const applySuggestion = useCallback(
+    (suggestion: Suggestion) => {
+      setShowSuggestions(false)
+      setSelectedSuggestionIndex(-1)
+      let updated: Filters
+      switch (suggestion.type) {
+        case "location":
+          updated = { ...filters, location: suggestion.label, search: "" }
+          break
+        case "developer":
+        case "estate":
+          updated = { ...filters, search: suggestion.label }
+          break
+        case "property_type":
+          updated = { ...filters, property_type: suggestion.label.toLowerCase(), search: "" }
+          break
+        default:
+          updated = { ...filters, search: suggestion.label }
+      }
+      setFilters(updated)
+      applyFilters(updated)
+    },
+    [filters, applyFilters],
+  )
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (!showSuggestions) {
+        if (e.key === "ArrowDown") {
+          setShowSuggestions(true)
+          e.preventDefault()
+        }
+        return
+      }
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault()
+        setSelectedSuggestionIndex((prev) => (prev < filteredSuggestions.length - 1 ? prev + 1 : 0))
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault()
+        setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : filteredSuggestions.length - 1))
+      } else if (e.key === "Enter") {
+        if (selectedSuggestionIndex >= 0 && filteredSuggestions[selectedSuggestionIndex]) {
+          e.preventDefault()
+          applySuggestion(filteredSuggestions[selectedSuggestionIndex])
+        }
+      } else if (e.key === "Escape") {
+        setShowSuggestions(false)
+        setSelectedSuggestionIndex(-1)
+      }
+    },
+    [showSuggestions, selectedSuggestionIndex, filteredSuggestions, applySuggestion],
   )
 
   return (
@@ -328,18 +437,68 @@ export default function RentClient({ initialProperties, initialTotal, initialFil
           {/* Search Bar */}
           <form onSubmit={handleSearchSubmit} className="max-w-2xl mx-auto">
             <div className="flex gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search by name, developer, or keyword..."
-                  value={filters.search}
-                  onChange={(e) => setFilters((f) => ({ ...f, search: e.target.value }))}
-                  className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-                />
+              <div className="relative flex-1" ref={searchWrapperRef}>
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Search by name, developer, or keyword..."
+                    value={filters.search}
+                    onChange={(e) => {
+                      setFilters((f) => ({ ...f, search: e.target.value }))
+                      setShowSuggestions(true)
+                      setSelectedSuggestionIndex(-1)
+                    }}
+                    onFocus={() => setShowSuggestions(true)}
+                    onKeyDown={handleSearchKeyDown}
+                    className="w-full pl-12 pr-4 py-3.5 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                    autoComplete="off"
+                    role="combobox"
+                    aria-expanded={showSuggestions}
+                    aria-haspopup="listbox"
+                    aria-autocomplete="list"
+                  />
+                </div>
+
+                {showSuggestions && (filteredSuggestions.length > 0 || filters.search.trim().length > 0) && (
+                  <div
+                    className="absolute top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-gray-200 z-50 overflow-hidden text-left"
+                    role="listbox"
+                  >
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider bg-gray-50">
+                      {filters.search.trim().length === 0 ? "Browse by" : `Suggestions for "${filters.search}"`}
+                    </div>
+                    {filteredSuggestions.map((suggestion, index) => (
+                      <button
+                        key={`${suggestion.type}-${suggestion.label}`}
+                        type="button"
+                        onClick={() => applySuggestion(suggestion)}
+                        onMouseEnter={() => setSelectedSuggestionIndex(index)}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-left text-sm transition ${
+                          index === selectedSuggestionIndex
+                            ? "bg-blue-50 text-blue-900"
+                            : "text-gray-700 hover:bg-gray-50"
+                        }`}
+                        role="option"
+                        aria-selected={index === selectedSuggestionIndex}
+                      >
+                        {getSuggestionIcon(suggestion.type)}
+                        <span className="flex-1">{suggestion.label}</span>
+                        <span className="text-xs text-gray-400">{suggestion.count} {suggestion.count === 1 ? "listing" : "listings"}</span>
+                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{getSuggestionTypeLabel(suggestion.type)}</span>
+                      </button>
+                    ))}
+                    {filteredSuggestions.length === 0 && filters.search.trim().length > 0 && (
+                      <div className="px-4 py-4 text-sm text-gray-500 text-center">
+                        No suggestions found. Press Enter to search for &ldquo;{filters.search}&rdquo;
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <button
                 type="submit"
+                onClick={() => setShowSuggestions(false)}
                 className="px-6 py-3.5 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition whitespace-nowrap shadow-sm"
               >
                 Search
