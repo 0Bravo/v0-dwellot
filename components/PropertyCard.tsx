@@ -204,6 +204,7 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
               <div className="font-medium">
                 <span
                   onClick={(e) => {
+                    e.preventDefault()
                     e.stopPropagation()
                     window.location.href = `tel:${property.phone || "0302967150"}`
                   }}
@@ -217,19 +218,18 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
           </div>
 
           <div className="flex items-center gap-4">
-            <a
-              href={generateWhatsAppUrl(property)}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
               onClick={(e) => {
+                e.preventDefault()
                 e.stopPropagation()
                 trackEnquiry({ property_id: property.id, enquiry_type: "whatsapp", source_page: "homepage" })
+                window.open(generateWhatsAppUrl(property), "_blank", "noopener,noreferrer")
               }}
               className="bg-green-500 p-2 rounded hover:bg-green-600 transition"
               title="WhatsApp"
             >
               <MessageCircle className="h-5 w-5 text-white" />
-            </a>
+            </button>
             <button
               onClick={toggleSave}
               className="bg-gray-100 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
