@@ -52,10 +52,13 @@ export async function POST(request: Request) {
         const { Resend } = await import("resend")
         const resend = new Resend(process.env.RESEND_API_KEY)
 
+        const fromAddress = process.env.RESEND_FROM_EMAIL || "Dwellot <onboarding@resend.dev>"
+        const adminEmail = process.env.ADMIN_EMAIL || "support@dwellot.com"
+
         // Admin notification
         await resend.emails.send({
-          from: "Dwellot <noreply@dwellot.com>",
-          to: "support@dwellot.com",
+          from: fromAddress,
+          to: adminEmail,
           subject: `New Newsletter Subscriber: ${email}`,
           html: `
             <h2>New Newsletter Subscription</h2>
@@ -68,7 +71,7 @@ export async function POST(request: Request) {
 
         // Welcome email to subscriber
         await resend.emails.send({
-          from: "Dwellot <noreply@dwellot.com>",
+          from: fromAddress,
           to: email,
           subject: "Welcome to Dwellot - Ghana Property Alerts",
           html: `
