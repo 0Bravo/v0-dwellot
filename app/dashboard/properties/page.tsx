@@ -83,7 +83,7 @@ export default function PropertyManagementDashboard() {
 
   const fetchProperties = async () => {
     try {
-      const response = await fetch("/api/properties/manage")
+      const response = await fetch("/api/properties/manage", { cache: "no-store" })
       const data = await response.json()
 
       if (response.ok) {
