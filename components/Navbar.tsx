@@ -1,16 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Menu, X, User, ChevronDown, Home, LogOut, Settings, LayoutDashboard, PlusCircle } from "lucide-react" // Added PlusCircle icon
+import { Menu, X, User, ChevronDown, Home, LogOut, Settings, LayoutDashboard, PlusCircle } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
+import { isNative, isAndroid } from "@/lib/capacitor"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const { user, signOut } = useAuth() // Added auth context
+  const [runningInApp, setRunningInApp] = useState(false)
+  const { user, signOut } = useAuth()
   const router = useRouter()
+
+  // Handle Android hardware back button inside Capacitor
+  useEffect(() => {
+    setRunningInApp(isNative())
+
+    if (!isAndroid()) return
+
+    let backHandler: { remove: () => void } | null = null
+
+    async function setupBackButton() {
+      try {
+        const { App } = await import("@capacitor/app")
+        backHandler = await App.addListener("backButton", ({ canGoBack }) => {
+          if (canGoBack) {
+            window.history.back()
+          } else {
+            App.exitApp()
+          }
+        })
+      } catch {
+        // @capacitor/app not available (running in browser)
+      }
+    }
+
+    setupBackButton()
+    return () => {
+      backHandler?.remove()
+    }
+  }, [])
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -27,7 +58,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="bg-white shadow-lg fixed w-full top-0 z-50">
+    <nav className={`bg-white shadow-lg fixed w-full top-0 z-50 ${runningInApp ? "pt-[env(safe-area-inset-top)]" : ""}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
