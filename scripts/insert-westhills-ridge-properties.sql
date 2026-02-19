@@ -1,0 +1,93 @@
+INSERT INTO properties (title, description, property_type, listing_type, price, currency, location, address, region, bedrooms, bathrooms, amenities, status, agent, agent_name, agent_phone, agent_email, agent_company, developer, estate_name, phone, agent_whatsapp, created_at, updated_at)
+VALUES
+(
+  'Westhills 1-Bedroom Apartment - Eden Heights',
+  'Modern 1-bedroom apartment with top-notch amenities in West Accra''s premier Eden Heights development. Grade A finishing, modern design, city views, and fully fitted interiors. 84 sqm of well-designed living space. 5 mins walk to West Hills Mall, 30 mins to airport. 1232 total units in the development.',
+  'apartment', 'sale', 100000, 'USD',
+  'Weija', 'Eden Heights, West Hills, Weija', 'Greater Accra',
+  1, 1,
+  '{"Swimming Pool","Gym","Sports Complex","24/7 Security","On-site Management","Parking","Grade A Finishing","City Views"}',
+  'inactive',
+  'Westhills Ridge', 'Westhills Ridge', '', '', 'Westhills Ridge Company Ltd',
+  'Westhills Ridge', 'Eden Heights',
+  '', '',
+  NOW(), NOW()
+),
+(
+  'Westhills 1-Bedroom + Study - Eden Heights',
+  'Spacious 1-bedroom apartment with study room, perfect for professionals in West Accra. 107.2 sqm with grade A finishing, panoramic views, and smart features. Part of SSNIT & Amandi Group joint venture. Promotional prices available.',
+  'apartment', 'sale', 115000, 'USD',
+  'Weija', 'Eden Heights, West Hills, Weija', 'Greater Accra',
+  1, 1,
+  '{"Swimming Pool","Gym","Tennis Court","Soccer Field","Conference Centre","Pharmacy","Study Room","Panoramic Views","Smart Features"}',
+  'inactive',
+  'Westhills Ridge', 'Westhills Ridge', '', '', 'Westhills Ridge Company Ltd',
+  'Westhills Ridge', 'Eden Heights',
+  '', '',
+  NOW(), NOW()
+),
+(
+  'Westhills 2-Bedroom Apartment - Eden Heights',
+  'Elegant 2-bedroom apartment in Eden Heights with world-class sports facilities and amenities. 115.16 sqm with open plan living, modern finishes, balcony, and fitted kitchen & bathroom. 24-month payment plan available. Utility supply guaranteed.',
+  'apartment', 'sale', 130000, 'USD',
+  'Weija', 'Eden Heights, West Hills, Weija', 'Greater Accra',
+  2, 2,
+  '{"Olympic Swimming Pool","Fitness Centre","Athletics Track","Community Centre","Fast WiFi","Open Plan","Balcony","Fitted Kitchen"}',
+  'inactive',
+  'Westhills Ridge', 'Westhills Ridge', '', '', 'Westhills Ridge Company Ltd',
+  'Westhills Ridge', 'Eden Heights',
+  '', '',
+  NOW(), NOW()
+),
+(
+  'Westhills 3-Bedroom Standard - Eden Heights',
+  'Spacious 3-bedroom apartment ideal for families in Eden Heights premium development. 151.96 sqm with modern kitchen, multiple balconies, and city views. Close to beach resorts (10 mins). Ghana''s largest sports complex on-site.',
+  'apartment', 'sale', 168000, 'USD',
+  'Weija', 'Eden Heights, West Hills, Weija', 'Greater Accra',
+  3, 3,
+  '{"Swimming Pool","Gym","Sports Complex","Shopping Mall Nearby","24/7 Security","Central AC","Multiple Balconies","City Views"}',
+  'inactive',
+  'Westhills Ridge', 'Westhills Ridge', '', '', 'Westhills Ridge Company Ltd',
+  'Westhills Ridge', 'Eden Heights',
+  '', '',
+  NOW(), NOW()
+),
+(
+  'Westhills 3-Bedroom + Study - Eden Heights',
+  'Premium 3-bedroom apartment with dedicated study at Eden Heights. 181.03 sqm with premium finishing, expansive living areas, and high ceilings. 4 swimming pools, gym, rooftop lounge, and concierge service. Penthouse options also available.',
+  'apartment', 'sale', 190000, 'USD',
+  'Weija', 'Eden Heights, West Hills, Weija', 'Greater Accra',
+  3, 3,
+  '{"Swimming Pool","Gym","Rooftop Lounge","Concierge","Estate Management","Generator","Study Room","High Ceilings"}',
+  'inactive',
+  'Westhills Ridge', 'Westhills Ridge', '', '', 'Westhills Ridge Company Ltd',
+  'Westhills Ridge', 'Eden Heights',
+  '', '',
+  NOW(), NOW()
+),
+(
+  'Westhills 4-Bedroom Apartment - Eden Heights',
+  'Luxurious 4-bedroom apartment for large families at Eden Heights. Top-tier living with luxury finishes, multiple living areas, large balconies, and premium views. Premium units with customization options. 2-year payment plan available.',
+  'apartment', 'sale', 250000, 'USD',
+  'Weija', 'Eden Heights, West Hills, Weija', 'Greater Accra',
+  4, 4,
+  '{"Swimming Pool","Gym","Tennis","Football Field","Kids Play Area","Pharmacy","Restaurant","Luxury Finishes","Large Balconies"}',
+  'inactive',
+  'Westhills Ridge', 'Westhills Ridge', '', '', 'Westhills Ridge Company Ltd',
+  'Westhills Ridge', 'Eden Heights',
+  '', '',
+  NOW(), NOW()
+),
+(
+  'Westhills Penthouse - Eden Heights',
+  'Exclusive penthouse living at Eden Heights with panoramic West Accra views. 4-bedroom penthouse with private terrace, premium finishes, and private outdoor space. Limited availability. Contact for pricing.',
+  'penthouse', 'sale', 0, 'USD',
+  'Weija', 'Eden Heights, West Hills, Weija', 'Greater Accra',
+  4, 4,
+  '{"Private Terrace","Swimming Pool","Gym","Exclusive Amenities","24/7 Security","Concierge","Panoramic Views","Private Outdoor Space"}',
+  'inactive',
+  'Westhills Ridge', 'Westhills Ridge', '', '', 'Westhills Ridge Company Ltd',
+  'Westhills Ridge', 'Eden Heights',
+  '', '',
+  NOW(), NOW()
+);
