@@ -3,7 +3,7 @@ VALUES
 (
   'Selton Skye 1-Bedroom',
   'Luxury apartment in Ghana''s tallest residential building at 27-28 floors. 8 mins to Accra Mall. 10 mins to KIA. Design inspired by Adinkra symbol for excellence. Smart Home Technology with city views.',
-  'apartment', 'For Sale', 180000, 'USD',
+  'apartment', 'sale', 180000, 'USD',
   'Airport Area', 'North-West Airport off N1', 'Greater Accra',
   1, 1,
   ARRAY['Sky Pool', 'Sky Lounge', 'Floating Tennis Court', 'Spa', 'Movie Theatre', 'Gym', 'Co-Working Space', 'Grocery Store', 'Pharmacy', 'Restaurant', 'Concierge', '24/7 Security'],
@@ -16,7 +16,7 @@ VALUES
 (
   'Selton Skye 2-Bedroom',
   'Two bedroom luxury apartment with panoramic views and world-class amenities. Near Tullow Oil, 355 Towers, Deloitte, BOST, and FDA headquarters. Smart Home with premium location.',
-  'apartment', 'For Sale', 280000, 'USD',
+  'apartment', 'sale', 280000, 'USD',
   'Airport Area', 'North-West Airport off N1', 'Greater Accra',
   2, 2,
   ARRAY['Sky Pool', 'Sky Lounge', 'Floating Tennis Court', 'Spa', 'Movie Theatre', 'Gym', 'Co-Working Space', 'Grocery Store', 'Pharmacy', 'Restaurant', 'Concierge', '24/7 Security'],
@@ -29,7 +29,7 @@ VALUES
 (
   'Selton Skye 3-Bedroom',
   'Spacious 3-bedroom in twin tower development with exclusive amenities. In-house rental team for property management. End-to-end investment experience with family living.',
-  'apartment', 'For Sale', 400000, 'USD',
+  'apartment', 'sale', 400000, 'USD',
   'Airport Area', 'North-West Airport off N1', 'Greater Accra',
   3, 3,
   ARRAY['Sky Pool', 'Sky Lounge', 'Floating Tennis Court', 'Spa', 'Movie Theatre', 'Gym', 'Co-Working Space', 'Grocery Store', 'Pharmacy', 'Restaurant', 'Concierge', '24/7 Security', '2-Level Underground Parking'],
@@ -42,7 +42,7 @@ VALUES
 (
   'Selton Skye 4-Bedroom',
   'Executive 4-bedroom apartment with premium finishes and spectacular views. Two exclusive floors for rental investors with separate amenities. Full Smart Home technology.',
-  'apartment', 'For Sale', 550000, 'USD',
+  'apartment', 'sale', 550000, 'USD',
   'Airport Area', 'North-West Airport off N1', 'Greater Accra',
   4, 4,
   ARRAY['Sky Pool', 'Sky Lounge', 'Floating Tennis Court', 'Spa', 'Movie Theatre', 'Gym', 'Co-Working Space', 'Grocery Store', 'Pharmacy', 'Restaurant', 'Concierge', '24/7 Security', '2-Level Underground Parking'],
@@ -55,7 +55,7 @@ VALUES
 (
   'Selton Skye Penthouse',
   'Sky level penthouse - the crown jewel of Ghana''s tallest residential building. Most exclusive residential offering in Ghana with private elevator access. Unmatched views and ultimate luxury.',
-  'penthouse', 'For Sale', 1200000, 'USD',
+  'penthouse', 'sale', 1200000, 'USD',
   'Airport Area', 'North-West Airport off N1', 'Greater Accra',
   4, 5,
   ARRAY['Private Sky Pool', 'Sky Lounge', 'Full Amenities', 'Concierge', '24/7 Security', 'Underground Parking', 'Restaurant Access'],
@@ -68,7 +68,7 @@ VALUES
 (
   'The Signature 1-Bedroom',
   'Luxury apartment in iconic twin towers overlooking Tetteh Quarshie Interchange. Redefined Accra''s skyline with quality finishes and premium East Legon location.',
-  'apartment', 'For Sale', 150000, 'USD',
+  'apartment', 'sale', 150000, 'USD',
   'East Legon', 'Shiashie East Legon', 'Greater Accra',
   1, 1,
   ARRAY['Swimming Pool', 'Gym', '24/7 Security', 'Concierge'],
@@ -81,7 +81,7 @@ VALUES
 (
   'The Signature 2-Bedroom',
   'Two bedroom apartment in prestigious Signature twin tower development. Spectacular views of Accra skyline with premium construction quality.',
-  'apartment', 'For Sale', 250000, 'USD',
+  'apartment', 'sale', 250000, 'USD',
   'East Legon', 'Shiashie East Legon', 'Greater Accra',
   2, 2,
   ARRAY['Swimming Pool', 'Gym', '24/7 Security', 'Concierge'],
@@ -94,7 +94,7 @@ VALUES
 (
   'The Signature 3-Bedroom',
   'Three bedroom apartment with penthouse options in iconic twin towers. Near Tetteh Quarshie Interchange with premium views and quality finishes. Established in 2008 by Kasapreko PLC subsidiary.',
-  'apartment', 'For Sale', 380000, 'USD',
+  'apartment', 'sale', 380000, 'USD',
   'East Legon', 'Shiashie East Legon', 'Greater Accra',
   3, 3,
   ARRAY['Swimming Pool', 'Gym', '24/7 Security', 'Concierge'],
@@ -107,7 +107,7 @@ VALUES
 (
   'Park Ridge Estate 4-Bedroom Townhouse',
   'Deluxe 4-bedroom townhouse with luxurious aesthetics and staff quarters. En-suite bathrooms, main kitchen and show kitchen. 3 mins from Palace Mall, near East Airport International School.',
-  'townhouse', 'For Sale', 350000, 'USD',
+  'townhouse', 'sale', 350000, 'USD',
   'Airport Area', 'East Airport', 'Greater Accra',
   4, 4,
   ARRAY['Swimming Pool', '24/7 Security', 'Gated Community'],
@@ -120,7 +120,7 @@ VALUES
 (
   'Park Ridge Estate Villa',
   'Premium villa with striking facade and plush interiors. Unique architecture with luxury finishes, staff quarters, and private gardens. Near thriving business hub with premium finishing.',
-  'villa', 'For Sale', 450000, 'USD',
+  'villa', 'sale', 450000, 'USD',
   'Airport Area', 'East Airport', 'Greater Accra',
   4, 5,
   ARRAY['Swimming Pool', '24/7 Security', 'Gated Community'],
