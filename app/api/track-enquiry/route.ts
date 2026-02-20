@@ -20,8 +20,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Invalid enquiry_type. Must be one of: ${validTypes.join(", ")}` }, { status: 400 })
     }
 
+    const pid = Number(property_id)
+
     const { error } = await supabase.from("property_enquiries").insert({
-      property_id: Number(property_id),
+      property_id: pid,
       enquiry_type,
       source_page: source_page || "unknown",
       visitor_name: visitor_name || null,
@@ -34,7 +36,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to track enquiry" }, { status: 500 })
     }
 
-    return NextResponse.json({ success: true })
+    // Increment enquiry_count on the properties table
+    const { data: prop } = await supabase
+      .from("properties")
+      .select("enquiry_count")
+      .eq("id", pid)
+      .single()
+
+    await supabase
+      .from("properties")
+      .update({ enquiry_count: (prop?.enquiry_count || 0) + 1 })
+      .eq("id", pid)
+
+    return NextResponse.json({ success: true, enquiry_count: (prop?.enquiry_count || 0) + 1 })
   } catch (error) {
     console.error("[track-enquiry] Error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
