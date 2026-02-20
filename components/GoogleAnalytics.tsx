@@ -4,7 +4,7 @@ import Script from "next/script"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID
 
 export default function GoogleAnalytics() {
   const pathname = usePathname()
