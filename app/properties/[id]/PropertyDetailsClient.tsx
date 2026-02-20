@@ -28,7 +28,7 @@ import {
   MessageCircle,
   Maximize2,
 } from "lucide-react"
-import { generateStructuredData } from "@/lib/seo"
+import { generateEnhancedStructuredData } from "@/lib/seo"
 import { analytics } from "@/lib/analytics"
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
@@ -289,7 +289,7 @@ export default function PropertyDetailsClient() {
     )
   }
 
-  const structuredData = generateStructuredData(property as any)
+  const structuredData = generateEnhancedStructuredData(property as any)
 
   return (
     <>
