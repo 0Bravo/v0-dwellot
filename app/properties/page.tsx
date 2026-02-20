@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { createClient } from "@supabase/supabase-js"
 import PropertiesClient from "./PropertiesClient"
 
+export const dynamic = "force-dynamic"
 export const revalidate = 60
 
 const SELECT_FIELDS =

@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js"
 import RentClient from "./RentClient"
 
+export const dynamic = "force-dynamic"
 export const revalidate = 60
 
 const SELECT_FIELDS =
