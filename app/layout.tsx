@@ -11,6 +11,8 @@ import { ToastProvider } from "@/components/Toast"
 import { CompareProvider } from "@/contexts/CompareContext"
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext"
 import NewsletterModal from "@/components/NewsletterModal"
+import GoogleAnalytics from "@/components/GoogleAnalytics"
+import HotjarAnalytics from "@/components/HotjarAnalytics"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -212,6 +214,8 @@ export default function RootLayout({
             </CompareProvider>
           </RecentlyViewedProvider>
         </ToastProvider>
+        <GoogleAnalytics />
+        <HotjarAnalytics />
         <Analytics />
         <SpeedInsights />
       </body>

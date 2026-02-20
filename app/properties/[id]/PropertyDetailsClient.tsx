@@ -29,7 +29,14 @@ import {
   Maximize2,
 } from "lucide-react"
 import { generateStructuredData } from "@/lib/seo"
-import { analytics } from "@/lib/analytics"
+import {
+  analytics,
+  trackPropertyView as trackGA4PropertyView,
+  trackWhatsAppClick,
+  trackPhoneRevealed,
+  trackScheduleVisit,
+  trackInquirySent,
+} from "@/lib/analytics"
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { trackEnquiry } from "@/lib/utils/track-enquiry"
@@ -98,6 +105,15 @@ export default function PropertyDetailsClient() {
     if (property) {
       trackPropertyView()
       analytics.trackPropertyView(property.id, property.title)
+      trackGA4PropertyView({
+        property_id: property.id,
+        property_type: property.property_type,
+        listing_type: property.listing_type,
+        location: property.location,
+        price: property.price,
+        currency: "USD",
+        bedrooms: property.bedrooms,
+      })
 
       addToRecentlyViewed({
         id: property.id,
@@ -605,6 +621,15 @@ export default function PropertyDetailsClient() {
                       if (property) {
                         analytics.trackAgentContact(property.users?.id || "unknown", "whatsapp")
                         trackEnquiry({ property_id: property.id, enquiry_type: "whatsapp", source_page: "property_detail" })
+                        trackWhatsAppClick({
+                          property_id: property.id,
+                          property_type: property.property_type,
+                          listing_type: property.listing_type,
+                          location: property.location,
+                          price: property.price,
+                          currency: "USD",
+                          agent_name: property.users?.name || "Unknown",
+                        })
                       }
                     }}
                     className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center"
@@ -618,6 +643,15 @@ export default function PropertyDetailsClient() {
                       if (property) {
                         analytics.trackAgentContact(property.users?.id || "unknown", "phone")
                         trackEnquiry({ property_id: property.id, enquiry_type: "phone_call", source_page: "property_detail" })
+                        trackPhoneRevealed({
+                          property_id: property.id,
+                          property_type: property.property_type,
+                          listing_type: property.listing_type,
+                          location: property.location,
+                          price: property.price,
+                          currency: "USD",
+                          agent_name: property.users?.name || "Unknown",
+                        })
                       }
                     }}
                     className="w-full border-2 border-blue-600 text-blue-600 py-3 px-4 rounded-lg hover:bg-blue-50 transition font-medium flex items-center justify-center"
@@ -629,6 +663,14 @@ export default function PropertyDetailsClient() {
                     onClick={() => {
                       if (property) {
                         trackEnquiry({ property_id: property.id, enquiry_type: "schedule_viewing", source_page: "property_detail" })
+                        trackScheduleVisit({
+                          property_id: property.id,
+                          property_type: property.property_type,
+                          listing_type: property.listing_type,
+                          location: property.location,
+                          price: property.price,
+                          currency: "USD",
+                        })
                       }
                     }}
                     className="w-full border-2 border-gray-300 text-gray-700 py-3 px-4 rounded-lg hover:bg-gray-50 transition font-medium flex items-center justify-center"

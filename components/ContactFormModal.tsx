@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useState } from "react"
-import { analytics } from "@/lib/analytics"
+import { analytics, trackInquirySent } from "@/lib/analytics"
 
 interface ContactFormModalProps {
   propertyId: string
@@ -30,6 +30,9 @@ export default function ContactFormModal({ propertyId, propertyTitle, agentId, o
       })
 
       analytics.trackInquiry(propertyId, propertyTitle, "contact_form")
+      trackInquirySent({
+        property_id: propertyId,
+      })
 
       onClose()
       setContactForm({ name: "", email: "", phone: "", message: "" })
