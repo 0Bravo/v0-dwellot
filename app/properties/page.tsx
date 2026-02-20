@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { createClient } from "@supabase/supabase-js"
+import { normalizePropertyType, extractShortArea } from "@/lib/seo"
 import PropertiesClient from "./PropertiesClient"
 
 export const dynamic = "force-dynamic"
@@ -18,21 +19,55 @@ export async function generateMetadata({
   const listing_type = params.listing_type
   const property_type = params.property_type
 
-  const parts: string[] = []
-  if (property_type) parts.push(property_type.charAt(0).toUpperCase() + property_type.slice(1) + "s")
+  // Build short area from location filter
+  const area = location ? extractShortArea(location) : null
+  const typeLabel = property_type
+    ? normalizePropertyType(property_type) + "s"
+    : "Properties"
+
+  // Title: max ~60 chars
+  // Pattern: "[Types] for [Sale/Rent] in [Area] | Dwellot"
+  const parts: string[] = [typeLabel]
   if (listing_type === "sale") parts.push("for Sale")
   else if (listing_type === "rent") parts.push("for Rent")
   else parts.push("for Sale & Rent")
-  if (location) parts.push(`in ${location}`)
-  parts.push("Ghana")
+  if (area) parts.push(`in ${area}, Ghana`)
+  else parts.push("in Ghana")
 
-  const title = parts.length > 1 ? `${parts.join(" ")} | Dwellot` : "Properties for Sale & Rent in Ghana | Dwellot"
-  const description = `Browse verified properties ${parts.join(" ").toLowerCase()}. Filter by location, price, bedrooms. Houses, apartments, land, and commercial properties on Dwellot.`
+  let title = `${parts.join(" ")} | Dwellot`
+  // Truncate if over 60
+  if (title.length > 60) {
+    title = `${parts.join(" ").substring(0, 49)} | Dwellot`
+  }
+
+  // Description: max 155 chars
+  const descParts = parts.join(" ").toLowerCase()
+  const description = `Browse verified ${descParts}. Filter by location, price, bedrooms. Find your perfect home on Dwellot.`
+
+  // Canonical URL
+  const canonical = new URL("/properties", "https://dwellot.com")
+  if (listing_type) canonical.searchParams.set("listing_type", listing_type)
+  if (property_type) canonical.searchParams.set("property_type", property_type)
+  if (location) canonical.searchParams.set("location", location)
 
   return {
     title,
     description,
-    alternates: { canonical: "https://dwellot.com/properties" },
+    alternates: { canonical: canonical.toString() },
+    openGraph: {
+      title,
+      description,
+      url: canonical.toString(),
+      siteName: "Dwellot",
+      locale: "en_GH",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@dwellot",
+      title,
+      description,
+    },
   }
 }
 

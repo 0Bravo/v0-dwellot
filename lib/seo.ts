@@ -1,81 +1,323 @@
 import type { Metadata } from "next"
 
+const BASE_URL = "https://dwellot.com"
+
+// Known estate/building name prefixes — skip these to get the area name
+const ESTATE_PREFIXES = [
+  "the ", "arlo", "acacia", "palm hills", "eden heights", "knightsbridge",
+  "sakora", "locus", "mo's", "casa", "grace courts", "park ridge",
+  "selton", "akaya", "trasacco", "the oxford", "the edge", "the address",
+  "the kharis", "block ", "phase ", "unit ", "plot ", "villa ",
+]
+
+// ---------------------------------------------------------------------------
+// Shared interfaces
+// ---------------------------------------------------------------------------
+
 interface PropertySEO {
-  id: string
+  id: number | string
   title: string
-  description: string
-  price: number
-  location: string
-  images: string[]
-  property_type: string
-  bedrooms: number
-  bathrooms: number
-  listing_type: string
-  area?: number
+  description?: string | null
+  property_type?: string | null
+  listing_type?: string | null
+  location?: string | null
+  price?: number | null
+  currency?: string | null
+  bedrooms?: number | null
+  bathrooms?: number | null
+  area?: number | null
+  parking?: number | null
+  images?: string[] | null
+  amenities?: string[] | null
+  created_at?: string | null
+  updated_at?: string | null
+  region?: string | null
 }
 
-export function generatePropertyMetadata(property: PropertySEO): Metadata {
-  const url = `https://dwellot.com/properties/${property.id}`
-  const imageUrl = property.images[0] || "/images/hero-bg.jpg"
+// ---------------------------------------------------------------------------
+// Helper functions (exported for reuse in components)
+// ---------------------------------------------------------------------------
+
+/**
+ * Normalise property_type to Title Case.
+ * "house" -> "House", "APARTMENT" -> "Apartment", etc.
+ */
+export function normalizePropertyType(type: string | null | undefined): string {
+  if (!type) return "Property"
+  const lower = type.toLowerCase().trim()
+  const map: Record<string, string> = {
+    house: "House",
+    apartment: "Apartment",
+    townhouse: "Townhouse",
+    villa: "Villa",
+    penthouse: "Penthouse",
+    studio: "Studio",
+    commercial: "Commercial",
+    land: "Land",
+    mansion: "Mansion",
+    duplex: "Duplex",
+  }
+  return map[lower] || lower.charAt(0).toUpperCase() + lower.slice(1)
+}
+
+/**
+ * Extract the short neighbourhood / area name from a full location string.
+ *
+ * "Spintex, Manet, Behind Ghana International Mall, Accra" -> "Spintex"
+ * "Acacia, East Legon Hills, Accra"                       -> "East Legon Hills"
+ * "The Edge, Airport Residential, Accra"                   -> "Airport Residential"
+ * "East Legon"                                             -> "East Legon"
+ * "ARLO, Cantonments, Accra"                               -> "Cantonments"
+ */
+export function extractShortArea(location: string | null | undefined): string {
+  if (!location) return "Ghana"
+
+  const parts = location.split(",").map((p) => p.trim()).filter(Boolean)
+  if (parts.length === 1) return parts[0]
+
+  // Strip trailing city / country names
+  const filtered = parts.filter(
+    (p) =>
+      !["accra", "ghana", "greater accra", "greater accra region"].includes(
+        p.toLowerCase(),
+      ),
+  )
+
+  if (filtered.length === 0) return parts[0]
+  if (filtered.length === 1) return filtered[0]
+
+  // If the first part looks like an estate / building name, use the second part
+  const firstLower = filtered[0].toLowerCase()
+  const isEstateName =
+    ESTATE_PREFIXES.some((prefix) => firstLower.startsWith(prefix)) ||
+    /^(block|phase|unit|plot)\s/i.test(filtered[0])
+
+  if (isEstateName && filtered.length >= 2) {
+    return filtered[1]
+  }
+
+  return filtered[0]
+}
+
+/**
+ * Format price with commas and currency symbol.
+ * 290000 -> "$290,000"
+ */
+export function formatPrice(
+  price: number | null | undefined,
+  currency?: string | null,
+): string {
+  if (!price) return ""
+  const symbol = currency?.toUpperCase() === "GHS" ? "GH\u20B5" : "$"
+  return `${symbol}${price.toLocaleString("en-US")}`
+}
+
+// ---------------------------------------------------------------------------
+// Title generation — strict max 60 chars
+// ---------------------------------------------------------------------------
+
+/**
+ * Pattern: [Beds] Bed [Type] for [Sale/Rent] in [Area] | Dwellot
+ *
+ * Examples:
+ *   "3 Bed Townhouse for Sale in Spintex | Dwellot"  (47 chars)
+ *   "Studio Apartment for Rent in Cantonments | Dwellot" (51 chars)
+ */
+export function generatePropertyTitle(property: PropertySEO): string {
+  const type = normalizePropertyType(property.property_type)
+  const listingAction = property.listing_type === "rent" ? "Rent" : "Sale"
+  const area = extractShortArea(property.location)
+  const suffix = " | Dwellot" // 10 chars
+
+  let bedsPrefix: string
+  if (property.bedrooms === 0 || type === "Studio") {
+    bedsPrefix = "Studio Apartment"
+  } else if (type === "Penthouse") {
+    bedsPrefix = "Penthouse"
+  } else if (type === "Land" || type === "Commercial") {
+    bedsPrefix = type
+  } else {
+    bedsPrefix = `${property.bedrooms || ""} Bed ${type}`
+  }
+
+  // Full attempt
+  let title = `${bedsPrefix} for ${listingAction} in ${area}${suffix}`
+
+  // Over 60? Try first word of area only
+  if (title.length > 60) {
+    const shortArea = area.split(" ")[0]
+    title = `${bedsPrefix} for ${listingAction} in ${shortArea}${suffix}`
+  }
+
+  // Still over? Drop location entirely
+  if (title.length > 60) {
+    title = `${bedsPrefix} for ${listingAction}${suffix}`
+  }
+
+  return title
+}
+
+// ---------------------------------------------------------------------------
+// Description generation — strict max 155 chars
+// ---------------------------------------------------------------------------
+
+/**
+ * Pattern: [Beds] bedroom [type] for [sale/rent] in [area], Ghana. $[price]. [sqm]m². [feature]. Browse verified properties on Dwellot.
+ */
+export function generatePropertyDescription(property: PropertySEO): string {
+  const type = normalizePropertyType(property.property_type)?.toLowerCase()
+  const listingAction = property.listing_type === "rent" ? "rent" : "sale"
+  const area = extractShortArea(property.location)
+  const tail = " Browse verified properties on Dwellot."
+
+  // Beds prefix
+  let bedsStr: string
+  if (property.bedrooms === 0 || type === "studio") {
+    bedsStr = "Studio apartment"
+  } else {
+    bedsStr = `${property.bedrooms} bedroom ${type}`
+  }
+
+  const priceStr = property.price
+    ? ` ${formatPrice(property.price, property.currency)}.`
+    : ""
+  const sqmStr = property.area ? ` ${property.area}m\u00B2.` : ""
+
+  // Pick one short amenity as a feature
+  let featureStr = ""
+  if (property.amenities && property.amenities.length > 0) {
+    const shortAmenity = property.amenities.find((a) => a.length <= 25)
+    if (shortAmenity) featureStr = ` ${shortAmenity}.`
+  }
+
+  // Progressive truncation to stay under 155 chars
+  let desc = `${bedsStr} for ${listingAction} in ${area}, Ghana.${priceStr}${sqmStr}${featureStr}${tail}`
+
+  if (desc.length > 155) {
+    desc = `${bedsStr} for ${listingAction} in ${area}, Ghana.${priceStr}${sqmStr}${tail}`
+  }
+  if (desc.length > 155) {
+    desc = `${bedsStr} for ${listingAction} in ${area}, Ghana.${priceStr}${tail}`
+  }
+  if (desc.length > 155) {
+    const shortArea = area.split(" ")[0]
+    desc = `${bedsStr} for ${listingAction} in ${shortArea}, Ghana.${priceStr}${tail}`
+  }
+
+  return desc
+}
+
+// ---------------------------------------------------------------------------
+// Full Metadata object (used by generateMetadata in page.tsx)
+// ---------------------------------------------------------------------------
+
+export function generateEnhancedPropertyMetadata(property: PropertySEO): Metadata {
+  const title = generatePropertyTitle(property)
+  const description = generatePropertyDescription(property)
+  const url = `${BASE_URL}/properties/${property.id}`
+  const image = property.images?.[0] || `${BASE_URL}/og-default.jpg`
+  const resolvedImage = image.startsWith("http") ? image : `${BASE_URL}${image}`
+  const imageAlt = `${property.title} in ${extractShortArea(property.location)}, Ghana`
 
   return {
-    title: `${property.title} - ${property.location} | Dwellot`,
-    description: `${property.listing_type === "sale" ? "Buy" : "Rent"} this ${property.bedrooms} bedroom ${property.property_type} in ${property.location} for $${property.price.toLocaleString()}. ${property.description?.slice(0, 150)}`,
-    keywords: `${property.location}, ${property.property_type}, ${property.bedrooms} bedroom, property for ${property.listing_type}, Ghana real estate`,
+    title,
+    description,
+    alternates: { canonical: url },
+    robots: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large" as const,
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
     openGraph: {
-      title: property.title,
-      description: property.description?.slice(0, 200),
+      title,
+      description,
       url,
+      type: "website",
       siteName: "Dwellot",
+      locale: "en_GH",
       images: [
         {
-          url: imageUrl.startsWith("http") ? imageUrl : `https://dwellot.com${imageUrl}`,
+          url: resolvedImage,
           width: 1200,
           height: 630,
-          alt: property.title,
+          alt: imageAlt,
         },
       ],
-      locale: "en_GH",
-      type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: property.title,
-      description: property.description?.slice(0, 200),
-      images: [imageUrl.startsWith("http") ? imageUrl : `https://dwellot.com${imageUrl}`],
-    },
-    alternates: {
-      canonical: url,
+      site: "@dwellot",
+      creator: "@dwellot",
+      title,
+      description,
+      images: [resolvedImage],
     },
   }
 }
 
-export function generateStructuredData(property: PropertySEO) {
+// ---------------------------------------------------------------------------
+// JSON-LD Structured Data
+// ---------------------------------------------------------------------------
+
+export function generateEnhancedStructuredData(property: PropertySEO) {
+  const description = generatePropertyDescription(property)
+  const area = extractShortArea(property.location)
+  const image = property.images?.[0]
+  const resolvedImage = image
+    ? image.startsWith("http")
+      ? image
+      : `${BASE_URL}${image}`
+    : undefined
+
   return {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
     name: property.title,
-    description: property.description,
-    url: `https://dwellot.com/properties/${property.id}`,
-    image: property.images.map((img) => (img.startsWith("http") ? img : `https://dwellot.com${img}`)),
+    description,
+    url: `${BASE_URL}/properties/${property.id}`,
+    ...(resolvedImage && { image: resolvedImage }),
+    ...(property.created_at && { datePosted: property.created_at }),
+    ...(property.updated_at && { dateModified: property.updated_at }),
     offers: {
       "@type": "Offer",
-      price: property.price,
-      priceCurrency: "USD",
+      price: property.price || undefined,
+      priceCurrency: property.currency?.toUpperCase() || "USD",
       availability: "https://schema.org/InStock",
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: property.price,
-        priceCurrency: "USD",
-      },
     },
     address: {
       "@type": "PostalAddress",
-      addressLocality: property.location,
+      addressLocality: area,
+      addressRegion: property.region || "Greater Accra",
       addressCountry: "GH",
     },
-    numberOfRooms: property.bedrooms,
-    numberOfBathroomsTotal: property.bathrooms,
+    ...(property.bedrooms != null && { numberOfRooms: property.bedrooms }),
+    ...(property.bathrooms != null && {
+      numberOfBathroomsTotal: property.bathrooms,
+    }),
+    ...(property.area && {
+      floorSize: {
+        "@type": "QuantitativeValue",
+        value: property.area,
+        unitCode: "MTK",
+      },
+    }),
+  }
+}
+
+export function generateBreadcrumbSchema(
+  items: { name: string; url: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
   }
 }
 
@@ -86,8 +328,8 @@ export function generateOrganizationSchema() {
     name: "Dwellot",
     description:
       "Ghana's premier property marketplace connecting buyers, sellers, and renters across Accra, Kumasi, and beyond.",
-    url: "https://dwellot.com",
-    logo: "https://dwellot.com/icon-512.png",
+    url: BASE_URL,
+    logo: `${BASE_URL}/icon-512.png`,
     telephone: "+233-020-157-8429",
     email: "support@dwellot.com",
     address: {
@@ -101,37 +343,20 @@ export function generateOrganizationSchema() {
       "https://instagram.com/dwellot",
       "https://linkedin.com/company/dwellot",
     ],
-    areaServed: {
-      "@type": "Country",
-      name: "Ghana",
-    },
+    areaServed: { "@type": "Country", name: "Ghana" },
   }
 }
 
-export function generateBreadcrumbSchema(items: Array<{ name: string; url: string }>) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: items.map((item, index) => ({
-      "@type": "ListItem",
-      position: index + 1,
-      name: item.name,
-      item: item.url,
-    })),
-  }
-}
-
-export function generateFAQSchema(faqs: Array<{ question: string; answer: string }>) {
+export function generateFAQSchema(
+  faqs: { question: string; answer: string }[],
+) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: faqs.map((faq) => ({
       "@type": "Question",
       name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
     })),
   }
 }
@@ -141,121 +366,14 @@ export function generateSearchActionSchema() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Dwellot",
-    url: "https://dwellot.com",
+    url: BASE_URL,
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://dwellot.com/properties?search={search_term_string}",
+        urlTemplate: `${BASE_URL}/properties?search={search_term_string}`,
       },
       "query-input": "required name=search_term_string",
     },
-  }
-}
-
-export function generateEnhancedPropertyMetadata(property: PropertySEO): Metadata {
-  const url = `https://dwellot.com/properties/${property.id}`
-  const imageUrl = property.images[0] || "/images/hero-bg.jpg"
-
-  const aiOptimizedDescription = `${property.bedrooms} bedroom ${property.property_type.toLowerCase()} for ${property.listing_type} in ${property.location}, Ghana. $${property.price.toLocaleString()}. ${property.bathrooms} bathroom${property.bathrooms > 1 ? "s" : ""}${property.area ? `, ${property.area}m\u00B2` : ""}. Browse on Dwellot.`
-
-  return {
-    title: `${property.title} | ${property.bedrooms} Bed ${property.property_type} in ${property.location} | Dwellot`,
-    description: aiOptimizedDescription,
-    keywords: [
-      `${property.location} property`,
-      `${property.property_type} ${property.location}`,
-      `${property.bedrooms} bedroom ${property.location}`,
-      `property for ${property.listing_type} Ghana`,
-      `${property.location} real estate`,
-      "Ghana property marketplace",
-      "houses in Ghana",
-      "apartments in Ghana",
-    ].join(", "),
-    authors: [{ name: "Dwellot" }],
-    openGraph: {
-      title: `${property.title} - ${property.location}`,
-      description: aiOptimizedDescription,
-      url,
-      siteName: "Dwellot",
-      images: [
-        {
-          url: imageUrl.startsWith("http") ? imageUrl : `https://dwellot.com${imageUrl}`,
-          width: 1200,
-          height: 630,
-          alt: `${property.title} in ${property.location}, Ghana`,
-        },
-      ],
-      locale: "en_GH",
-      type: "website",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: property.title,
-      description: aiOptimizedDescription,
-      images: [imageUrl.startsWith("http") ? imageUrl : `https://dwellot.com${imageUrl}`],
-      creator: "@dwellot",
-    },
-    alternates: {
-      canonical: url,
-    },
-    robots: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  }
-}
-
-export function generateEnhancedStructuredData(property: PropertySEO & { created_at?: string }) {
-  const images = (property.images || []).map((img) =>
-    img.startsWith("http") ? img : `https://dwellot.com${img}`,
-  )
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "RealEstateListing",
-    name: property.title,
-    description: property.description,
-    url: `https://dwellot.com/properties/${property.id}`,
-    ...(property.created_at && { datePosted: property.created_at }),
-    image: images,
-    offers: {
-      "@type": "Offer",
-      price: property.price,
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      priceSpecification: {
-        "@type": "UnitPriceSpecification",
-        price: property.price,
-        priceCurrency: "USD",
-        unitText: property.listing_type === "sale" ? "SALE" : "MONTH",
-      },
-      seller: {
-        "@type": "RealEstateAgent",
-        name: "Dwellot",
-        url: "https://dwellot.com",
-      },
-    },
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: property.location,
-      addressRegion: "Greater Accra",
-      addressCountry: "GH",
-    },
-    numberOfRooms: property.bedrooms + property.bathrooms,
-    numberOfBedrooms: property.bedrooms,
-    numberOfBathroomsTotal: property.bathrooms,
-    ...(property.area && {
-      floorSize: {
-        "@type": "QuantitativeValue",
-        value: property.area,
-        unitCode: "SQM",
-      },
-    }),
-    category: property.property_type,
-    additionalType: property.listing_type === "sale" ? "Sale" : "Rental",
   }
 }

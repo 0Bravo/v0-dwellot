@@ -1,8 +1,47 @@
+import type { Metadata } from "next"
 import { createClient } from "@supabase/supabase-js"
+import { extractShortArea } from "@/lib/seo"
 import RentClient from "./RentClient"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 60
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>
+}): Promise<Metadata> {
+  const params = await searchParams
+  const area = params.location ? extractShortArea(params.location) : null
+
+  const title = area
+    ? `Properties for Rent in ${area}, Ghana | Dwellot`
+    : "Properties for Rent in Ghana | Dwellot"
+
+  const description = area
+    ? `Browse verified rental properties in ${area}, Ghana. Apartments, houses, and more. Find your next home on Dwellot.`
+    : "Browse verified rental properties across Ghana. Apartments, houses, townhouses and more. Find your next home on Dwellot."
+
+  return {
+    title,
+    description,
+    alternates: { canonical: "https://dwellot.com/rent" },
+    openGraph: {
+      title,
+      description,
+      url: "https://dwellot.com/rent",
+      siteName: "Dwellot",
+      locale: "en_GH",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@dwellot",
+      title,
+      description,
+    },
+  }
+}
 
 const SELECT_FIELDS =
   "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, agent, phone, view_count, created_at"
