@@ -36,19 +36,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to track enquiry" }, { status: 500 })
     }
 
-    // Increment enquiry_count on the properties table
+    // Fetch the updated enquiry_count (already incremented by database trigger)
     const { data: prop } = await supabase
       .from("properties")
       .select("enquiry_count")
       .eq("id", pid)
       .single()
 
-    await supabase
-      .from("properties")
-      .update({ enquiry_count: (prop?.enquiry_count || 0) + 1 })
-      .eq("id", pid)
-
-    return NextResponse.json({ success: true, enquiry_count: (prop?.enquiry_count || 0) + 1 })
+    return NextResponse.json({ success: true, enquiry_count: prop?.enquiry_count || 0 })
   } catch (error) {
     console.error("[track-enquiry] Error:", error)
     return NextResponse.json({ error: "Internal server error" }, { status: 500 })
