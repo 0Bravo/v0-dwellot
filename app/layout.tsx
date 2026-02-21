@@ -19,11 +19,11 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   metadataBase: new URL("https://dwellot.com"),
   title: {
-    default: "Dwellot - Ghana's #1 Property Marketplace | Houses, Apartments for Sale & Rent",
+    default: "Dwellot — Ghana Real Estate for Diaspora Buyers | UK, USA, Canada",
     template: "%s | Dwellot Ghana",
   },
   description:
-    "Find your dream property in Ghana. Browse thousands of verified houses, apartments, and commercial properties for sale and rent in Accra, Kumasi, East Legon, Airport Hills, Appolonia City, and across Ghana. Ghana's most trusted property marketplace.",
+    "Find verified properties in Ghana from the UK, USA or Canada. Browse houses, apartments and land in Accra and beyond. Prices shown in GBP, USD and CAD. Trusted by Ghanaian diaspora worldwide.",
   keywords: [
     // Primary keywords (High volume)
     "Ghana property",
@@ -108,24 +108,24 @@ export const metadata: Metadata = {
     locale: "en_GH",
     url: "https://dwellot.com",
     siteName: "Dwellot",
-    title: "Dwellot - Ghana's #1 Property Marketplace",
+    title: "Dwellot — Ghana Real Estate for Diaspora Buyers",
     description:
-      "Discover your perfect home in Ghana. Thousands of verified properties for sale and rent in Accra, Kumasi, and across Ghana.",
+      "Find verified properties in Ghana from the UK, USA or Canada. Houses, apartments and land in Accra and beyond.",
     images: [
       {
-        url: "/images/hero-bg.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Dwellot - Ghana's Premier Property Marketplace",
+        alt: "Dwellot — Ghana Real Estate for Diaspora Buyers",
         type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dwellot - Ghana's #1 Property Marketplace",
-    description: "Find your dream property in Ghana. Browse thousands of verified listings.",
-    images: ["/images/hero-bg.jpg"],
+    title: "Dwellot — Ghana Real Estate for Diaspora Buyers",
+    description: "Find verified properties in Ghana from the UK, USA or Canada. Trusted by Ghanaian diaspora worldwide.",
+    images: ["/og-image.jpg"],
     creator: "@dwellot",
     site: "@dwellot",
   },
@@ -157,20 +157,35 @@ export default function RootLayout({
 }) {
   const organizationSchema = {
     "@context": "https://schema.org",
-    "@type": "RealEstateAgent",
+    "@type": "Organization",
     name: "Dwellot",
-    description: "Ghana's premier property marketplace connecting buyers, sellers, and renters.",
     url: "https://dwellot.com",
-    logo: "https://dwellot.com/icon-512.png",
-    address: {
-      "@type": "PostalAddress",
-      addressCountry: "Ghana",
-      addressLocality: "Accra",
+    logo: "https://dwellot.com/logo.png",
+    description:
+      "Ghana real estate marketplace connecting diaspora buyers in UK, USA and Canada with verified properties in Ghana",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+233201578429",
+      contactType: "customer service",
+      availableLanguage: "English",
     },
+    sameAs: [
+      "https://www.facebook.com/dwellot",
+      "https://www.instagram.com/dwellot",
+      "https://www.linkedin.com/company/dwellot",
+      "https://twitter.com/dwellot",
+    ],
     areaServed: {
       "@type": "Country",
       name: "Ghana",
     },
+    foundingDate: "2024",
+    knowsAbout: [
+      "Ghana real estate",
+      "Property investment",
+      "Diaspora property buying",
+      "Accra property market",
+    ],
   }
 
   const searchActionSchema = {
@@ -178,11 +193,13 @@ export default function RootLayout({
     "@type": "WebSite",
     name: "Dwellot",
     url: "https://dwellot.com",
+    description:
+      "Ghana real estate marketplace — verified properties for diaspora buyers in UK, USA and Canada",
     potentialAction: {
       "@type": "SearchAction",
       target: {
         "@type": "EntryPoint",
-        urlTemplate: "https://dwellot.com/properties?search={search_term_string}",
+        urlTemplate: "https://dwellot.com/properties?q={search_term_string}",
       },
       "query-input": "required name=search_term_string",
     },
