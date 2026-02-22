@@ -212,7 +212,7 @@ function PropertyCard({ property }: { property: Property }) {
                                               }`}
                                             >
                                   {property.listing_type === "rent" ? "For Rent" : "For Sale"}
-                                </span>span>
+                                </span>
                       </div>
                       <button
                                   onClick={(e) => {
@@ -224,60 +224,60 @@ function PropertyCard({ property }: { property: Property }) {
                                   aria-label={saved ? "Remove from saved" : "Save property"}
                                 >
                                 <Heart className={`w-4 h-4 ${saved ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
-                      </button>button>
+                      </button>
               </div>
               <div className="p-5 flex flex-col flex-1">
                       <div className="flex items-start justify-between mb-2">
                                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-teal-600 transition line-clamp-2 flex-1 mr-2">
                                   {property.title}
-                                </h3>h3>
+                                </h3>
                                 <span className="text-xs font-semibold px-2.5 py-1 bg-gray-100 text-gray-700 rounded uppercase whitespace-nowrap flex-shrink-0">
                                   {property.property_type}
-                                </span>span>
+                                </span>
                       </div>
                       <p className="text-gray-500 flex items-center gap-1 mb-3 text-sm">
                                 <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                                <span className="truncate">{property.location}</span>span>
+                                <span className="truncate">{property.location}</span>
                       </p>
                       <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
                         {property.bedrooms > 0 && (
                             <span className="flex items-center gap-1.5">
                                           <Bed className="w-4 h-4" />
-                                          <span>{property.bedrooms}</span>span>
-                            </span>span>
+                                          <span>{property.bedrooms}</span>
+                            </span>
                                 )}
                         {property.bathrooms > 0 && (
                             <span className="flex items-center gap-1.5">
                                           <Bath className="w-4 h-4" />
-                                          <span>{property.bathrooms}</span>span>
-                            </span>span>
+                                          <span>{property.bathrooms}</span>
+                            </span>
                                 )}
                         {property.area > 0 && (
                             <span className="flex items-center gap-1.5">
                                           <Square className="w-4 h-4" />
-                                          <span>{property.area}m&sup2;</span>span>
-                            </span>span>
+                                          <span>{property.area}m&sup2;</span>
+                            </span>
                                 )}
                         {property.parking && property.parking > 0 && (
                             <span className="flex items-center gap-1.5">
                                           <Car className="w-4 h-4" />
-                                          <span>{property.parking}</span>span>
-                            </span>span>
+                                          <span>{property.parking}</span>
+                            </span>
                                 )}
                       </div>
                       <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                                 <span className="text-xl font-bold text-gray-900">
                                             ${property.price.toLocaleString()}
                                   {property.listing_type === "rent" && (
-                              <span className="text-sm font-normal text-gray-500">/mo</span>span>
+                              <span className="text-sm font-normal text-gray-500">/mo</span>
                                             )}
-                                </span>span>
+                                </span>
                                 <span className="text-xs text-gray-400">
                                   {property.agent || "Dwellot Estates"}
-                                </span>span>
+                                </span>
                       </div>
               </div>
-        </Link>Link>
+        </Link>
       )
 }
 
