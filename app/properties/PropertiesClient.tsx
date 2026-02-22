@@ -8,7 +8,7 @@ import Image from "next/image"
 import useSWR from "swr"
 import {
     MapPin,
-    Bed,
+    Bed,h
     Bath,
     Square,
     Heart,
@@ -201,9 +201,9 @@ function PropertyCard({ property }: { property: Property }) {
                                                     />
                                       <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center">
                                                     <Camera className="w-10 h-10 text-white/80 mb-2" />
-                                                    <p className="text-white font-semibold">Images Coming Soon</p>p>
-                                      </div>div>
-                          </div>div>
+                                                    <p className="text-white font-semibold">Images Coming Soon</p>
+                                      </div>
+                          </div>
                       )}
                       <div className="absolute top-3 left-3 flex gap-2">
                                 <span
@@ -213,7 +213,7 @@ function PropertyCard({ property }: { property: Property }) {
                                             >
                                   {property.listing_type === "rent" ? "For Rent" : "For Sale"}
                                 </span>span>
-                      </div>div>
+                      </div>
                       <button
                                   onClick={(e) => {
                                                 e.preventDefault()
@@ -225,7 +225,7 @@ function PropertyCard({ property }: { property: Property }) {
                                 >
                                 <Heart className={`w-4 h-4 ${saved ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
                       </button>button>
-              </div>div>
+              </div>
               <div className="p-5 flex flex-col flex-1">
                       <div className="flex items-start justify-between mb-2">
                                 <h3 className="text-lg font-bold text-gray-900 group-hover:text-teal-600 transition line-clamp-2 flex-1 mr-2">
@@ -234,11 +234,11 @@ function PropertyCard({ property }: { property: Property }) {
                                 <span className="text-xs font-semibold px-2.5 py-1 bg-gray-100 text-gray-700 rounded uppercase whitespace-nowrap flex-shrink-0">
                                   {property.property_type}
                                 </span>span>
-                      </div>div>
+                      </div>
                       <p className="text-gray-500 flex items-center gap-1 mb-3 text-sm">
                                 <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
                                 <span className="truncate">{property.location}</span>span>
-                      </p>p>
+                      </p>
                       <div className="flex items-center gap-4 text-gray-600 text-sm mb-4">
                         {property.bedrooms > 0 && (
                             <span className="flex items-center gap-1.5">
@@ -264,7 +264,7 @@ function PropertyCard({ property }: { property: Property }) {
                                           <span>{property.parking}</span>span>
                             </span>span>
                                 )}
-                      </div>div>
+                      </div>
                       <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                                 <span className="text-xl font-bold text-gray-900">
                                             ${property.price.toLocaleString()}
@@ -275,8 +275,8 @@ function PropertyCard({ property }: { property: Property }) {
                                 <span className="text-xs text-gray-400">
                                   {property.agent || "Dwellot Estates"}
                                 </span>span>
-                      </div>div>
-              </div>div>
+                      </div>
+              </div>
         </Link>Link>
       )
 }
