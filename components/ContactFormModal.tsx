@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { analytics, trackInquirySent } from "@/lib/analytics"
+import { trackLead } from "@/lib/meta-pixel"
 
 interface ContactFormModalProps {
   propertyId: string
@@ -30,9 +31,8 @@ export default function ContactFormModal({ propertyId, propertyTitle, agentId, o
       })
 
       analytics.trackInquiry(propertyId, propertyTitle, "contact_form")
-      trackInquirySent({
-        property_id: propertyId,
-      })
+      trackInquirySent({ property_id: propertyId })
+      trackLead(propertyTitle)
 
       onClose()
       setContactForm({ name: "", email: "", phone: "", message: "" })

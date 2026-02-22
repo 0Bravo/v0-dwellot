@@ -24,6 +24,7 @@ import {
   trackPhoneRevealed,
   trackScheduleVisit,
 } from "@/lib/analytics"
+import { trackViewContent, trackContact, trackLead } from "@/lib/meta-pixel"
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { trackEnquiry } from "@/lib/utils/track-enquiry"
@@ -103,8 +104,9 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
       })
       .catch(() => {})
 
-    // GA4 + analytics
+    // GA4 + Meta Pixel + analytics
     analytics.trackPropertyView(String(property.id), property.title)
+    trackViewContent(property.title, property.property_type)
     trackGA4PropertyView({
       property_id: property.id,
       property_type: property.property_type,
@@ -319,6 +321,7 @@ export default function PropertyDetailsClient({ property }: PropertyDetailsClien
                   onClick={() => {
                     analytics.trackAgentContact(property.users?.id || "unknown", "whatsapp")
                     trackEnquiry({ property_id: property.id, enquiry_type: "whatsapp", source_page: "property_detail" })
+                    trackContact(property.title)
                     trackWhatsAppClick({
                       property_id: property.id,
                       property_type: property.property_type,

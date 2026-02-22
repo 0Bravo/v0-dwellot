@@ -13,6 +13,7 @@ import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext"
 import NewsletterModal from "@/components/NewsletterModal"
 import GoogleAnalytics from "@/components/GoogleAnalytics"
 import HotjarAnalytics from "@/components/HotjarAnalytics"
+import MetaPixel from "@/components/MetaPixel"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -233,6 +234,7 @@ export default function RootLayout({
         </ToastProvider>
         <GoogleAnalytics />
         <HotjarAnalytics />
+        <MetaPixel />
         <Analytics />
         <SpeedInsights />
       </body>
