@@ -8,7 +8,7 @@ import Image from "next/image"
 import useSWR from "swr"
 import {
     MapPin,
-    Bed,h
+    Bed,
     Bath,
     Square,
     Heart,
