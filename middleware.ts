@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from "next/server"
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
-  // Allow API routes - they handle their own auth
+  // Allow ALL API routes - they handle their own auth
   if (pathname.startsWith("/api/")) {
     return NextResponse.next()
   }
