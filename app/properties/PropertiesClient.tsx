@@ -287,6 +287,8 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
             const [properties, setProperties] = useState<Property[]>(initialProperties)
                 const [total, setTotal] = useState(initialTotal)
                     const [filters, setFilters] = useState<Filters>(initialFilters)
+    console.log("DEBUG: initialProperties received:", initialProperties);
+console.log("DEBUG: properties state value:", properties);
                         const [loading, setLoading] = useState(false)
                             const [loadingMore, setLoadingMore] = useState(false)
                                 const [showMobileFilters, setShowMobileFilters] = useState(false)
