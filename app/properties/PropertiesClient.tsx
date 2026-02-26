@@ -271,6 +271,14 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
   const searchWrapperRef = useRef<HTMLDivElement>(null)
 
+  // Sync state when server re-renders with new props after navigation
+  useEffect(() => {
+    setProperties(initialProperties)
+    setTotal(initialTotal)
+    setFilters(initialFilters)
+    setLoading(false)
+  }, [initialProperties, initialTotal, initialFilters])
+
   const { data: suggestionsData } = useSWR<{ suggestions: Suggestion[] }>("/api/search-suggestions", suggestionFetcher, {
     revalidateOnFocus: false,
     dedupingInterval: 600000,
