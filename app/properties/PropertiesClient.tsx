@@ -283,18 +283,223 @@ function PropertyCard({ property }: { property: Property }) {
 
 export default function PropertiesClient({ initialProperties, initialTotal, initialFilters }: Props) {
     const router = useRouter()
-        const pathname = usePathname()
-            const [properties, setProperties] = useState<Property[]>(initialProperties)
-                const [total, setTotal] = useState(initialTotal)
-                    const [filters, setFilters] = useState<Filters>(initialFilters)
+    const pathname = usePathname()
+    const [properties, setProperties] = useState(initialProperties)
+    const [total, setTotal] = useState(initialTotal)
+    const [filters, setFilters] = useState(initialFilters)
     console.log("DEBUG: initialProperties received:", initialProperties);
-console.log("DEBUG: properties state value:", properties);
-                        const [loading, setLoading] = useState(false)
-                            const [loadingMore, setLoadingMore] = useState(false)
-                                const [showMobileFilters, setShowMobileFilters] = useState(false)
-                                    const [showSuggestions, setShowSuggestions] = useState(false)
-                                        const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
-                                            const searchWrapperRef = useRef<HTMLDivElement>(null)
-                                              
-                                                // Sync server-fetched results into state whenever Next.js re-renders this
-    // component</Link>
+    console.log("DEBUG: properties state value:", properties);
+    const [loading, setLoading] = useState(false)
+    const [loadingMore, setLoadingMore] = useState(false)
+    const [showMobileFilters, setShowMobileFilters] = useState(false)
+    const [showSuggestions, setShowSuggestions] = useState(false)
+    const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
+    const searchWrapperRef = useRef(null)
+
+    // Sync server-fetched results into state whenever Next.js re-renders this
+    // component
+    // (You will need to re-add the original code here later, but for now, we're simplifying to debug)
+
+
+    // Everything below here was part of the original component logic that you can ignore for this debugging step
+    // const { data: suggestionsData } = useSWR("/api/search-suggestions", suggestionFetcher, {
+    //   revalidateOnFocus: false,
+    //   dedupingInterval: 600000,
+    // })
+
+    // const allSuggestions = suggestionsData?.suggestions || []
+    // const filteredSuggestions = filters.search.trim().length > 0
+    //   ? allSuggestions.filter((s) => s.label.toLowerCase().includes(filters.search.toLowerCase())).slice(0, 8)
+    //   : allSuggestions.slice(0, 8)
+
+    // useEffect(() => {
+    //   function handleClickOutside(e: MouseEvent) {
+    //     if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target as Node)) {
+    //       setShowSuggestions(false)
+    //     }
+    //   }
+    //   document.addEventListener("mousedown", handleClickOutside)
+    //   return () => document.removeEventListener("mousedown", handleClickOutside)
+    // }, [])
+
+    // const hasMore = properties.length < total && !loading && !loadingMore
+
+    // const applyFilters = useCallback(
+    //   async (newFilters: Filters) => {
+    //     setLoading(true)
+    //     const params = new URLSearchParams()
+    //     if (newFilters.search) params.set("search", newFilters.search)
+    //     if (newFilters.location) params.set("location", newFilters.location)
+    //     if (newFilters.listing_type && newFilters.listing_type !== "all") params.set("listing_type", newFilters.listing_type)
+    //     if (newFilters.property_type) params.set("property_type", newFilters.property_type)
+    //     if (newFilters.bedrooms) params.set("bedrooms", newFilters.bedrooms)
+    //     if (newFilters.min_price) params.set("min_price", newFilters.min_price)
+    //     if (newFilters.max_price) params.set("max_price", newFilters.max_price)
+    //     if (newFilters.sort && newFilters.sort !== "newest") params.set("sort", newFilters.sort)
+
+    //     const qs = params.toString()
+    //     router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+
+    //     try {
+    //       const res = await fetch(`/api/properties?${params}`)
+    //       if (res.ok) {
+    //         const data = await res.json()
+    //         setProperties(data.properties || [])
+    //         setTotal(data.total || 0)
+    //       } else {
+    //         console.error("Failed to fetch properties:", res.status, res.statusText)
+    //         setProperties([])
+    //         setTotal(0)
+    //       }
+    //     } catch (error) {
+    //       console.error("Error fetching properties:", error)
+    //       setProperties([])
+    //       setTotal(0)
+    //     } finally {
+    //       setLoading(false)
+    //     }
+    //   },
+    //   [router, pathname],
+    // )
+
+    // const applySuggestion = useCallback(
+    //   (suggestion: Suggestion) => {
+    //     setShowSuggestions(false)
+    //     setSelectedSuggestionIndex(-1)
+    //     let updated: Filters
+    //     switch (suggestion.type) {
+    //       case "location":
+    //         updated = { ...filters, location: suggestion.label, search: "" }
+    //         break
+    //       case "developer":
+    //       case "estate":
+    //         updated = { ...filters, search: suggestion.label }
+    //         break
+    //       case "property_type":
+    //         updated = { ...filters, property_type: suggestion.label.toLowerCase(), search: "" }
+    //         break
+    //       default:
+    //         updated = { ...filters, search: suggestion.label }
+    //     }
+    //     setFilters(updated)
+    //     applyFilters(updated)
+    //   },
+    //   [filters, applyFilters],
+    // )
+
+    // const handleSearchKeyDown = useCallback(
+    //   (e: React.KeyboardEvent) => {
+    //     if (!showSuggestions) {
+    //       if (e.key === "ArrowDown") {
+    //         setShowSuggestions(true)
+    //         e.preventDefault()
+    //       }
+    //       return
+    //     }
+
+    //     if (e.key === "ArrowDown") {
+    //       e.preventDefault()
+    //       setSelectedSuggestionIndex((prev) => (prev < filteredSuggestions.length - 1 ? prev + 1 : 0))
+    //     } else if (e.key === "ArrowUp") {
+    //       e.preventDefault()
+    //       setSelectedSuggestionIndex((prev) => (prev > 0 ? prev - 1 : filteredSuggestions.length - 1))
+    //     } else if (e.key === "Enter") {
+    //       if (selectedSuggestionIndex >= 0 && filteredSuggestions[selectedSuggestionIndex]) {
+    //         e.preventDefault()
+    //         applySuggestion(filteredSuggestions[selectedSuggestionIndex])
+    //       }
+    //       // Otherwise let the form submit naturally
+    //     } else if (e.key === "Escape") {
+    //       setShowSuggestions(false)
+    //       setSelectedSuggestionIndex(-1)
+    //     }
+    //   },
+    //   [showSuggestions, selectedSuggestionIndex, filteredSuggestions, applySuggestion],
+    // )
+
+    // const handleFilterChange = useCallback(
+    //   (key: keyof Filters, value: string) => {
+    //     const updated = { ...filters, [key]: value }
+    //     setFilters(updated)
+    //     applyFilters(updated)
+    //   },
+    //   [filters, applyFilters],
+    // )
+
+    // const resetFilters = useCallback(() => {
+    //   const empty: Filters = {
+    //     search: "",
+    //     location: "",
+    //     listing_type: "all",
+    //     property_type: "",
+    //     bedrooms: "",
+    //     min_price: "",
+    //     max_price: "",
+    //     sort: "newest",
+    //   }
+    //   setFilters(empty)
+    //   applyFilters(empty)
+    // }, [applyFilters])
+
+    // const hasActiveFilters =
+    //   filters.search || filters.location || (filters.listing_type && filters.listing_type !== "all") ||
+    //   filters.property_type || filters.bedrooms || filters.min_price || filters.max_price
+
+    // const loadMore = useCallback(async () => {
+    //   setLoadingMore(true)
+    //   try {
+    //     const params = new URLSearchParams()
+    //     params.set("limit", ITEMS_PER_PAGE.toString())
+    //     params.set("offset", properties.length.toString())
+    //     if (filters.search) params.set("search", filters.search)
+    //     if (filters.location) params.set("location", filters.location)
+    //     if (filters.listing_type && filters.listing_type !== "all") {
+    //       // Map listing_type filter to match API expectations
+    //       params.set("listing_type", filters.listing_type)
+    //     }
+    //     if (filters.property_type) params.set("property_type", filters.property_type)
+    //     if (filters.bedrooms) params.set("bedrooms", filters.bedrooms)
+    //     if (filters.min_price) params.set("min_price", filters.min_price)
+    //     if (filters.max_price) params.set("max_price", filters.max_price)
+    //     if (filters.sort && filters.sort !== "newest") params.set("sort", filters.sort)
+
+    //     const res = await fetch(`/api/properties?${params}`)
+    //     if (res.ok) {
+    //       const data = await res.json()
+    //       setProperties((prev) => [...prev, ...(data.properties || [])])
+    //       if (data.total) setTotal(data.total)
+    //     }
+    //   } catch (error) {
+    //     console.error("Error loading more properties:", error)
+    //   } finally {
+    //     setLoadingMore(false)
+    //   }
+    // }, [properties.length, filters])
+
+    // const handleSearchSubmit = useCallback(
+    //   (e: React.FormEvent) => {
+    //     e.preventDefault()
+    //     applyFilters(filters)
+    //   },
+    //   [filters, applyFilters],
+    // )
+
+    // This is the missing return statement. This whole block needs to be added.
+    return (
+      <div style={{ padding: '20px', backgroundColor: 'lightyellow', border: '1px solid orange' }}>
+        <h1>DEBUG: Properties List Test</h1>
+        {properties.length === 0 ? (
+          <p>No properties found in state (should not happen).</p>
+        ) : (
+          <ul>
+            {properties.map((property) => (
+              <li key={property.id} style={{ borderBottom: '1px solid #ccc', padding: '5px', margin: '5px 0' }}>
+                {property.title} - {property.location} - ${property.price.toLocaleString()}
+              </li>
+            ))}
+          </ul>
+        )}
+        <p>Showing {properties.length} properties.</p>
+      </div>
+    );
+}
