@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import Script from "next/script"
 import { pageview } from "@/lib/meta-pixel"
 
-const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
+const PIXEL_ID = "2273764416366824"
 
 export default function MetaPixel() {
   const pathname = usePathname()
@@ -14,8 +14,6 @@ export default function MetaPixel() {
   useEffect(() => {
     pageview()
   }, [pathname])
-
-  if (!PIXEL_ID) return null
 
   return (
     <>

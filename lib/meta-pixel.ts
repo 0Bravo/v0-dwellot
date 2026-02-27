@@ -1,12 +1,11 @@
 // ── Meta Pixel (Facebook/Instagram) ────────────────────────────────
-// Pixel ID sourced from NEXT_PUBLIC_META_PIXEL_ID env var.
-// All helpers silently no-op when the pixel is absent.
+// Pixel ID: 2273764416366824
 
-const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID
+const PIXEL_ID = "2273764416366824"
 
-/** True when the pixel SDK is loaded and a Pixel ID is configured */
+/** True when the pixel SDK is loaded */
 function isReady(): boolean {
-  return typeof window !== "undefined" && typeof window.fbq === "function" && !!PIXEL_ID
+  return typeof window !== "undefined" && typeof window.fbq === "function"
 }
 
 /** Standard PageView event -- fired on every route change */
