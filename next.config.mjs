@@ -7,30 +7,20 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    domains: [
+      'lom7safe82jeycnd.public.blob.vercel-storage.com',
+      'appolonia.com.gh',
+      'www.appolonia.com.gh',
+      'images.unsplash.com',
+    ],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'lom7safe82jeycnd.public.blob.vercel-storage.com',
+        hostname: '*.public.blob.vercel-storage.com',
       },
       {
         protocol: 'https',
-        hostname: '**.public.blob.vercel-storage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.vercel-storage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'appolonia.com.gh',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.appolonia.com.gh',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: '*.blob.vercel-storage.com',
       },
     ],
   },
