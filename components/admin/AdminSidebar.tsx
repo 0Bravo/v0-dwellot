@@ -15,7 +15,8 @@ import {
   Upload,
   Settings,
   LogOut,
-  X
+  X,
+  Megaphone,
 } from "lucide-react"
 
 const navigation = [
@@ -27,6 +28,7 @@ const navigation = [
   { name: "Subscribers", href: "/dashboard/subscribers", icon: Mail },
   { name: "Agent Applications", href: "/dashboard/agent-applications", icon: UserPlus },
   { name: "Users", href: "/dashboard/users", icon: Users },
+  { name: "Facebook Pixel", href: "/dashboard/facebook-pixel", icon: Megaphone },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 
