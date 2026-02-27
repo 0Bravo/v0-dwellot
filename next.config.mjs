@@ -38,6 +38,21 @@ const nextConfig = {
     // Ensure service worker and manifest are copied to public directory
     return config
   },
+  redirects: async () => {
+    return [
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'host',
+            value: 'www.dwellot.com',
+          },
+        ],
+        destination: 'https://dwellot.com/:path*',
+        permanent: true,
+      },
+    ]
+  },
   headers: async () => {
     return [
       {
