@@ -106,9 +106,9 @@ export default function BlogPage() {
                       {post.date}
                     </span>
                   </div>
-                  <Link href="#" className="text-teal-600 hover:text-teal-700 flex items-center gap-1 font-semibold">
+                  <span className="text-teal-600/60 flex items-center gap-1 font-semibold cursor-not-allowed" title="Coming soon">
                     Read More <ArrowRight className="h-4 w-4" />
-                  </Link>
+                  </span>
                 </CardContent>
               </Card>
             ))}
