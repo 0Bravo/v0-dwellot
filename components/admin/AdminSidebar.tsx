@@ -15,7 +15,8 @@ import {
   Upload,
   Settings,
   LogOut,
-  X
+  X,
+  BarChart3,
 } from "lucide-react"
 
 const navigation = [
@@ -27,6 +28,7 @@ const navigation = [
   { name: "Subscribers", href: "/dashboard/subscribers", icon: Mail },
   { name: "Agent Applications", href: "/dashboard/agent-applications", icon: UserPlus },
   { name: "Users", href: "/dashboard/users", icon: Users },
+  { name: "Facebook Pixel", href: "/dashboard/integrations/pixel", icon: BarChart3 },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ]
 
