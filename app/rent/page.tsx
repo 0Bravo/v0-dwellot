@@ -1,7 +1,23 @@
+import type { Metadata } from "next"
 import { createClient } from "@supabase/supabase-js"
 import RentClient from "./RentClient"
 
 export const revalidate = 60
+
+export const metadata: Metadata = {
+  title: "Properties for Rent in Ghana | Houses & Apartments | Dwellot",
+  description:
+    "Browse verified rental properties in Ghana. Find houses, apartments, and commercial spaces for rent in Accra, Kumasi, and across Ghana. Filter by location, price, and bedrooms.",
+  alternates: {
+    canonical: "https://dwellot.com/rent",
+  },
+  openGraph: {
+    title: "Properties for Rent in Ghana | Dwellot",
+    description:
+      "Find your perfect rental property in Ghana. Verified listings of houses, apartments, and commercial spaces.",
+    url: "https://dwellot.com/rent",
+  },
+}
 
 const SELECT_FIELDS =
   "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, agent, phone, view_count, created_at"
