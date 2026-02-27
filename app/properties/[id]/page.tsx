@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { notFound } from "next/navigation"
 import {
   generateEnhancedPropertyMetadata,
   generateEnhancedStructuredData,
@@ -43,34 +44,30 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
   const { id } = await params
   const property = await getProperty(id)
 
-  // Build JSON-LD structured data from server-fetched property
-  const structuredData = property
-    ? generateEnhancedStructuredData(property)
-    : null
+  if (!property) {
+    notFound()
+  }
 
-  const breadcrumbData = property
-    ? generateBreadcrumbSchema([
-        { name: "Home", url: "https://dwellot.com" },
-        { name: "Properties", url: "https://dwellot.com/properties" },
-        { name: property.location, url: `https://dwellot.com/properties?location=${encodeURIComponent(property.location)}` },
-        { name: property.title, url: `https://dwellot.com/properties/${property.id}` },
-      ])
-    : null
+  // Build JSON-LD structured data from server-fetched property
+  const structuredData = generateEnhancedStructuredData(property)
+
+  const breadcrumbData = generateBreadcrumbSchema([
+    { name: "Home", url: "https://dwellot.com" },
+    { name: "Properties", url: "https://dwellot.com/properties" },
+    { name: property.location, url: `https://dwellot.com/properties?location=${encodeURIComponent(property.location)}` },
+    { name: property.title, url: `https://dwellot.com/properties/${property.id}` },
+  ])
 
   return (
     <>
-      {structuredData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      )}
-      {breadcrumbData && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
       <PropertyDetailsClient />
     </>
   )

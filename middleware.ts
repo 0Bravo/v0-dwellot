@@ -4,6 +4,15 @@ import { updateSession } from "@/lib/supabase/middleware"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
+  const url = request.nextUrl
+  
+  // Enforce non-www canonical: redirect www.dwellot.com to dwellot.com
+  if (url.hostname === "www.dwellot.com") {
+    const newUrl = new URL(url.toString())
+    newUrl.hostname = "dwellot.com"
+    return NextResponse.redirect(newUrl, 301)
+  }
+  
   // This middleware will now ONLY run for routes defined in `config.matcher`.
   // Public pages and static assets will completely bypass this function.
   try {
@@ -17,21 +26,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // These are the routes that require session handling (authentication).
-    // The middleware (and thus updateSession) will run ONLY for these.
-    // All other routes (like /properties, /about, /blog, /rent, /sell) will completely bypass.
-    '/dashboard/:path*', // Matches /dashboard and any subpaths
-    '/profile/:path*',   // Matches /profile and any subpaths
-    '/admin/:path*',     // Matches /admin and any subpaths
-    '/favorites/:path*', // Matches /favorites and any subpaths
-    '/auth/:path*',      // Matches /auth and any subpaths
-    
-    // Explicitly allow API routes to be handled by their own handlers, not middleware.
-    // The previous negative lookahead was covering it, but by being explicit here
-    // we ensure the middleware only runs for paths that need `updateSession`.
-    // However, if we list only protected routes, then /api will also bypass.
-    // So if Supabase auth is used for API routes too, they should be covered by separate means
-    // or added here if `updateSession` is relevant.
-    // For now, let's assume /api routes handle auth themselves and don't need middleware.
+    // Match all paths for www to non-www redirect and protected routes
+    // Exclude static files and Next.js internals
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|txt|xml)$).*)',
   ],
 }
