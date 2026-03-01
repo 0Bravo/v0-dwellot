@@ -33,6 +33,7 @@ import { analytics } from "@/lib/analytics"
 import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { trackEnquiry } from "@/lib/utils/track-enquiry"
+import { trackViewContent, trackContact } from "@/lib/facebook-pixel"
 
 // Lazy-load heavy components that are not needed on initial render
 const PropertyPrint = dynamic(() => import("@/components/PropertyPrint"), { ssr: false })
@@ -98,6 +99,15 @@ export default function PropertyDetailsClient() {
     if (property) {
       trackPropertyView()
       analytics.trackPropertyView(property.id, property.title)
+      
+      // Facebook Pixel: ViewContent event
+      trackViewContent({
+        content_name: property.title,
+        content_ids: [property.id],
+        content_type: 'property',
+        value: property.price,
+        currency: 'USD',
+      })
 
       addToRecentlyViewed({
         id: property.id,
@@ -605,6 +615,8 @@ export default function PropertyDetailsClient() {
                       if (property) {
                         analytics.trackAgentContact(property.users?.id || "unknown", "whatsapp")
                         trackEnquiry({ property_id: property.id, enquiry_type: "whatsapp", source_page: "property_detail" })
+                        // Facebook Pixel: Contact event
+                        trackContact({ content_name: property.title, content_category: 'whatsapp' })
                       }
                     }}
                     className="w-full bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition font-medium flex items-center justify-center"
@@ -618,6 +630,8 @@ export default function PropertyDetailsClient() {
                       if (property) {
                         analytics.trackAgentContact(property.users?.id || "unknown", "phone")
                         trackEnquiry({ property_id: property.id, enquiry_type: "phone_call", source_page: "property_detail" })
+                        // Facebook Pixel: Contact event
+                        trackContact({ content_name: property.title, content_category: 'phone' })
                       }
                     }}
                     className="w-full border-2 border-blue-600 text-blue-600 py-3 px-4 rounded-lg hover:bg-blue-50 transition font-medium flex items-center justify-center"

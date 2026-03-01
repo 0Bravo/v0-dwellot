@@ -3,6 +3,7 @@
 import type React from "react"
 import { useState } from "react"
 import { analytics } from "@/lib/analytics"
+import { trackLead } from "@/lib/facebook-pixel"
 
 interface ContactFormModalProps {
   propertyId: string
@@ -30,6 +31,12 @@ export default function ContactFormModal({ propertyId, propertyTitle, agentId, o
       })
 
       analytics.trackInquiry(propertyId, propertyTitle, "contact_form")
+      
+      // Facebook Pixel: Lead event
+      trackLead({
+        content_name: propertyTitle,
+        content_category: 'enquiry_form',
+      })
 
       onClose()
       setContactForm({ name: "", email: "", phone: "", message: "" })
