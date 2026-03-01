@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect } from "react"
+import { Suspense, useEffect } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import { initPixel, trackPageView, FB_PIXEL_ID } from "@/lib/facebook-pixel"
 
-export default function FacebookPixel() {
+function FacebookPixelTracker() {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
@@ -35,5 +35,13 @@ export default function FacebookPixel() {
         alt=""
       />
     </noscript>
+  )
+}
+
+export default function FacebookPixel() {
+  return (
+    <Suspense fallback={null}>
+      <FacebookPixelTracker />
+    </Suspense>
   )
 }
