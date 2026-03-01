@@ -7,30 +7,32 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
+    unoptimized: process.env.NODE_ENV === 'development',
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'lom7safe82jeycnd.public.blob.vercel-storage.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.public.blob.vercel-storage.com',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'appolonia.com.gh',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'www.appolonia.com.gh',
+        pathname: '/**',
       },
       {
         protocol: 'https',
         hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.public.blob.vercel-storage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.blob.vercel-storage.com',
+        pathname: '/**',
       },
     ],
   },
