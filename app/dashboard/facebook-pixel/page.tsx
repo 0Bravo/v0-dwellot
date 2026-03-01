@@ -20,7 +20,7 @@ import { Progress } from "@/components/ui/progress"
 
 const STORAGE_KEY = "dwellot-pixel-checklist"
 
-// Event tracking data
+// Event tracking data - All events are now implemented
 const trackingEvents = [
   {
     name: "PageView",
@@ -32,25 +32,25 @@ const trackingEvents = [
     name: "ViewContent",
     description: "Fires when a listing is viewed",
     adTargeting: "Retarget people who viewed specific listings",
-    defaultStatus: "not-implemented" as const,
+    defaultStatus: "active" as const,
   },
   {
     name: "Contact",
-    description: "Fires when WhatsApp button is clicked",
+    description: "Fires when WhatsApp/phone button is clicked",
     adTargeting: "Your most valuable audience — people who clicked to enquire",
-    defaultStatus: "not-implemented" as const,
+    defaultStatus: "active" as const,
   },
   {
     name: "Lead",
     description: "Fires on enquiry form submission",
     adTargeting: "Track enquiry form completions",
-    defaultStatus: "not-implemented" as const,
+    defaultStatus: "active" as const,
   },
   {
     name: "Search",
     description: "Fires when search/filter is used",
     adTargeting: "Understand what people are searching for",
-    defaultStatus: "not-implemented" as const,
+    defaultStatus: "active" as const,
   },
 ]
 

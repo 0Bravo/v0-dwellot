@@ -11,6 +11,7 @@ import { ToastProvider } from "@/components/Toast"
 import { CompareProvider } from "@/contexts/CompareContext"
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext"
 import NewsletterModal from "@/components/NewsletterModal"
+import FacebookPixel from "@/components/FacebookPixel"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -213,6 +214,7 @@ export default function RootLayout({
         </ToastProvider>
         <Analytics />
         <SpeedInsights />
+        <FacebookPixel />
       </body>
     </html>
   )

@@ -23,6 +23,7 @@ import {
     Home,
     Landmark,
 } from "lucide-react"
+import { trackSearch } from "@/lib/facebook-pixel"
 
 interface Suggestion {
     label: string
@@ -335,6 +336,16 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
 
             const qs = params.toString()
             router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false })
+            
+            // Facebook Pixel: Search event
+            const hasSearchCriteria = newFilters.search || newFilters.location || newFilters.property_type || newFilters.bedrooms
+            if (hasSearchCriteria) {
+                trackSearch({
+                    search_string: newFilters.search || newFilters.location || '',
+                    content_category: newFilters.property_type || 'all',
+                    content_ids: [newFilters.location, newFilters.property_type, newFilters.bedrooms].filter(Boolean),
+                })
+            }
 
             try {
                 const res = await fetch(`/api/properties?${params}`)
