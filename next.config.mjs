@@ -7,32 +7,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'lom7safe82jeycnd.public.blob.vercel-storage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: 'appolonia.com.gh',
-      },
-      {
-        protocol: 'https',
-        hostname: 'www.appolonia.com.gh',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.public.blob.vercel-storage.com',
-      },
-      {
-        protocol: 'https',
-        hostname: '**.blob.vercel-storage.com',
-      },
-    ],
+    unoptimized: true,
   },
   webpack: (config) => {
     // Ensure service worker and manifest are copied to public directory

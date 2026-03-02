@@ -54,13 +54,13 @@ const trackingEvents = [
   },
 ]
 
-// Checklist items
+// Checklist items - items with implemented: true are auto-checked (code is already in codebase)
 const checklistItems = [
-  { id: "pixel-env", label: "Pixel ID added to environment variables" },
-  { id: "pixel-component", label: "FacebookPixel component added to root layout" },
-  { id: "pageview-event", label: "PageView event firing (verify with Meta Pixel Helper)" },
-  { id: "viewcontent-event", label: "ViewContent event added to listing pages" },
-  { id: "contact-event", label: "WhatsApp Contact event added to enquiry button" },
+  { id: "pixel-env", label: "Pixel ID added to environment variables", implemented: false },
+  { id: "pixel-component", label: "FacebookPixel component added to root layout", implemented: true },
+  { id: "pageview-event", label: "PageView event firing (verify with Meta Pixel Helper)", implemented: true },
+  { id: "viewcontent-event", label: "ViewContent event added to listing pages", implemented: true },
+  { id: "contact-event", label: "WhatsApp Contact event added to enquiry button", implemented: true },
 ]
 
 type EventStatus = "active" | "not-firing" | "not-implemented"
@@ -99,13 +99,26 @@ export default function FacebookPixelPage() {
   const [connectionStatus, setConnectionStatus] = useState<"idle" | "active" | "not-detected">("idle")
   const [checked, setChecked] = useState<Record<string, boolean>>({})
 
-  // Load saved checklist state
+  // Load saved checklist state and auto-check implemented items
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
-      if (saved) setChecked(JSON.parse(saved))
+      const savedState = saved ? JSON.parse(saved) : {}
+      
+      // Auto-check items that are already implemented in the codebase
+      const autoChecked = checklistItems.reduce((acc, item) => {
+        acc[item.id] = item.implemented || savedState[item.id] || false
+        return acc
+      }, {} as Record<string, boolean>)
+      
+      setChecked(autoChecked)
     } catch {
-      // Ignore localStorage errors
+      // Fallback: just check implemented items
+      const autoChecked = checklistItems.reduce((acc, item) => {
+        acc[item.id] = item.implemented
+        return acc
+      }, {} as Record<string, boolean>)
+      setChecked(autoChecked)
     }
 
     // Check for existing pixel ID from environment
@@ -117,6 +130,10 @@ export default function FacebookPixelPage() {
   }, [])
 
   const toggle = useCallback((id: string) => {
+    // Don't allow unchecking items that are already implemented in code
+    const item = checklistItems.find(i => i.id === id)
+    if (item?.implemented) return
+    
     setChecked((prev) => {
       const next = { ...prev, [id]: !prev[id] }
       try {
@@ -367,7 +384,9 @@ export default function FacebookPixelPage() {
               <li key={item.id} className="group">
                 <button
                   onClick={() => toggle(item.id)}
-                  className="w-full flex items-start gap-3 px-6 py-4 text-left hover:bg-gray-50 transition"
+                  className={`w-full flex items-start gap-3 px-6 py-4 text-left transition ${
+                    item.implemented ? "cursor-default" : "hover:bg-gray-50"
+                  }`}
                 >
                   <span className="mt-0.5 flex-shrink-0">
                     {checked[item.id] ? (
@@ -376,7 +395,7 @@ export default function FacebookPixelPage() {
                       <Circle className="w-5 h-5 text-gray-300 group-hover:text-gray-400 transition" />
                     )}
                   </span>
-                  <span className="flex-1 min-w-0">
+                  <span className="flex-1 min-w-0 flex items-center gap-2">
                     <span
                       className={`text-sm leading-relaxed ${
                         checked[item.id]
@@ -389,6 +408,11 @@ export default function FacebookPixelPage() {
                       </span>
                       {item.label}
                     </span>
+                    {item.implemented && (
+                      <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-100 text-emerald-700">
+                        Auto
+                      </span>
+                    )}
                   </span>
                 </button>
               </li>
