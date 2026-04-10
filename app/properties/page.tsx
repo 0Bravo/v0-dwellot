@@ -74,11 +74,12 @@ async function getInitialProperties(params: Record<string, string | undefined>) 
   if (params.location) {
     query = query.ilike("location", `%${params.location}%`)
   }
-  if (params.search) {
+ if (params.search) {
     query = query.or(
-      `title.ilike.%${params.search}%,description.ilike.%${params.search}%,location.ilike.%${params.search}%`
+      `title.ilike.%${params.search}%,description.ilike.%${params.search}%,location.ilike.%${params.search}%,developer.ilike.%${params.search}%,estate_name.ilike.%${params.search}%`
     )
   }
+
 
   // Sort
   const sort = params.sort || "newest"
