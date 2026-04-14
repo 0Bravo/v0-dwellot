@@ -2,16 +2,14 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
 import { AuthProvider } from "@/lib/auth-context"
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { ToastProvider } from "@/components/Toast"
 import { CompareProvider } from "@/contexts/CompareContext"
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext"
-import NewsletterModal from "@/components/NewsletterModal"
 import FacebookPixel from "@/components/FacebookPixel"
+import SiteShell from "@/components/SiteShell"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -204,10 +202,7 @@ export default function RootLayout({
           <RecentlyViewedProvider>
             <CompareProvider>
               <AuthProvider>
-                <Navbar />
-                <main className="pt-16">{children}</main>
-                <Footer />
-                <NewsletterModal />
+                <SiteShell>{children}</SiteShell>
               </AuthProvider>
             </CompareProvider>
           </RecentlyViewedProvider>
