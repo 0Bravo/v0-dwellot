@@ -134,7 +134,7 @@ function LeadForm({ selectedUnit }: { selectedUnit: string }) {
         }),
       })
       setStatus(res.ok ? "success" : "error")
-      if (res.ok) setForm({ fullName: "", email: "", phone: "", timeline: "", message: "" })
+      if (res.ok) {         setForm({ fullName: "", email: "", phone: "", timeline: "", message: "" })         if (typeof window !== "undefined" && (window as any).fbq) {           ;(window as any).fbq("track", "Lead", { content_name: `The Kharis — ${unit?.label}`, currency: "USD", value: unit?.priceUSD ?? 320000 })         }       }
     } catch {
       setStatus("error")
     }
