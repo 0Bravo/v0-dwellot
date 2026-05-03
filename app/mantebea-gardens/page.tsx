@@ -184,7 +184,12 @@ function LeadForm({ selectedUnit }: { selectedUnit: string }) {
         }),
       })
       setStatus(res.ok ? "success" : "error")
-      if (res.ok) {         setForm({ fullName: "", email: "", phone: "", timeline: "", message: "" })         if (typeof window !== "undefined" && (window as any).fbq) {           ;(window as any).fbq("track", "Lead", { content_name: `Mantebea Gardens — ${unit?.label}`, currency: "USD", value: unit?.priceUSD ?? 140000 })         }       }
+      if (res.ok) {
+          setForm({ fullName: "", email: "", phone: "", timeline: "", message: "" })
+          if (typeof window !== "undefined" && (window as any).fbq) {
+            ;(window as any).fbq("track", "Lead", { content_name: `Mantebea Gardens — ${unit?.label}`, currency: "USD", value: unit?.priceUSD ?? 140000 })
+          }
+        }
     } catch {
       setStatus("error")
     }
