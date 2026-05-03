@@ -109,7 +109,12 @@ function LeadForm({ propertyName }: { propertyName: string }) {
         }),
       })
       setStatus(res.ok ? "success" : "error")
-      if (res.ok) {         setForm({ fullName: "", email: "", phone: "", timeline: "", message: "" })         if (typeof window !== "undefined" && (window as any).fbq) {           ;(window as any).fbq("track", "Lead", { content_name: propertyName, currency: "USD", value: 300000 })         }       }
+      if (res.ok) {
+          setForm({ fullName: "", email: "", phone: "", timeline: "", message: "" })
+          if (typeof window !== "undefined" && (window as any).fbq) {
+            ;(window as any).fbq("track", "Lead", { content_name: propertyName, currency: "USD", value: 300000 })
+          }
+        }
     } catch {
       setStatus("error")
     }
