@@ -155,7 +155,7 @@ const WHY_POINTS = [
   },
 ]
 
-const WHATSAPP_NUMBER = "447576368312"
+const WHATSAPP_NUMBER = "233552599185"
 
 // ─── Lead Form ────────────────────────────────────────────────────────────────
 function LeadForm({ selectedUnit }: { selectedUnit: string }) {
@@ -250,7 +250,7 @@ function LeadForm({ selectedUnit }: { selectedUnit: string }) {
       {status === "error" && (
         <p className="text-red-500 text-xs">
           Something went wrong. WhatsApp us on{" "}
-          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="underline font-semibold">+44 7576 368312</a>.
+          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="underline font-semibold">+233 55 259 9185</a>.
         </p>
       )}
       <p className="text-gray-400 text-xs text-center">We respect your privacy. No spam, ever.</p>
@@ -265,7 +265,6 @@ export default function MantebeaGardensPage() {
   const [callbackTime, setCallbackTime] = useState("")
   const [callbackName, setCallbackName] = useState("")
   const [callbackPhone, setCallbackPhone] = useState("")
-  const [callbackEmail, setCallbackEmail] = useState("")
   const [callbackStatus, setCallbackStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const unit = UNITS.find((u) => u.id === selectedUnit)!
   const waMessage = `Hi Bestworld, I'm interested in Mantebea Gardens (${unit.label}, ${unit.price}) in East Amrahia. Please send me more details.`
@@ -515,22 +514,21 @@ export default function MantebeaGardensPage() {
                 <CheckCircle className="w-10 h-10 text-teal-500" />
                 <p className="text-gray-800 font-semibold text-sm text-center">Call Back Scheduled!</p>
                 <p className="text-gray-500 text-xs text-center">We'll call you on <strong>{callbackDate}</strong> at <strong>{callbackTime}</strong>.</p>
-                <button onClick={() => { setCallbackStatus("idle"); setCallbackDate(""); setCallbackTime(""); setCallbackName(""); setCallbackPhone(""); setCallbackEmail(""); }} className="text-teal-600 text-xs underline mt-1">Schedule another</button>
+                <button onClick={() => { setCallbackStatus("idle"); setCallbackDate(""); setCallbackTime(""); setCallbackName(""); setCallbackPhone(""); }} className="text-teal-600 text-xs underline mt-1">Schedule another</button>
               </div>
             ) : (
               <form onSubmit={async (e) => {
                 e.preventDefault()
                 setCallbackStatus("loading")
                 try {
-                  const res = await fetch("/api/leads", {
+                  const res = await fetch("/api/inquiries", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
-                      name: callbackName,
-                      email: callbackEmail,
+                      fullName: callbackName,
                       phone: callbackPhone,
+                      message: `[CALL BACK REQUEST — Mantebea Gardens]\nDate: ${callbackDate}\nTime: ${callbackTime}`,
                       source: "callback-mantebea-gardens",
-                      notes: `[CALL BACK REQUEST — Mantebea Gardens]\nDate: ${callbackDate}\nTime: ${callbackTime}`,
                     }),
                   })
                   setCallbackStatus(res.ok ? "success" : "error")
@@ -539,10 +537,6 @@ export default function MantebeaGardensPage() {
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name *</label>
                   <input type="text" required value={callbackName} onChange={e => setCallbackName(e.target.value)} placeholder="e.g. Kofi Mensah" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400" />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address *</label>
-                  <input type="email" required value={callbackEmail} onChange={e => setCallbackEmail(e.target.value)} placeholder="you@example.com" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-400" />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">Phone / WhatsApp *</label>
