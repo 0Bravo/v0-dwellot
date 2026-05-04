@@ -1,7 +1,6 @@
 import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-    optimizeFonts: false,
     // Security: suppress "X-Powered-By: Next.js" response header
     poweredByHeader: false,
     images: {
@@ -22,7 +21,6 @@ const nextConfig: NextConfig = {
           contentDispositionType: "attachment",
           contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
-    experimental: {},
 }
 
 export default nextConfig
