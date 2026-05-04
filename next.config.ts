@@ -22,16 +22,7 @@ const nextConfig: NextConfig = {
           contentDispositionType: "attachment",
           contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
-    experimental: {
-          turbo: {
-                  rules: {
-                            "*.svg": {
-                                        loaders: ["@svgr/webpack"],
-                                        as: "*.js",
-                            },
-                  },
-          },
-    },
+    experimental: {},
 }
 
 export default nextConfig
