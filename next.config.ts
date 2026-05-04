@@ -34,7 +34,8 @@ const nextConfig: NextConfig = {
                       hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com",
             },
                 ],
-          contentDispositionType: "attachment",
+          dangerouslyAllowSVG: true,
+          contentDispositionType: "inline",
           contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     },
 }
