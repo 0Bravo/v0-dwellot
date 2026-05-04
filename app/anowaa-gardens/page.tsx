@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import {
   MapPin, Phone, Mail, CheckCircle, Shield, ChevronRight,
   MessageCircle, BedDouble, Bath, Maximize2, Building2,
-  Car, Wifi, Dumbbell, Lock, Droplets, Trees,
+  Car, Wifi, Dumbbell, Lock, Droplets, Trees, CalendarDays, Clock,
 } from "lucide-react"
 
 // ─── Images (from Vercel Blob Storage) ───────────────────────────────────────
@@ -36,7 +36,7 @@ const PROPERTY = {
   parking: 2,
   type: "3-Bedroom Townhome with BQ",
   paymentNote: "Interest-free flexible payment plans available",
-  whatsappNumber: "233552599185",
+  whatsappNumber: "447576368312",
   whatsappMessage: "Hi Bestworld, I'm interested in Anowaa Gardens (East Airport). Please send me more details.",
   heroGradient: "from-emerald-800 via-emerald-700 to-teal-600",
   accentColor: "emerald",
@@ -175,7 +175,7 @@ function LeadForm({ propertyName }: { propertyName: string }) {
       {status === "error" && (
         <p className="text-red-500 text-xs">
           Something went wrong. WhatsApp us directly on{" "}
-          <a href={`https://wa.me/${PROPERTY.whatsappNumber}`} className="underline font-semibold">+233 55 259 9185</a>.
+          <a href={`https://wa.me/${PROPERTY.whatsappNumber}`} className="underline font-semibold">+44 7576 368312</a>.
         </p>
       )}
       <p className="text-gray-400 text-xs text-center">We respect your privacy. No spam, ever.</p>
@@ -185,6 +185,13 @@ function LeadForm({ propertyName }: { propertyName: string }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function AnowaaGardensPage() {
+  const [callbackDate, setCallbackDate] = useState("")
+  const [callbackTime, setCallbackTime] = useState("")
+  const [callbackName, setCallbackName] = useState("")
+  const [callbackPhone, setCallbackPhone] = useState("")
+  const [callbackEmail, setCallbackEmail] = useState("")
+  const [callbackStatus, setCallbackStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+
   return (
     <main className="min-h-screen bg-white font-sans">
 
@@ -392,18 +399,79 @@ export default function AnowaaGardensPage() {
               ))}
             </div>
           </div>
-          <div className="bg-emerald-50 rounded-2xl p-8 text-center">
-            <Building2 className="w-16 h-16 text-emerald-300 mx-auto mb-4" />
-            <p className="text-gray-700 font-semibold mb-2">Schedule a Site Visit</p>
-            <p className="text-gray-500 text-sm mb-5">
-              Can't travel to Accra? We offer virtual tours via WhatsApp or Zoom.
-              Our on-ground team shows you every room, the street, and the community.
+          <div className="bg-emerald-50 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <CalendarDays className="w-5 h-5 text-emerald-600" />
+              <p className="text-gray-800 font-bold text-base">Schedule a Call Back</p>
+            </div>
+            <p className="text-gray-500 text-xs mb-5">
+              Pick a date and time and our team will call you back to discuss Anowaa Gardens.
             </p>
-            <a href={`https://wa.me/${PROPERTY.whatsappNumber}?text=${encodeURIComponent("Hi Bestworld, I'd like to schedule a virtual tour of Anowaa Gardens.")}`}
-              target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-emerald-600 text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-emerald-700 transition-colors">
-              <MessageCircle className="w-4 h-4" /> Book a Virtual Tour
-            </a>
+            {callbackStatus === "success" ? (
+              <div className="flex flex-col items-center gap-3 py-4">
+                <CheckCircle className="w-10 h-10 text-emerald-500" />
+                <p className="text-gray-800 font-semibold text-sm text-center">Call Back Scheduled!</p>
+                <p className="text-gray-500 text-xs text-center">We&apos;ll call you on <strong>{callbackDate}</strong> at <strong>{callbackTime}</strong>.</p>
+                <button onClick={() => { setCallbackStatus("idle"); setCallbackDate(""); setCallbackTime(""); setCallbackName(""); setCallbackPhone(""); setCallbackEmail(""); }} className="text-emerald-600 text-xs underline mt-1">Schedule another</button>
+              </div>
+            ) : (
+              <form onSubmit={async (e) => {
+                e.preventDefault()
+                setCallbackStatus("loading")
+                try {
+                  const res = await fetch("/api/leads", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      name: callbackName,
+                      email: callbackEmail,
+                      phone: callbackPhone,
+                      source: "callback-anowaa-gardens",
+                      notes: `[CALL BACK REQUEST — Anowaa Gardens]\nDate: ${callbackDate}\nTime: ${callbackTime}`,
+                    }),
+                  })
+                  setCallbackStatus(res.ok ? "success" : "error")
+                } catch { setCallbackStatus("error") }
+              }} className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name *</label>
+                  <input type="text" required value={callbackName} onChange={e => setCallbackName(e.target.value)} placeholder="e.g. Kofi Mensah" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address *</label>
+                  <input type="email" required value={callbackEmail} onChange={e => setCallbackEmail(e.target.value)} placeholder="you@example.com" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Phone / WhatsApp *</label>
+                  <input type="tel" required value={callbackPhone} onChange={e => setCallbackPhone(e.target.value)} placeholder="+1 555 000 0000" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1 flex items-center gap-1"><CalendarDays className="w-3 h-3" /> Date *</label>
+                    <input type="date" required value={callbackDate} min={new Date().toISOString().split("T")[0]} onChange={e => setCallbackDate(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-white" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1 flex items-center gap-1"><Clock className="w-3 h-3" /> Time *</label>
+                    <select required value={callbackTime} onChange={e => setCallbackTime(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                      <option value="">Select</option>
+                      <option>08:00 AM</option>
+                      <option>09:00 AM</option>
+                      <option>10:00 AM</option>
+                      <option>11:00 AM</option>
+                      <option>12:00 PM</option>
+                      <option>02:00 PM</option>
+                      <option>03:00 PM</option>
+                      <option>04:00 PM</option>
+                      <option>05:00 PM</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" disabled={callbackStatus === "loading"} className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+                  {callbackStatus === "loading" ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Booking…</> : <><CalendarDays className="w-4 h-4" /> Book Call Back</>}
+                </button>
+                {callbackStatus === "error" && <p className="text-red-500 text-xs text-center">Something went wrong. <a href={`https://wa.me/${PROPERTY.whatsappNumber}`} className="underline font-semibold">Try WhatsApp instead.</a></p>}
+              </form>
+            )}
           </div>
         </div>
       </section>

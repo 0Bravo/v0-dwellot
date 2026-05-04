@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import {
   MapPin, Phone, Mail, CheckCircle, Shield, ChevronRight,
   MessageCircle, BedDouble, Bath, Maximize2, Building2,
-  Car, Dumbbell, Lock, Droplets, Trees, Star,
+  Car, Dumbbell, Lock, Droplets, Trees, Star, CalendarDays, Clock,
 } from "lucide-react"
 
 // ─── Images (from Vercel Blob Storage) ───────────────────────────────────────
@@ -105,7 +105,7 @@ const WHY_POINTS = [
   },
 ]
 
-const WHATSAPP_NUMBER = "233552599185"
+const WHATSAPP_NUMBER = "447576368312"
 
 // ─── Lead Form ────────────────────────────────────────────────────────────────
 function LeadForm({ selectedUnit }: { selectedUnit: string }) {
@@ -200,7 +200,7 @@ function LeadForm({ selectedUnit }: { selectedUnit: string }) {
       {status === "error" && (
         <p className="text-red-500 text-xs">
           Something went wrong. WhatsApp us on{" "}
-          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="underline font-semibold">+233 55 259 9185</a>.
+          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="underline font-semibold">+44 7576 368312</a>.
         </p>
       )}
       <p className="text-gray-400 text-xs text-center">We respect your privacy. No spam, ever.</p>
@@ -211,6 +211,12 @@ function LeadForm({ selectedUnit }: { selectedUnit: string }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function TheKharisPage() {
   const [selectedUnit, setSelectedUnit] = useState("3br")
+  const [callbackDate, setCallbackDate] = useState("")
+  const [callbackTime, setCallbackTime] = useState("")
+  const [callbackName, setCallbackName] = useState("")
+  const [callbackPhone, setCallbackPhone] = useState("")
+  const [callbackEmail, setCallbackEmail] = useState("")
+  const [callbackStatus, setCallbackStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const unit = UNITS.find((u) => u.id === selectedUnit)!
   const waMessage = `Hi Bestworld, I'm interested in The Kharis (${unit.label}, ${unit.price}) in East Airport. Please send me more details.`
 
@@ -448,18 +454,79 @@ export default function TheKharisPage() {
               ))}
             </div>
           </div>
-          <div className="bg-blue-50 rounded-2xl p-8 text-center">
-            <Building2 className="w-16 h-16 text-blue-300 mx-auto mb-4" />
-            <p className="text-gray-700 font-semibold mb-2">Book a Virtual Tour</p>
-            <p className="text-gray-500 text-sm mb-5">
-              Our Accra team takes you through every room, the street, and the community via WhatsApp or Zoom.
-              Diaspora buyers complete full purchases remotely every week.
+          <div className="bg-blue-50 rounded-2xl p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <CalendarDays className="w-5 h-5 text-blue-600" />
+              <p className="text-gray-800 font-bold text-base">Schedule a Call Back</p>
+            </div>
+            <p className="text-gray-500 text-xs mb-5">
+              Pick a date and time and our team will call you back to discuss The Kharis.
             </p>
-            <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Hi Bestworld, I'd like to schedule a virtual tour of The Kharis.")}`}
-              target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-blue-600 text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-blue-700 transition-colors">
-              <MessageCircle className="w-4 h-4" /> Book a Virtual Tour
-            </a>
+            {callbackStatus === "success" ? (
+              <div className="flex flex-col items-center gap-3 py-4">
+                <CheckCircle className="w-10 h-10 text-blue-500" />
+                <p className="text-gray-800 font-semibold text-sm text-center">Call Back Scheduled!</p>
+                <p className="text-gray-500 text-xs text-center">We&apos;ll call you on <strong>{callbackDate}</strong> at <strong>{callbackTime}</strong>.</p>
+                <button onClick={() => { setCallbackStatus("idle"); setCallbackDate(""); setCallbackTime(""); setCallbackName(""); setCallbackPhone(""); setCallbackEmail(""); }} className="text-blue-600 text-xs underline mt-1">Schedule another</button>
+              </div>
+            ) : (
+              <form onSubmit={async (e) => {
+                e.preventDefault()
+                setCallbackStatus("loading")
+                try {
+                  const res = await fetch("/api/leads", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      name: callbackName,
+                      email: callbackEmail,
+                      phone: callbackPhone,
+                      source: "callback-the-kharis",
+                      notes: `[CALL BACK REQUEST — The Kharis]\nDate: ${callbackDate}\nTime: ${callbackTime}`,
+                    }),
+                  })
+                  setCallbackStatus(res.ok ? "success" : "error")
+                } catch { setCallbackStatus("error") }
+              }} className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Your Name *</label>
+                  <input type="text" required value={callbackName} onChange={e => setCallbackName(e.target.value)} placeholder="e.g. Kofi Mensah" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Email Address *</label>
+                  <input type="email" required value={callbackEmail} onChange={e => setCallbackEmail(e.target.value)} placeholder="you@example.com" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Phone / WhatsApp *</label>
+                  <input type="tel" required value={callbackPhone} onChange={e => setCallbackPhone(e.target.value)} placeholder="+1 555 000 0000" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1 flex items-center gap-1"><CalendarDays className="w-3 h-3" /> Date *</label>
+                    <input type="date" required value={callbackDate} min={new Date().toISOString().split("T")[0]} onChange={e => setCallbackDate(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1 flex items-center gap-1"><Clock className="w-3 h-3" /> Time *</label>
+                    <select required value={callbackTime} onChange={e => setCallbackTime(e.target.value)} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+                      <option value="">Select</option>
+                      <option>08:00 AM</option>
+                      <option>09:00 AM</option>
+                      <option>10:00 AM</option>
+                      <option>11:00 AM</option>
+                      <option>12:00 PM</option>
+                      <option>02:00 PM</option>
+                      <option>03:00 PM</option>
+                      <option>04:00 PM</option>
+                      <option>05:00 PM</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" disabled={callbackStatus === "loading"} className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 text-sm">
+                  {callbackStatus === "loading" ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Booking…</> : <><CalendarDays className="w-4 h-4" /> Book Call Back</>}
+                </button>
+                {callbackStatus === "error" && <p className="text-red-500 text-xs text-center">Something went wrong. <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="underline font-semibold">Try WhatsApp instead.</a></p>}
+              </form>
+            )}
           </div>
         </div>
       </section>
@@ -570,7 +637,7 @@ export default function TheKharisPage() {
         </div>
       </footer>
 
-      {/* ── Floating WhatsApp ───────────────────────────────────────────────── */}
+      {/* ── Floating WhatsApp ────────────────────────────────────����──────────── */}
       <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`}
         target="_blank" rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-colors"
