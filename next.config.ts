@@ -17,6 +17,22 @@ const nextConfig: NextConfig = {
                       protocol: "https",
                       hostname: "via.placeholder.com",
             },
+            {
+                      protocol: "https",
+                      hostname: "*.public.blob.vercel-storage.com",
+            },
+            {
+                      protocol: "https",
+                      hostname: "*.vercel-storage.com",
+            },
+            {
+                      protocol: "https",
+                      hostname: "blob.vercel-storage.com",
+            },
+            {
+                      protocol: "https",
+                      hostname: "hebbkx1anhila5yf.public.blob.vercel-storage.com",
+            },
                 ],
           contentDispositionType: "attachment",
           contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
