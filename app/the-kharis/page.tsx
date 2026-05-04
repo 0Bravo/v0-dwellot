@@ -105,7 +105,7 @@ const WHY_POINTS = [
   },
 ]
 
-const WHATSAPP_NUMBER = "233552599185"
+const WHATSAPP_NUMBER = "447576368312"
 
 // ─── Lead Form ────────────────────────────────────────────────────────────────
 function LeadForm({ selectedUnit }: { selectedUnit: string }) {
@@ -200,7 +200,7 @@ function LeadForm({ selectedUnit }: { selectedUnit: string }) {
       {status === "error" && (
         <p className="text-red-500 text-xs">
           Something went wrong. WhatsApp us on{" "}
-          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="underline font-semibold">+233 55 259 9185</a>.
+          <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="underline font-semibold">+44 7576 368312</a>.
         </p>
       )}
       <p className="text-gray-400 text-xs text-center">We respect your privacy. No spam, ever.</p>
@@ -570,7 +570,7 @@ export default function TheKharisPage() {
         </div>
       </footer>
 
-      {/* ── Floating WhatsApp ───────────────────────────────────────────────── */}
+      {/* ── Floating WhatsApp ────────────────────────────────────���──────────── */}
       <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`}
         target="_blank" rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-colors"

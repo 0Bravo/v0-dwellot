@@ -36,7 +36,7 @@ const PROPERTY = {
   parking: 2,
   type: "3-Bedroom Townhome with BQ",
   paymentNote: "Interest-free flexible payment plans available",
-  whatsappNumber: "233552599185",
+  whatsappNumber: "447576368312",
   whatsappMessage: "Hi Bestworld, I'm interested in Anowaa Gardens (East Airport). Please send me more details.",
   heroGradient: "from-emerald-800 via-emerald-700 to-teal-600",
   accentColor: "emerald",
@@ -175,7 +175,7 @@ function LeadForm({ propertyName }: { propertyName: string }) {
       {status === "error" && (
         <p className="text-red-500 text-xs">
           Something went wrong. WhatsApp us directly on{" "}
-          <a href={`https://wa.me/${PROPERTY.whatsappNumber}`} className="underline font-semibold">+233 55 259 9185</a>.
+          <a href={`https://wa.me/${PROPERTY.whatsappNumber}`} className="underline font-semibold">+44 7576 368312</a>.
         </p>
       )}
       <p className="text-gray-400 text-xs text-center">We respect your privacy. No spam, ever.</p>
