@@ -81,7 +81,7 @@ export default function BulkUploadPage() {
         row[header] = value
       })
 
-      return row as PropertyRow
+      return row as unknown as PropertyRow
     })
   }
 
