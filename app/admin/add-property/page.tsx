@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import PropertyImportForm from "@/components/PropertyImportForm"
 import BulkUploadForm from "@/components/BulkUploadForm"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CarhdHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2 } from "lucide-react"
 
@@ -56,7 +56,7 @@ export default function AddPropertyPage() {
               <TabsTrigger value="bulk">Bulk Upload</TabsTrigger>
             </TabsList>
             <TabsContent value="single" className="mt-6">
-              <PropertyImportForm />
+              <PropertyImportForm  userId={user.id}/>
             </TabsContent>
             <TabsContent value="bulk" className="mt-6">
               <BulkUploadForm />
