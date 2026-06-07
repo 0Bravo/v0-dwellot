@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     const period = searchParams.get("period") || "7" // days
 
-    const supabase = createClient()
+    const supabase = await createClient()
 
     // Get inquiry statistics
     const { data: inquiries, error } = await supabase
