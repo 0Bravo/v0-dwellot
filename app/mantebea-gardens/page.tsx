@@ -8,7 +8,7 @@ import {
   MapPin, Phone, Mail, CheckCircle, Shield, ChevronRight,
   MessageCircle, BedDouble, Bath, Maximize2, Building2,
   Car, Dumbbell, Lock, Droplets, Trees, CalendarDays, Clock,
-} from "lucide-react"
+} from "lucide-react"h
 
 // ─── Images (from Vercel Blob Storage) ───────────────────────────────────────
 const GALLERY_IMAGES = [
@@ -187,7 +187,7 @@ function LeadForm({ selectedUnit }: { selectedUnit: string }) {
       if (res.ok) {
           setForm({ fullName: "", email: "", phone: "", timeline: "", message: "" })
           if (typeof window !== "undefined" && (window as any).fbq) {
-            ;(window as any).fbq("track", "Lead", { content_name: `Mantebea Gardens — ${unit?.label}`, currency: "USD", value: unit?.priceUSD ?? 140000 })
+            ;(window as any).fbq("track", "Lead", { content_name: `Mantebea Gardens — ${unit?.label}`, currency: "USD", value: unit?.priceRaw ?? 140000 })
           }
         }
     } catch {
