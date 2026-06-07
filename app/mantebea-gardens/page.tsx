@@ -8,7 +8,7 @@ import {
   MapPin, Phone, Mail, CheckCircle, Shield, ChevronRight,
   MessageCircle, BedDouble, Bath, Maximize2, Building2,
   Car, Dumbbell, Lock, Droplets, Trees, CalendarDays, Clock,
-} from "lucide-react"h
+} from "lucide-react"
 
 // ─── Images (from Vercel Blob Storage) ───────────────────────────────────────
 const GALLERY_IMAGES = [
