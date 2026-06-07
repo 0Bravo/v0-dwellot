@@ -45,8 +45,8 @@ export async function POST(request: Request) {
     }
 
     if (property) {
-      const agentEmail = property.email || property.users?.email || "support@dwellot.com"
-      const agentName = property.agent || property.users?.name || "Agent"
+              const agentEmail = property.email || (property.users as any)?.[0]?.email || "support@dwellot.com"
+              const agentName = property.agent || (property.users as any)?.[0]?.name || "Agent"
 
       // Send notification to agent
       sendInquiryNotification({
