@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
     const { data: property } = await supabase
       .from("properties")
-      .select("id, title, agent, email as agent_email, users(name, email)")
+              .select("id, title, agent, email, users(name, email)")
       .eq("id", property_id)
       .single()
 
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     }
 
     if (property) {
-      const agentEmail = property.agent_email || property.users?.email || "support@dwellot.com"
+      const agentEmail = property.email || property.users?.email || "support@dwellot.com"
       const agentName = property.agent || property.users?.name || "Agent"
 
       // Send notification to agent
