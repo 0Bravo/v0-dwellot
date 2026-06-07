@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     // Check if lead already exists with this email
     const { data: existingLead } = await supabase
       .from("leads")
-      .select("id, email")
+      .select("id, email, name")
       .eq("email", email.toLowerCase().trim())
       .single()
 
