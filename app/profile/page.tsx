@@ -22,7 +22,7 @@ export default async function ProfilePage() {
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Profile Settings</h1>
-            <ProfileForm initialProfile={profile} userEmail={user.emai ?? ""l} />
+                          <ProfileForm initialProfile={profile} userEmail={user.email ?? ""} />
           </div>
         </div>
       </div>
