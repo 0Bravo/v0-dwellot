@@ -106,7 +106,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative rounded-3xl overflow-hidden shadow-2xl">
             <div className="absolute inset-0">
-              <Image src="/images/hero-bg.jpg" alt="Ghana coastal cityscape" fill className="object-cover" priority sizes="100vw" />
+              <Image src="/images/hero-bg.jpg" alt="Ghana coastal cityscape" fill className="object-cover" priority fetchPriority="high" quality={65} sizes="(max-width: 1280px) 100vw, 1280px" />
               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50 z-10"></div>
             </div>
 
