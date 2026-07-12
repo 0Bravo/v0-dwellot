@@ -304,7 +304,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
         dedupingInterval: 600000,
     })
 
-    const allSuggestions = suggestionsData?.suggestions || []
+    const allSuggestions: { label: string; type: string; count?: number }[] = suggestionsData?.suggestions || []
     const filteredSuggestions = filters.search.trim().length > 0
         ? allSuggestions.filter((s) => s.label.toLowerCase().includes(filters.search.toLowerCase())).slice(0, 8)
         : allSuggestions.slice(0, 8)
