@@ -11,9 +11,18 @@ function FacebookPixelTracker() {
   // Initialize pixel on mount
   useEffect(() => {
     if (!FB_PIXEL_ID) return
-    initPixel()
-    // Track initial page view
-    trackPageView()
+    // Defer pixel init until the browser is idle so it doesn't compete
+    // with LCP resources on slow connections (reduces unused JS at load)
+    const start = () => {
+      initPixel()
+      trackPageView()
+    }
+    if ("requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(start, { timeout: 4000 })
+      return () => window.cancelIdleCallback(id)
+    }
+    const t = window.setTimeout(start, 2500)
+    return () => window.clearTimeout(t)
   }, [])
 
   // Track page views on route changes
