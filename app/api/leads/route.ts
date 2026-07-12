@@ -21,22 +21,26 @@ export async function POST(request: NextRequest) {
       notes,
     } = body
 
-    // Validate required fields
-    if (!email) {
+    // Require at least one contact channel: email or WhatsApp number
+    if (!email && !whatsapp_number) {
       return NextResponse.json(
-        { error: "Email is required" },
+        { error: "Email or WhatsApp number is required" },
         { status: 400 }
       )
     }
 
-    // Validate email format
+    // Validate email format when provided
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
+    if (email && !emailRegex.test(email)) {
       return NextResponse.json(
         { error: "Invalid email format" },
         { status: 400 }
       )
     }
+
+    // WhatsApp-only leads get a synthetic unique email to satisfy the
+    // NOT NULL/unique constraint while remaining identifiable
+    const effectiveEmail = (email || `wa-${String(whatsapp_number).replace(/\D/g, "")}@leads.dwellot.com`).toLowerCase().trim()
 
     const supabase = createAdminClient()
 
@@ -44,7 +48,7 @@ export async function POST(request: NextRequest) {
     const { data: existingLead } = await supabase
       .from("leads")
       .select("id, email, name")
-      .eq("email", email.toLowerCase().trim())
+      .eq("email", effectiveEmail)
       .single()
 
     if (existingLead) {
@@ -90,7 +94,7 @@ export async function POST(request: NextRequest) {
       .from("leads")
       .insert({
         name,
-        email: email.toLowerCase().trim(),
+        email: effectiveEmail,
         phone,
         whatsapp_number,
         intent,
