@@ -3,7 +3,8 @@
 import { usePathname } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import NewsletterModal from "@/components/NewsletterModal"
+import PropertyAlertModal from "@/components/PropertyAlertModal"
+import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton"
 
 const STANDALONE_ROUTES = ["/buy-property-ghana"]
 
@@ -20,7 +21,8 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main className="pt-16">{children}</main>
       <Footer />
-      <NewsletterModal />
+      <PropertyAlertModal />
+      <WhatsAppFloatingButton />
     </>
   )
 }
