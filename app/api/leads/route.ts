@@ -9,14 +9,14 @@ export async function POST(request: NextRequest) {
       name,
       email,
       phone,
-      whatsapp_number,
+      whatsapp: whatsapp_number,
       intent,
       property_type,
-      min_budget,
-      max_budget,
+      budget_min: min_budget,
+      budget_max: max_budget,
       bedrooms,
       preferred_locations,
-      timeline,
+      timeline: normalizedTimeline,
       source,
       notes,
     } = body
@@ -42,6 +42,17 @@ export async function POST(request: NextRequest) {
     // NOT NULL/unique constraint while remaining identifiable
     const effectiveEmail = (email || `wa-${String(whatsapp_number).replace(/\D/g, "")}@leads.dwellot.com`).toLowerCase().trim()
 
+    // Normalize timeline to the values allowed by the leads table CHECK constraint
+    const TIMELINE_MAP: Record<string, string> = {
+      "Immediately": "immediately",
+      "Within 1 month": "1-3_months",
+      "1-3 months": "1-3_months",
+      "3-6 months": "3-6_months",
+      "6-12 months": "6-12_months",
+      "Just browsing": "just_browsing",
+    }
+    const normalizedTimeline = timeline ? TIMELINE_MAP[timeline] || null : null
+
     const supabase = createAdminClient()
 
     // Check if lead already exists with this email
@@ -58,14 +69,14 @@ export async function POST(request: NextRequest) {
         .update({
           name: name || existingLead.name,
           phone,
-          whatsapp_number,
+          whatsapp: whatsapp_number,
           intent,
           property_type,
-          min_budget,
-          max_budget,
+          budget_min: min_budget,
+          budget_max: max_budget,
           bedrooms,
           preferred_locations,
-          timeline,
+          timeline: normalizedTimeline,
           notes,
           updated_at: new Date().toISOString(),
         })
@@ -96,14 +107,14 @@ export async function POST(request: NextRequest) {
         name,
         email: effectiveEmail,
         phone,
-        whatsapp_number,
+        whatsapp: whatsapp_number,
         intent,
         property_type,
-        min_budget,
-        max_budget,
+        budget_min: min_budget,
+        budget_max: max_budget,
         bedrooms,
         preferred_locations,
-        timeline,
+        timeline: normalizedTimeline,
         source: source || "website_modal",
         notes,
         status: "new",
