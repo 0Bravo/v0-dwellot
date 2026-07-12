@@ -20,14 +20,15 @@ export const initPixel = (): void => {
   if (!FB_PIXEL_ID || typeof window === 'undefined') return
   
   // Prevent double initialization
-  if (window.fbq) return
+  if (typeof window.fbq === 'function') return
 
   // FB Pixel base code
   const n = (window.fbq = function (...args: unknown[]) {
-    if ((n as { callMethod?: (...a: unknown[]) => void }).callMethod) {
-      (n as { callMethod: (...a: unknown[]) => void }).callMethod(...args)
+    const fn = n as unknown as { callMethod?: (...a: unknown[]) => void; queue: unknown[] }
+    if (fn.callMethod) {
+      fn.callMethod(...args)
     } else {
-      (n as { queue: unknown[] }).queue.push(args)
+      fn.queue.push(args)
     }
   }) as typeof window.fbq & { push: (...a: unknown[]) => void; loaded: boolean; version: string; queue: unknown[] }
   

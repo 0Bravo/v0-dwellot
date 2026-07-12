@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react"
-import type { User, SupabaseClient } from "@supabase/supabase-js"
+import type { User, SupabaseClient, Session, AuthChangeEvent } from "@supabase/supabase-js"
 import { createClient } from "./supabase/client"
 
 interface AuthContextType {
@@ -36,14 +36,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return
     }
 
-    client.auth.getSession().then(({ data: { session } }) => {
+    client.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
     const {
       data: { subscription },
-    } = client.auth.onAuthStateChange(async (_event, session) => {
+    } = client.auth.onAuthStateChange(async (_event: AuthChangeEvent, session: Session | null) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })

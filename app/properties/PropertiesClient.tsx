@@ -297,7 +297,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
     const [showMobileFilters, setShowMobileFilters] = useState(false)
     const [showSuggestions, setShowSuggestions] = useState(false)
     const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
-    const searchWrapperRef = useRef<HTMLDivElement | null>(null)
+    const searchWrapperRef = useRef<HTMLFormElement | null>(null)
 
     const { data: suggestionsData } = useSWR("/api/search-suggestions", suggestionFetcher, {
         revalidateOnFocus: false,

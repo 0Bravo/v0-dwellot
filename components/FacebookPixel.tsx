@@ -17,12 +17,12 @@ function FacebookPixelTracker() {
       initPixel()
       trackPageView()
     }
-    if ("requestIdleCallback" in window) {
+    if (typeof window.requestIdleCallback === "function") {
       const id = window.requestIdleCallback(start, { timeout: 4000 })
       return () => window.cancelIdleCallback(id)
     }
-    const t = window.setTimeout(start, 2500)
-    return () => window.clearTimeout(t)
+    const t = setTimeout(start, 2500)
+    return () => clearTimeout(t)
   }, [])
 
   // Track page views on route changes

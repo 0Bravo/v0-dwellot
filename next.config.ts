@@ -3,14 +3,6 @@ import type { NextConfig } from "next"
 const nextConfig: NextConfig = {
     // Security: suppress "X-Powered-By: Next.js" response header
     poweredByHeader: false,
-    // TEMPORARY: unblock deployments (main has pre-existing type/lint errors
-    // accumulated since June). Remove once the codebase typechecks cleanly.
-    typescript: {
-          ignoreBuildErrors: true,
-    },
-    eslint: {
-          ignoreDuringBuilds: true,
-    },
     images: {
           remotePatterns: [
             {
@@ -32,6 +24,8 @@ const nextConfig: NextConfig = {
                 ],
           // Serve modern formats (AVIF is ~30-50% smaller than JPEG)
           formats: ["image/avif", "image/webp"],
+          // Allow the quality values used across the app (required in Next.js 16)
+          qualities: [65, 75, 80, 85, 90, 100],
           // Cache optimized images for 1 year (fixes "Use efficient cache lifetimes")
           minimumCacheTTL: 31536000,
           contentDispositionType: "attachment",

@@ -56,7 +56,9 @@ export default function RoleBasedDashboard() {
     await signOut()
   }
 
-  const userRole = "user"
+  // Custom profile fields live in Supabase user_metadata
+  const meta = (user.user_metadata ?? {}) as Record<string, any>
+  const userRole: string = meta.role || "user"
 
   // Get role-specific tabs and content
   const getRoleTabs = () => {
@@ -169,7 +171,7 @@ export default function RoleBasedDashboard() {
                       ? "Agent Dashboard"
                       : "My Dashboard"}
                 </h1>
-                <p className="text-sm text-gray-600">Welcome back, {user.full_name || user.first_name || "User"}</p>
+                <p className="text-sm text-gray-600">Welcome back, {meta.full_name || meta.first_name || "User"}</p>
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -514,7 +516,7 @@ export default function RoleBasedDashboard() {
                       </div>
                       <div>
                         <h3 className="text-xl font-semibold text-gray-900">
-                          {user.full_name || `${user.first_name || ""} ${user.last_name || ""}`.trim() || "User"}
+                          {meta.full_name || `${meta.first_name || ""} ${meta.last_name || ""}`.trim() || "User"}
                         </h3>
                         <p className="text-gray-600">{user.email}</p>
                         <p className="text-sm text-gray-500 capitalize">{userRole} Account</p>
@@ -526,7 +528,7 @@ export default function RoleBasedDashboard() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                         <input
                           type="text"
-                          value={user.first_name || ""}
+                          value={meta.first_name || ""}
                           disabled={!isEditingProfile}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
                         />
@@ -536,7 +538,7 @@ export default function RoleBasedDashboard() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                         <input
                           type="text"
-                          value={user.last_name || ""}
+                          value={meta.last_name || ""}
                           disabled={!isEditingProfile}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
                         />
@@ -568,12 +570,12 @@ export default function RoleBasedDashboard() {
                         </div>
                       </div>
 
-                      {user.agency_name && (
+                      {meta.agency_name && (
                         <div className="md:col-span-2">
                           <label className="block text-sm font-medium text-gray-700 mb-2">Agency Name</label>
                           <input
                             type="text"
-                            value={user.agency_name}
+                            value={meta.agency_name}
                             disabled={!isEditingProfile}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50"
                           />
@@ -602,7 +604,7 @@ export default function RoleBasedDashboard() {
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked={user.email_notifications}
+                            defaultChecked={Boolean(meta.email_notifications)}
                             className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                           />
                         </div>
@@ -613,7 +615,7 @@ export default function RoleBasedDashboard() {
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked={user.sms_notifications}
+                            defaultChecked={Boolean(meta.sms_notifications)}
                             className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                           />
                         </div>
@@ -624,7 +626,7 @@ export default function RoleBasedDashboard() {
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked={user.marketing_emails}
+                            defaultChecked={Boolean(meta.marketing_emails)}
                             className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                           />
                         </div>
