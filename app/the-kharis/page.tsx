@@ -300,14 +300,14 @@ export default function TheKharisPage() {
             <div className="flex flex-col sm:flex-row gap-4 text-sm text-blue-100">
               <div>
                 <p className="font-semibold text-white text-xs uppercase tracking-wide mb-0.5">Bestworld — Ghana</p>
-                <a href="tel:+233552599185" className="hover:text-white">+233 55 259 9185</a>
+                <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
                 {" · "}
                 <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               </div>
               <div className="hidden sm:block w-px bg-white/20" />
               <div>
                 <p className="font-semibold text-white text-xs uppercase tracking-wide mb-0.5">UK Office</p>
-                <a href="tel:+447861932209" className="hover:text-white">+44 7861 932209</a>
+                <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
                 <span className="text-blue-300 text-xs ml-1">· London EC2A</span>
               </div>
             </div>
@@ -618,10 +618,10 @@ export default function TheKharisPage() {
             <p className="text-white font-semibold mb-3">Contact Bestworld</p>
             <div className="flex flex-col gap-2 text-xs">
               <p className="text-gray-300 font-medium">🇬🇭 Ghana Office</p>
-              <a href="tel:+233552599185" className="hover:text-white">+233 55 259 9185</a>
+              <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               <p className="text-gray-300 font-medium mt-2">🇬🇧 UK Office</p>
-              <a href="tel:+447861932209" className="hover:text-white">+44 7861 932209</a>
+              <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               <a href="mailto:support@dwellot.com" className="hover:text-white flex items-center gap-1">
                 <Mail className="w-3 h-3" /> support@dwellot.com
               </a>
