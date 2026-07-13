@@ -105,7 +105,7 @@ export default function Footer() {
                   </div>
                   <div className="flex items-center space-x-3">
                     <Phone className="h-4 w-4 text-green-400 flex-shrink-0" />
-                    <span className="text-gray-400">020 157 8429</span>
+                    <span className="text-gray-400">07576 368312</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <Phone className="h-4 w-4 text-green-400 flex-shrink-0" />
