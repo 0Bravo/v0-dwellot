@@ -1,4 +1,4 @@
-const DEFAULT_DWELLOT_NUMBER = "233201578429"
+const DEFAULT_DWELLOT_NUMBER = "447576368312"
 
 function formatPhone(phone: string): string {
   return phone.replace(/[\s\-()]/g, "").replace(/^0/, "233")
