@@ -224,7 +224,7 @@ export default function ContactPage() {
                     <Phone className="h-5 w-5 text-teal-600 mt-1" />
                     <div>
                       <p className="font-semibold text-gray-900">Phone</p>
-                      <a href="tel:+233201578429" className="text-teal-600 hover:underline text-sm block">020 157 8429</a>
+                      <a href="tel:+447576368312" className="text-teal-600 hover:underline text-sm block">07576 368312</a>
                       <a href="tel:+233552599185" className="text-teal-600 hover:underline text-sm block">055 259 9185</a>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export default function ContactPage() {
                     <div>
                       <p className="font-semibold text-gray-900">WhatsApp</p>
                       <a
-                        href={`https://wa.me/233201578429?text=${encodeURIComponent("Hi Dwellot! I'd like to get in touch with your team.")}`}
+                        href={`https://wa.me/447576368312?text=${encodeURIComponent("Hi Dwellot! I'd like to get in touch with your team.")}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-green-600 hover:underline text-sm"
