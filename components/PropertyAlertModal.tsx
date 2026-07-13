@@ -218,7 +218,7 @@ export default function PropertyAlertModal() {
 
           // Start the WhatsApp conversation with their criteria prefilled
           const waMessage = `Hi Dwellot! Please send me property alerts. My criteria: ${criteriaSummary() || "open to suggestions"}.${name ? ` - ${name}` : ""}`
-          const waUrl = `https://wa.me/233201578429?text=${encodeURIComponent(waMessage)}`
+          const waUrl = `https://wa.me/447576368312?text=${encodeURIComponent(waMessage)}`
 
           setTimeout(() => {
             window.open(waUrl, "_blank", "noopener,noreferrer")
