@@ -317,11 +317,11 @@ export default function HomePage() {
             </Link>
             <span className="text-gray-500">or</span>
             <Link
-              href="tel:+233201578429"
+              href="tel:+447576368312"
               className="flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition font-semibold"
             >
               <Phone className="w-5 h-5" />
-              Call 020 157 8429
+              Call 07576 368312
             </Link>
           </div>
           <p className="text-sm text-gray-500 mt-4">
