@@ -652,13 +652,13 @@ export default function BestworldPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-gray-400">
             <div>
               <span className="text-white font-semibold">🇬🇭 Ghana: </span>
-              <a href="tel:+233552599185" className="hover:text-white">+233 55 259 9185</a>
+              <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               {" · "}
               <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
             </div>
             <div>
               <span className="text-white font-semibold">🇬🇧 UK: </span>
-              <a href="tel:+447861932209" className="hover:text-white">+44 7861 932209</a>
+              <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
             </div>
           </div>
         </div>
@@ -686,10 +686,10 @@ export default function BestworldPage() {
             <p className="text-white font-semibold mb-3">Get in Touch</p>
             <div className="flex flex-col gap-1.5 text-xs">
               <p className="text-gray-300 font-medium">🇬🇭 Ghana Office</p>
-              <a href="tel:+233552599185" className="hover:text-white">+233 55 259 9185</a>
+              <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               <p className="text-gray-300 font-medium mt-2">🇬🇧 UK Office</p>
-              <a href="tel:+447861932209" className="hover:text-white">+44 7861 932209</a>
+              <a href="tel:+447576368312" className="hover:text-white">+44 7576 368312</a>
               <a href="mailto:support@dwellot.com" className="hover:text-white flex items-center gap-1 mt-1">
                 <Mail className="w-3 h-3" /> support@dwellot.com
               </a>
