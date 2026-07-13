@@ -313,7 +313,7 @@ export default function AboutPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                    <a href="tel:+233552599185" className="text-gray-600 hover:text-teal-600 transition">055 259 9185</a>
+                    <a href="tel:+447576368312" className="text-gray-600 hover:text-teal-600 transition">+44 7576 368312</a>
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
@@ -342,7 +342,7 @@ export default function AboutPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                    <a href="tel:+447861932209" className="text-gray-600 hover:text-teal-600 transition">+44 7861 932209</a>
+                    <a href="tel:+447576368312" className="text-gray-600 hover:text-teal-600 transition">+44 7576 368312</a>
                   </div>
                   <div className="flex items-center gap-3">
                     <Mail className="h-4 w-4 text-gray-400 flex-shrink-0" />
