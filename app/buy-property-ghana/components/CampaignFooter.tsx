@@ -15,10 +15,10 @@ export default function CampaignFooter() {
           {/* Contact */}
           <div className="flex flex-col sm:flex-row items-center gap-4 text-sm">
             <a
-              href="tel:+233201578429"
+              href="tel:+447576368312"
               className="flex items-center gap-1.5 hover:text-white transition-colors"
             >
-              <Phone size={13} /> +233 20 157 8429
+              <Phone size={13} /> +44 7576 368312
             </a>
             <a
               href="mailto:hello@dwellot.com"
