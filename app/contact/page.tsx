@@ -225,7 +225,7 @@ export default function ContactPage() {
                     <div>
                       <p className="font-semibold text-gray-900">Phone</p>
                       <a href="tel:+447576368312" className="text-teal-600 hover:underline text-sm block">07576 368312</a>
-                      <a href="tel:+233552599185" className="text-teal-600 hover:underline text-sm block">055 259 9185</a>
+                      <a href="tel:+447576368312" className="text-teal-600 hover:underline text-sm block">+44 7576 368312</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
@@ -268,7 +268,7 @@ export default function ContactPage() {
                     <Phone className="h-5 w-5 text-teal-600 mt-1" />
                     <div>
                       <p className="font-semibold text-gray-900">Phone</p>
-                      <a href="tel:+447861932209" className="text-teal-600 hover:underline text-sm">+44 7861 932209</a>
+                      <a href="tel:+447576368312" className="text-teal-600 hover:underline text-sm">+44 7576 368312</a>
                     </div>
                   </div>
                 </CardContent>
