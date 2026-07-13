@@ -22,7 +22,7 @@ const PLACEHOLDER_AGENTS = [
     location: "Appolonia City, Accra",
     specialties: ["Residential", "Land"],
     listings: 24,
-    phone: "233201578429",
+    phone: "447576368312",
   },
   {
     name: "Ama Mensah",
@@ -31,7 +31,7 @@ const PLACEHOLDER_AGENTS = [
     location: "East Legon, Accra",
     specialties: ["Residential", "Commercial"],
     listings: 18,
-    phone: "233201578429",
+    phone: "447576368312",
   },
   {
     name: "Kofi Adjei",
@@ -40,7 +40,7 @@ const PLACEHOLDER_AGENTS = [
     location: "Airport Hills, Accra",
     specialties: ["Residential", "Luxury"],
     listings: 31,
-    phone: "233201578429",
+    phone: "447576368312",
   },
   {
     name: "Efua Owusu",
@@ -49,7 +49,7 @@ const PLACEHOLDER_AGENTS = [
     location: "Spintex, Accra",
     specialties: ["Commercial", "Land"],
     listings: 12,
-    phone: "233201578429",
+    phone: "447576368312",
   },
   {
     name: "Yaw Boateng",
@@ -58,7 +58,7 @@ const PLACEHOLDER_AGENTS = [
     location: "Cantonments, Accra",
     specialties: ["Residential", "Luxury"],
     listings: 27,
-    phone: "233201578429",
+    phone: "447576368312",
   },
   {
     name: "Abena Darko",
@@ -67,7 +67,7 @@ const PLACEHOLDER_AGENTS = [
     location: "Kumasi, Ashanti",
     specialties: ["Residential", "Land"],
     listings: 15,
-    phone: "233201578429",
+    phone: "447576368312",
   },
 ]
 
