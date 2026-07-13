@@ -330,7 +330,7 @@ export default function MortgageCalculatorPage() {
                   <ChevronRight className="w-4 h-4" />
                 </Link>
                 <a
-                  href="https://wa.me/233201578429?text=Hi%2C%20I%20used%20the%20mortgage%20calculator%20on%20Dwellot%20and%20would%20like%20to%20discuss%20financing%20options."
+                  href="https://wa.me/447576368312?text=Hi%2C%20I%20used%20the%20mortgage%20calculator%20on%20Dwellot%20and%20would%20like%20to%20discuss%20financing%20options."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition"
