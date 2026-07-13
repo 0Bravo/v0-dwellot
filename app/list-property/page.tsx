@@ -840,7 +840,7 @@ export default function ListPropertyPage() {
           <p className="text-gray-500 mb-6">{"Chat with us and we'll list it for you"}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href={`https://wa.me/233201578429?text=${encodeURIComponent("Hi Dwellot! I need help listing my property. Can you assist?")}`}
+              href={`https://wa.me/447576368312?text=${encodeURIComponent("Hi Dwellot! I need help listing my property. Can you assist?")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold transition"
@@ -849,11 +849,11 @@ export default function ListPropertyPage() {
               Chat on WhatsApp
             </a>
             <a
-              href="tel:+233201578429"
+              href="tel:+447576368312"
               className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition"
             >
               <Phone className="w-5 h-5" />
-              Call: 020 157 8429
+              Call: 07576 368312
             </a>
           </div>
         </div>
