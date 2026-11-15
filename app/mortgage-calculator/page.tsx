@@ -1,68 +1,99 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import {
   Calculator,
   Home,
   Percent,
   Calendar,
-  DollarSign,
+  Wallet,
   TrendingUp,
   Building2,
   Phone,
   Info,
   ChevronRight,
+  Activity,
 } from "lucide-react"
+import {
+  calculateMortgage,
+  clampDeposit,
+  currencyLabel,
+  formatMoney,
+  type MortgageCurrency,
+} from "@/lib/mortgage/calc"
+import { BASIS_LABEL, MORTGAGE_DEFAULTS, formatRateDate, type RateBasis } from "@/lib/mortgage/rates"
+import { useMortgageRates } from "@/hooks/use-mortgage-rates"
 
-const BANKS = [
-  { name: "GCB Bank", rate: 27.5, maxTerm: 20 },
-  { name: "Absa Ghana", rate: 26.0, maxTerm: 25 },
-  { name: "Stanbic Bank", rate: 25.5, maxTerm: 20 },
-  { name: "Ecobank Ghana", rate: 28.0, maxTerm: 15 },
-  { name: "Fidelity Bank", rate: 27.0, maxTerm: 20 },
+const PRICE_LIMITS: Record<MortgageCurrency, { min: number; max: number; step: number; start: number }> = {
+  GHS: { min: 50000, max: 10000000, step: 10000, start: 1000000 },
+  USD: { min: 20000, max: 2000000, step: 5000, start: 150000 },
+}
+
+const CURRENCY_OPTIONS: Array<{ value: MortgageCurrency; label: string; hint: string }> = [
+  { value: "GHS", label: "Ghana cedi mortgage", hint: "For buyers earning in cedis" },
+  { value: "USD", label: "US dollar mortgage", hint: "Common for diaspora buyers" },
 ]
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-GH", {
-    style: "currency",
-    currency: "GHS",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount)
+const BASIS_STYLE: Record<RateBasis, string> = {
+  published: "bg-teal-50 text-teal-700",
+  "grr-linked": "bg-green-50 text-green-700",
+  reported: "bg-amber-50 text-amber-700",
+  estimate: "bg-gray-100 text-gray-600",
 }
 
 export default function MortgageCalculatorPage() {
-  const [propertyPrice, setPropertyPrice] = useState(500000)
-  const [downPayment, setDownPayment] = useState(100000)
-  const [interestRate, setInterestRate] = useState(26)
-  const [loanTerm, setLoanTerm] = useState(15)
+  const [currency, setCurrency] = useState<MortgageCurrency>("GHS")
+  const [propertyPrice, setPropertyPrice] = useState(PRICE_LIMITS.GHS.start)
+  const [downPayment, setDownPayment] = useState(
+    PRICE_LIMITS.GHS.start * (MORTGAGE_DEFAULTS.GHS.depositPct / 100),
+  )
+  const [interestRate, setInterestRate] = useState(MORTGAGE_DEFAULTS.GHS.rate)
+  const [loanTerm, setLoanTerm] = useState(MORTGAGE_DEFAULTS.GHS.termYears)
 
-  const calculations = useMemo(() => {
-    const principal = propertyPrice - downPayment
-    const monthlyRate = interestRate / 100 / 12
-    const numberOfPayments = loanTerm * 12
+  const { grr, lenders, ratesReviewed } = useMortgageRates()
+  const lenderRates = lenders[currency]
+  const limits = PRICE_LIMITS[currency]
+  const defaults = MORTGAGE_DEFAULTS[currency]
+  const symbol = currencyLabel(currency)
 
-    if (principal <= 0 || monthlyRate <= 0 || numberOfPayments <= 0) {
-      return { monthlyPayment: 0, totalPayment: 0, totalInterest: 0, principal: 0 }
-    }
+  const calculations = useMemo(
+    () =>
+      calculateMortgage({
+        price: propertyPrice,
+        deposit: downPayment,
+        annualRatePct: interestRate,
+        termYears: loanTerm,
+      }),
+    [propertyPrice, downPayment, interestRate, loanTerm],
+  )
 
-    const monthlyPayment =
-      (principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments))) /
-      (Math.pow(1 + monthlyRate, numberOfPayments) - 1)
+  const switchCurrency = (next: MortgageCurrency) => {
+    if (next === currency) return
+    const nextDefaults = MORTGAGE_DEFAULTS[next]
+    const nextPrice = PRICE_LIMITS[next].start
+    setCurrency(next)
+    setPropertyPrice(nextPrice)
+    setDownPayment(nextPrice * (nextDefaults.depositPct / 100))
+    setInterestRate(nextDefaults.rate)
+    setLoanTerm(nextDefaults.termYears)
+  }
 
-    const totalPayment = monthlyPayment * numberOfPayments
-    const totalInterest = totalPayment - principal
+  const handlePriceChange = (value: number) => {
+    setPropertyPrice(value)
+    setDownPayment((current) => clampDeposit(current, value))
+  }
 
-    return {
-      monthlyPayment: isNaN(monthlyPayment) ? 0 : monthlyPayment,
-      totalPayment: isNaN(totalPayment) ? 0 : totalPayment,
-      totalInterest: isNaN(totalInterest) ? 0 : totalInterest,
-      principal,
-    }
-  }, [propertyPrice, downPayment, interestRate, loanTerm])
+  const applyLender = (rate: number, maxTermYears: number) => {
+    setInterestRate(rate)
+    if (loanTerm > maxTermYears) setLoanTerm(maxTermYears)
+  }
 
-  const downPaymentPercent = propertyPrice > 0 ? ((downPayment / propertyPrice) * 100).toFixed(1) : "0"
+  const whatsappMessage = encodeURIComponent(
+    `Hi, I used the mortgage calculator on Dwellot (${formatMoney(propertyPrice, currency)} property, ` +
+      `${formatMoney(calculations.loanAmount, currency)} loan over ${loanTerm} years at ${interestRate}%) ` +
+      `and would like to discuss financing options.`,
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -76,7 +107,12 @@ export default function MortgageCalculatorPage() {
             Ghana Mortgage Calculator
           </h1>
           <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            Estimate your monthly mortgage payments for properties in Ghana
+            Estimate your monthly mortgage payments for properties in Ghana, in cedis or US dollars
+          </p>
+          <p className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-teal-800/60 text-teal-50 text-sm">
+            <Activity className="w-4 h-4" />
+            Ghana Reference Rate: <span className="font-semibold">{grr.rate}%</span>
+            {grr.effectiveDate && <span>effective {formatRateDate(grr.effectiveDate)}</span>}
           </p>
         </div>
       </section>
@@ -89,115 +125,160 @@ export default function MortgageCalculatorPage() {
               <h2 className="text-xl font-bold text-gray-900 mb-6">Calculate Your Mortgage</h2>
 
               <div className="space-y-6">
+                {/* Loan Currency */}
+                <div>
+                  <p className="text-sm font-medium text-gray-700 mb-2">Mortgage Currency</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {CURRENCY_OPTIONS.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => switchCurrency(option.value)}
+                        aria-pressed={currency === option.value}
+                        className={`py-3 px-4 rounded-lg border text-left transition ${
+                          currency === option.value
+                            ? "bg-teal-600 text-white border-teal-600"
+                            : "bg-white text-gray-700 border-gray-300 hover:border-teal-300"
+                        }`}
+                      >
+                        <span className="block font-medium">{option.label}</span>
+                        <span className={`block text-xs ${currency === option.value ? "text-teal-100" : "text-gray-500"}`}>
+                          {option.hint}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Property Price */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="property-price" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <Home className="w-4 h-4 text-teal-600" />
                     Property Price
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
-                      GHS
+                      {symbol}
                     </span>
                     <input
+                      id="property-price"
                       type="number"
-                      value={propertyPrice}
-                      onChange={(e) => setPropertyPrice(Number(e.target.value))}
+                      value={propertyPrice || ""}
+                      onChange={(e) => handlePriceChange(Number(e.target.value))}
                       className="w-full pl-14 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       min={0}
-                      step={10000}
+                      step={limits.step}
                     />
                   </div>
                   <input
                     type="range"
+                    aria-label="Property price"
                     value={propertyPrice}
-                    onChange={(e) => setPropertyPrice(Number(e.target.value))}
-                    min={50000}
-                    max={5000000}
-                    step={10000}
+                    onChange={(e) => handlePriceChange(Number(e.target.value))}
+                    min={limits.min}
+                    max={limits.max}
+                    step={limits.step}
                     className="w-full mt-2 accent-teal-600"
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>GHS 50,000</span>
-                    <span>GHS 5,000,000</span>
+                    <span>{formatMoney(limits.min, currency)}</span>
+                    <span>{formatMoney(limits.max, currency)}</span>
                   </div>
                 </div>
 
                 {/* Down Payment */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                    <DollarSign className="w-4 h-4 text-teal-600" />
-                    Down Payment ({downPaymentPercent}%)
+                  <label htmlFor="down-payment" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                    <Wallet className="w-4 h-4 text-teal-600" />
+                    Down Payment ({calculations.depositPercent.toFixed(1)}%)
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">
-                      GHS
+                      {symbol}
                     </span>
                     <input
+                      id="down-payment"
                       type="number"
-                      value={downPayment}
-                      onChange={(e) => setDownPayment(Number(e.target.value))}
+                      value={downPayment || ""}
+                      onChange={(e) => setDownPayment(clampDeposit(Number(e.target.value), propertyPrice))}
                       className="w-full pl-14 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                       min={0}
                       max={propertyPrice}
-                      step={5000}
+                      step={limits.step / 2}
                     />
                   </div>
                   <input
                     type="range"
+                    aria-label="Down payment"
                     value={downPayment}
-                    onChange={(e) => setDownPayment(Number(e.target.value))}
+                    onChange={(e) => setDownPayment(clampDeposit(Number(e.target.value), propertyPrice))}
                     min={0}
                     max={propertyPrice}
-                    step={5000}
+                    step={limits.step / 2}
                     className="w-full mt-2 accent-teal-600"
                   />
+                  <div className="flex gap-2 mt-2">
+                    {[10, 20, 30].map((percent) => (
+                      <button
+                        key={percent}
+                        type="button"
+                        onClick={() => setDownPayment(Math.round(propertyPrice * (percent / 100)))}
+                        className="px-3 py-1 text-xs font-medium rounded-full border border-gray-300 text-gray-700 hover:border-teal-300"
+                      >
+                        {percent}%
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Interest Rate */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="interest-rate" className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <Percent className="w-4 h-4 text-teal-600" />
                     Annual Interest Rate
                   </label>
                   <div className="relative">
                     <input
+                      id="interest-rate"
                       type="number"
-                      value={interestRate}
+                      value={interestRate || ""}
                       onChange={(e) => setInterestRate(Number(e.target.value))}
                       className="w-full pl-4 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                      min={1}
-                      max={50}
-                      step={0.5}
+                      min={0}
+                      max={60}
+                      step={0.25}
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">%</span>
                   </div>
                   <input
                     type="range"
+                    aria-label="Annual interest rate"
                     value={interestRate}
                     onChange={(e) => setInterestRate(Number(e.target.value))}
-                    min={10}
+                    min={5}
                     max={40}
-                    step={0.5}
+                    step={0.25}
                     className="w-full mt-2 accent-teal-600"
                   />
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
-                    <span>10%</span>
+                    <span>5%</span>
                     <span>40%</span>
                   </div>
                 </div>
 
                 {/* Loan Term */}
                 <div>
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                  <p className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
                     <Calendar className="w-4 h-4 text-teal-600" />
                     Loan Term
-                  </label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {[5, 10, 15, 20].map((term) => (
+                  </p>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {defaults.terms.map((term) => (
                       <button
                         key={term}
+                        type="button"
                         onClick={() => setLoanTerm(term)}
+                        aria-pressed={loanTerm === term}
                         className={`py-3 px-4 rounded-lg border font-medium transition ${
                           loanTerm === term
                             ? "bg-teal-600 text-white border-teal-600"
@@ -214,35 +295,58 @@ export default function MortgageCalculatorPage() {
 
             {/* Bank Rates Reference */}
             <div className="bg-white rounded-xl border border-gray-200 p-6 md:p-8 mt-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <h3 className="text-lg font-bold text-gray-900 mb-1 flex items-center gap-2">
                 <Building2 className="w-5 h-5 text-teal-600" />
-                Current Bank Mortgage Rates in Ghana
+                {currency === "GHS" ? "Cedi" : "US Dollar"} Mortgage Rates from Banks in Ghana
               </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Rates reviewed {formatRateDate(ratesReviewed)}. Ghana Reference Rate {grr.rate}%
+                {grr.effectiveDate ? `, effective ${formatRateDate(grr.effectiveDate)}` : ""} (source:{" "}
+                <a
+                  href={grr.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-teal-600 hover:text-teal-700 underline"
+                >
+                  {grr.source}
+                </a>
+                {grr.live ? ", live" : ""}).
+              </p>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-200">
                       <th className="text-left py-3 font-semibold text-gray-700">Bank</th>
-                      <th className="text-center py-3 font-semibold text-gray-700">Interest Rate</th>
+                      <th className="text-left py-3 font-semibold text-gray-700">Interest Rate</th>
+                      <th className="text-left py-3 font-semibold text-gray-700">Basis</th>
                       <th className="text-center py-3 font-semibold text-gray-700">Max Term</th>
                       <th className="text-right py-3 font-semibold text-gray-700">Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {BANKS.map((bank) => (
-                      <tr key={bank.name} className="border-b border-gray-100 last:border-0">
-                        <td className="py-3 font-medium text-gray-900">{bank.name}</td>
-                        <td className="py-3 text-center text-gray-700">{bank.rate}%</td>
-                        <td className="py-3 text-center text-gray-700">{bank.maxTerm} years</td>
+                    {lenderRates.map((lender) => (
+                      <tr key={lender.id} className="border-b border-gray-100 last:border-0">
+                        <td className="py-3 font-medium text-gray-900">
+                          {lender.name}
+                          {lender.note && <span className="block text-xs font-normal text-gray-500">{lender.note}</span>}
+                        </td>
+                        <td className="py-3 text-gray-700 whitespace-nowrap">{lender.display}</td>
+                        <td className="py-3">
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${BASIS_STYLE[lender.basis]}`}
+                          >
+                            {BASIS_LABEL[lender.basis]}
+                          </span>
+                          <span className="block text-xs text-gray-500 mt-0.5">{formatRateDate(lender.asOf)}</span>
+                        </td>
+                        <td className="py-3 text-center text-gray-700 whitespace-nowrap">{lender.maxTermYears} years</td>
                         <td className="py-3 text-right">
                           <button
-                            onClick={() => {
-                              setInterestRate(bank.rate)
-                              if (loanTerm > bank.maxTerm) setLoanTerm(bank.maxTerm)
-                            }}
-                            className="text-teal-600 hover:text-teal-700 font-medium text-sm"
+                            type="button"
+                            onClick={() => applyLender(lender.rate, lender.maxTermYears)}
+                            className="text-teal-600 hover:text-teal-700 font-medium text-sm whitespace-nowrap"
                           >
-                            Apply Rate
+                            Apply {lender.rate}%
                           </button>
                         </td>
                       </tr>
@@ -250,10 +354,16 @@ export default function MortgageCalculatorPage() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-xs text-gray-500 mt-4 flex items-start gap-1.5">
+              <div className="text-xs text-gray-500 mt-4 flex items-start gap-1.5">
                 <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                Rates are indicative only and subject to change. Contact banks directly for current offers.
-              </p>
+                <p>
+                  Most banks in Ghana do not publish a mortgage rate, so only rows marked &quot;Published by bank&quot; or
+                  &quot;Live: tracks GRR&quot; come from a bank&apos;s own published terms. &quot;Reported&quot; and
+                  &quot;Estimate&quot; rows are indicative market figures; applying an estimate uses the middle of its
+                  range. Cedi mortgages are usually priced as the Ghana Reference Rate plus the bank&apos;s margin. Rates
+                  exclude fees and insurance. Always confirm the current offer with the bank.
+                </p>
+              </div>
             </div>
           </div>
 
@@ -266,7 +376,7 @@ export default function MortgageCalculatorPage() {
               <div className="bg-teal-50 rounded-xl p-6 mb-6 text-center">
                 <p className="text-sm text-teal-700 font-medium mb-1">Monthly Payment</p>
                 <p className="text-3xl md:text-4xl font-bold text-teal-700">
-                  {formatCurrency(calculations.monthlyPayment)}
+                  {formatMoney(calculations.monthlyPayment, currency)}
                 </p>
               </div>
 
@@ -275,19 +385,19 @@ export default function MortgageCalculatorPage() {
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
                   <span className="text-gray-600">Loan Amount</span>
                   <span className="font-semibold text-gray-900">
-                    {formatCurrency(calculations.principal)}
+                    {formatMoney(calculations.loanAmount, currency)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
                   <span className="text-gray-600">Total Interest</span>
                   <span className="font-semibold text-gray-900">
-                    {formatCurrency(calculations.totalInterest)}
+                    {formatMoney(calculations.totalInterest, currency)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
                   <span className="text-gray-600">Total Payment</span>
                   <span className="font-semibold text-gray-900">
-                    {formatCurrency(calculations.totalPayment)}
+                    {formatMoney(calculations.totalPayment, currency)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3">
@@ -302,9 +412,7 @@ export default function MortgageCalculatorPage() {
                 <div className="h-4 rounded-full overflow-hidden flex">
                   <div
                     className="bg-teal-600"
-                    style={{
-                      width: `${(calculations.principal / calculations.totalPayment) * 100 || 50}%`,
-                    }}
+                    style={{ width: `${calculations.totalPayment > 0 ? calculations.principalSharePct : 50}%` }}
                   />
                   <div className="bg-orange-400 flex-1" />
                 </div>
@@ -330,7 +438,7 @@ export default function MortgageCalculatorPage() {
                   <ChevronRight className="w-4 h-4" />
                 </Link>
                 <a
-                  href="https://wa.me/447576368312?text=Hi%2C%20I%20used%20the%20mortgage%20calculator%20on%20Dwellot%20and%20would%20like%20to%20discuss%20financing%20options."
+                  href={`https://wa.me/447576368312?text=${whatsappMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-green-700 transition"

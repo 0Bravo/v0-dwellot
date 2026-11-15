@@ -1,37 +1,57 @@
 "use client"
 
-import { useState } from "react"
-import { Calculator, DollarSign, Percent, Calendar } from "lucide-react"
+import { useMemo, useState } from "react"
+import Link from "next/link"
+import { Calculator, Calendar, Home, Percent, Wallet } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import {
+  calculateMortgage,
+  clampDeposit,
+  currencyLabel,
+  formatMoney,
+  toMortgageCurrency,
+} from "@/lib/mortgage/calc"
+import { MORTGAGE_DEFAULTS, formatRateDate } from "@/lib/mortgage/rates"
+import { useMortgageRates } from "@/hooks/use-mortgage-rates"
 
 interface MortgageCalculatorProps {
   propertyPrice?: number
+  /** Currency the property is priced in. Dwellot listings default to USD. */
+  currency?: string | null
 }
 
-export default function MortgageCalculator({ propertyPrice = 0 }: MortgageCalculatorProps) {
+export default function MortgageCalculator({ propertyPrice = 0, currency }: MortgageCalculatorProps) {
+  const loanCurrency = toMortgageCurrency(currency)
+  const defaults = MORTGAGE_DEFAULTS[loanCurrency]
+  const symbol = currencyLabel(loanCurrency)
+
   const [price, setPrice] = useState(propertyPrice)
-  const [downPayment, setDownPayment] = useState(propertyPrice * 0.2) // 20% default
-  const [interestRate, setInterestRate] = useState(6.5)
-  const [loanTerm, setLoanTerm] = useState(30)
+  const [deposit, setDeposit] = useState(Math.round(propertyPrice * (defaults.depositPct / 100)))
+  const [interestRate, setInterestRate] = useState(defaults.rate)
+  const [loanTerm, setLoanTerm] = useState(defaults.termYears)
 
-  const loanAmount = price - downPayment
-  const monthlyRate = interestRate / 100 / 12
-  const numberOfPayments = loanTerm * 12
+  const { grr, lenders } = useMortgageRates()
+  const lenderRates = lenders[loanCurrency]
 
-  // Calculate monthly payment using mortgage formula
-  const monthlyPayment =
-    loanAmount > 0
-      ? (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) /
-        (Math.pow(1 + monthlyRate, numberOfPayments) - 1)
-      : 0
+  const result = useMemo(
+    () => calculateMortgage({ price, deposit, annualRatePct: interestRate, termYears: loanTerm }),
+    [price, deposit, interestRate, loanTerm],
+  )
 
-  const totalPayment = monthlyPayment * numberOfPayments
-  const totalInterest = totalPayment - loanAmount
+  const handlePriceChange = (value: number) => {
+    setPrice(value)
+    setDeposit((current) => clampDeposit(current, value))
+  }
 
-  const downPaymentPercent = price > 0 ? (downPayment / price) * 100 : 0
+  const setDepositPercent = (percent: number) => setDeposit(Math.round(price * (percent / 100)))
+
+  const applyLender = (rate: number, maxTermYears: number) => {
+    setInterestRate(rate)
+    if (loanTerm > maxTermYears) setLoanTerm(maxTermYears)
+  }
 
   return (
     <Card className="w-full">
@@ -40,132 +60,154 @@ export default function MortgageCalculator({ propertyPrice = 0 }: MortgageCalcul
           <Calculator className="w-5 h-5 text-teal-600" />
           Mortgage Calculator
         </CardTitle>
-        <CardDescription>Estimate your monthly mortgage payments</CardDescription>
+        <CardDescription>
+          Estimate monthly repayments on a {loanCurrency === "USD" ? "US dollar" : "Ghana cedi"} mortgage from a
+          bank in Ghana
+        </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Property Price */}
         <div className="space-y-2">
-          <Label htmlFor="price" className="flex items-center gap-2">
-            <DollarSign className="w-4 h-4" />
-            Property Price
+          <Label htmlFor="mc-price" className="flex items-center gap-2">
+            <Home className="w-4 h-4" />
+            Property Price ({symbol})
           </Label>
           <Input
-            id="price"
+            id="mc-price"
             type="number"
+            min={0}
             value={price || ""}
-            onChange={(e) => setPrice(Number(e.target.value))}
+            onChange={(e) => handlePriceChange(Number(e.target.value))}
             placeholder="Enter property price"
           />
         </div>
 
-        {/* Down Payment */}
+        {/* Deposit */}
         <div className="space-y-2">
-          <Label htmlFor="downPayment" className="flex items-center justify-between">
+          <Label htmlFor="mc-deposit" className="flex items-center justify-between">
             <span className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4" />
-              Down Payment
+              <Wallet className="w-4 h-4" />
+              Deposit ({symbol})
             </span>
-            <span className="text-sm text-muted-foreground">{downPaymentPercent.toFixed(1)}%</span>
+            <span className="text-sm text-muted-foreground">{result.depositPercent.toFixed(1)}%</span>
           </Label>
           <Input
-            id="downPayment"
+            id="mc-deposit"
             type="number"
-            value={downPayment || ""}
-            onChange={(e) => setDownPayment(Number(e.target.value))}
-            placeholder="Enter down payment"
+            min={0}
+            max={price}
+            value={deposit || ""}
+            onChange={(e) => setDeposit(clampDeposit(Number(e.target.value), price))}
+            placeholder="Enter deposit"
           />
           <div className="flex gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => setDownPayment(price * 0.1)}>
-              10%
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => setDownPayment(price * 0.2)}>
-              20%
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => setDownPayment(price * 0.3)}>
-              30%
-            </Button>
+            {[10, 20, 30].map((percent) => (
+              <Button key={percent} type="button" variant="outline" size="sm" onClick={() => setDepositPercent(percent)}>
+                {percent}%
+              </Button>
+            ))}
           </div>
         </div>
 
         {/* Interest Rate */}
         <div className="space-y-2">
-          <Label htmlFor="interestRate" className="flex items-center gap-2">
+          <Label htmlFor="mc-rate" className="flex items-center gap-2">
             <Percent className="w-4 h-4" />
-            Interest Rate (Annual)
+            Interest Rate (% per year)
           </Label>
           <Input
-            id="interestRate"
+            id="mc-rate"
             type="number"
+            min={0}
+            max={60}
             step="0.1"
             value={interestRate || ""}
             onChange={(e) => setInterestRate(Number(e.target.value))}
             placeholder="Enter interest rate"
           />
+          {lenderRates.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {lenderRates.slice(0, 4).map((lender) => (
+                <Button
+                  key={lender.id}
+                  type="button"
+                  variant={interestRate === lender.rate ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => applyLender(lender.rate, lender.maxTermYears)}
+                  title={`${lender.name}: ${lender.display}, up to ${lender.maxTermYears} years`}
+                >
+                  {lender.name} {lender.rate}%
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Loan Term */}
         <div className="space-y-2">
-          <Label htmlFor="loanTerm" className="flex items-center gap-2">
+          <Label className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
-            Loan Term (Years)
+            Loan Term (years)
           </Label>
-          <Input
-            id="loanTerm"
-            type="number"
-            value={loanTerm || ""}
-            onChange={(e) => setLoanTerm(Number(e.target.value))}
-            placeholder="Enter loan term"
-          />
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => setLoanTerm(15)}>
-              15 years
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => setLoanTerm(20)}>
-              20 years
-            </Button>
-            <Button type="button" variant="outline" size="sm" onClick={() => setLoanTerm(30)}>
-              30 years
-            </Button>
+          <div className="flex flex-wrap gap-2">
+            {defaults.terms.map((term) => (
+              <Button
+                key={term}
+                type="button"
+                variant={loanTerm === term ? "default" : "outline"}
+                size="sm"
+                onClick={() => setLoanTerm(term)}
+              >
+                {term} years
+              </Button>
+            ))}
           </div>
         </div>
 
         {/* Results */}
         <div className="pt-4 border-t space-y-4">
           <div className="bg-teal-50 dark:bg-teal-950 p-4 rounded-lg">
-            <div className="text-sm text-muted-foreground mb-1">Monthly Payment</div>
-            <div className="text-3xl font-bold text-teal-600">
-              ${monthlyPayment.toLocaleString("en-US", { maximumFractionDigits: 0 })}
-            </div>
+            <div className="text-sm text-muted-foreground mb-1">Estimated Monthly Payment</div>
+            <div className="text-3xl font-bold text-teal-600">{formatMoney(result.monthlyPayment, loanCurrency)}</div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
               <div className="text-sm text-muted-foreground mb-1">Loan Amount</div>
-              <div className="text-lg font-semibold">
-                ${loanAmount.toLocaleString("en-US", { maximumFractionDigits: 0 })}
-              </div>
+              <div className="text-lg font-semibold">{formatMoney(result.loanAmount, loanCurrency)}</div>
             </div>
             <div>
               <div className="text-sm text-muted-foreground mb-1">Total Interest</div>
-              <div className="text-lg font-semibold">
-                ${totalInterest.toLocaleString("en-US", { maximumFractionDigits: 0 })}
-              </div>
+              <div className="text-lg font-semibold">{formatMoney(result.totalInterest, loanCurrency)}</div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground mb-1">Total Payment</div>
-              <div className="text-lg font-semibold">
-                ${totalPayment.toLocaleString("en-US", { maximumFractionDigits: 0 })}
-              </div>
+              <div className="text-sm text-muted-foreground mb-1">Total Repaid</div>
+              <div className="text-lg font-semibold">{formatMoney(result.totalPayment, loanCurrency)}</div>
             </div>
             <div>
-              <div className="text-sm text-muted-foreground mb-1">Number of Payments</div>
-              <div className="text-lg font-semibold">{numberOfPayments}</div>
+              <div className="text-sm text-muted-foreground mb-1">Monthly Payments</div>
+              <div className="text-lg font-semibold">{result.numberOfPayments}</div>
             </div>
           </div>
         </div>
 
-        <div className="text-xs text-muted-foreground">
-          * This is an estimate. Actual payments may vary based on property taxes, insurance, and other factors.
+        <div className="text-xs text-muted-foreground space-y-1">
+          <p>
+            Estimate only. Bank rates shown are indicative and exclude fees and insurance; your rate depends on the
+            bank and your circumstances.
+            {loanCurrency === "GHS" && (
+              <>
+                {" "}
+                Ghana Reference Rate: {grr.rate}%
+                {grr.effectiveDate ? ` (effective ${formatRateDate(grr.effectiveDate)})` : ""}.
+              </>
+            )}
+          </p>
+          <p>
+            <Link href="/mortgage-calculator" className="text-teal-600 hover:text-teal-700 font-medium">
+              Compare all bank rates in the full mortgage calculator
+            </Link>
+          </p>
         </div>
       </CardContent>
     </Card>
