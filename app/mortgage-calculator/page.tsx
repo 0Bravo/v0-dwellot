@@ -24,6 +24,8 @@ import {
 } from "@/lib/mortgage/calc"
 import { BASIS_LABEL, MORTGAGE_DEFAULTS, formatRateDate, type RateBasis } from "@/lib/mortgage/rates"
 import { useMortgageRates } from "@/hooks/use-mortgage-rates"
+import AffordabilityCalculator from "@/components/mortgage/AffordabilityCalculator"
+import MortgageLeadForm from "@/components/mortgage/MortgageLeadForm"
 
 const PRICE_LIMITS: Record<MortgageCurrency, { min: number; max: number; step: number; start: number }> = {
   GHS: { min: 50000, max: 10000000, step: 10000, start: 1000000 },
@@ -430,12 +432,18 @@ export default function MortgageCalculatorPage() {
 
               {/* CTAs */}
               <div className="space-y-3">
-                <Link
-                  href="/properties"
+                <a
+                  href="#mortgage-options"
                   className="w-full flex items-center justify-center gap-2 bg-teal-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-teal-700 transition"
                 >
-                  Browse Properties
+                  Get My Mortgage Options
                   <ChevronRight className="w-4 h-4" />
+                </a>
+                <Link
+                  href="/properties"
+                  className="w-full flex items-center justify-center gap-2 bg-white text-teal-700 border border-teal-600 py-3 px-4 rounded-lg font-medium hover:bg-teal-50 transition"
+                >
+                  Browse Properties
                 </Link>
                 <a
                   href={`https://wa.me/447576368312?text=${whatsappMessage}`}
@@ -450,6 +458,48 @@ export default function MortgageCalculatorPage() {
             </div>
           </div>
         </div>
+
+        {/* Affordability */}
+        <div className="mt-8">
+          <AffordabilityCalculator
+            key={currency}
+            currency={currency}
+            interestRate={interestRate}
+            termYears={loanTerm}
+            onUseResult={(price, deposit) => {
+              setPropertyPrice(price)
+              setDownPayment(clampDeposit(deposit, price))
+              window.scrollTo({ top: 0, behavior: "smooth" })
+            }}
+          />
+        </div>
+
+        {/* Lead capture */}
+        <div className="mt-8" id="mortgage-options">
+          <MortgageLeadForm
+            context={{
+              currency,
+              propertyPrice,
+              deposit: downPayment,
+              loanAmount: calculations.loanAmount,
+              monthlyPayment: calculations.monthlyPayment,
+              interestRate,
+              termYears: loanTerm,
+            }}
+          />
+        </div>
+
+        <p className="mt-6 text-sm text-gray-600">
+          More on financing a home in Ghana:{" "}
+          <Link href="/finance" className="text-teal-600 hover:text-teal-700 font-medium underline">
+            Dwellot property finance hub
+          </Link>{" "}
+          and the{" "}
+          <Link href="/finance/ghana-reference-rate" className="text-teal-600 hover:text-teal-700 font-medium underline">
+            current Ghana Reference Rate
+          </Link>
+          .
+        </p>
 
         {/* Info Section */}
         <section className="mt-12 bg-white rounded-xl border border-gray-200 p-6 md:p-8">

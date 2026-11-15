@@ -52,6 +52,16 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/mortgage-calculator" className="text-gray-400 hover:text-white transition-colors">
+                  Mortgage Calculator
+                </Link>
+              </li>
+              <li>
+                <Link href="/finance" className="text-gray-400 hover:text-white transition-colors">
+                  Property Finance
+                </Link>
+              </li>
+              <li>
                 <Link href="/blog" className="text-gray-400 hover:text-white transition-colors">
                   Blog
                 </Link>

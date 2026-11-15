@@ -94,6 +94,53 @@ export function calculateMortgage(input: MortgageInput): MortgageResult {
   }
 }
 
+export interface AffordabilityInput {
+  /** Net monthly income in the loan currency */
+  monthlyIncome: number
+  /** Existing monthly loan and credit repayments */
+  monthlyDebts: number
+  /** Deposit available */
+  deposit: number
+  annualRatePct: number
+  termYears: number
+  /** Share of income a lender allows for all debt repayments, e.g. 40 */
+  debtServiceRatioPct: number
+}
+
+export interface AffordabilityResult {
+  /** Monthly amount available for the mortgage after existing debts */
+  maxMonthlyPayment: number
+  maxLoan: number
+  /** Loan plus deposit */
+  maxPropertyPrice: number
+}
+
+/**
+ * How much someone could borrow: the largest loan whose monthly repayment
+ * fits inside the lender's debt service ratio after existing debts.
+ */
+export function calculateAffordability(input: AffordabilityInput): AffordabilityResult {
+  const income = Math.max(0, safe(input.monthlyIncome))
+  const debts = Math.max(0, safe(input.monthlyDebts))
+  const deposit = Math.max(0, safe(input.deposit))
+  const rate = Math.max(0, safe(input.annualRatePct))
+  const months = Math.round(Math.max(0, safe(input.termYears)) * 12)
+  const dsr = Math.min(100, Math.max(0, safe(input.debtServiceRatioPct)))
+
+  const maxMonthlyPayment = Math.max(0, income * (dsr / 100) - debts)
+  if (maxMonthlyPayment <= 0 || months <= 0) {
+    return { maxMonthlyPayment, maxLoan: 0, maxPropertyPrice: deposit }
+  }
+
+  const monthlyRate = rate / 100 / 12
+  const maxLoan =
+    monthlyRate === 0
+      ? maxMonthlyPayment * months
+      : safe((maxMonthlyPayment * (1 - Math.pow(1 + monthlyRate, -months))) / monthlyRate)
+
+  return { maxMonthlyPayment, maxLoan, maxPropertyPrice: maxLoan + deposit }
+}
+
 /** Normalise whatever is stored on a property to a supported loan currency. */
 export function toMortgageCurrency(currency?: string | null): MortgageCurrency {
   const c = (currency || "").trim().toUpperCase()
