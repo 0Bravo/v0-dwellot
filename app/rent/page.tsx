@@ -5,7 +5,7 @@ import RentClient from "./RentClient"
 export const revalidate = 60
 
 export const metadata: Metadata = {
-  title: "Properties for Rent in Ghana | Houses & Apartments | Dwellot",
+  title: "Properties for Rent in Ghana | Houses & Apartments",
   description:
     "Browse verified rental properties in Ghana. Find houses, apartments, and commercial spaces for rent in Accra, Kumasi, and across Ghana. Filter by location, price, and bedrooms.",
   alternates: {

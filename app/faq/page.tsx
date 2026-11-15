@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export const metadata: Metadata = {
-  title: "FAQ - Ghana Property Questions Answered | Dwellot",
+  title: "FAQ - Ghana Property Questions Answered",
   description:
     "Get answers to common questions about buying, renting, and investing in Ghana property. Learn about property costs, legal requirements, best areas in Accra, and more.",
   keywords:

@@ -50,6 +50,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
       title: property.title || "",
       location: property.location || "",
       price: property.price || 0,
+      currency: property.currency ?? null,
       listing_type: property.listing_type || "sale",
       property_type: property.property_type || "House",
       bedrooms: property.bedrooms || 0,

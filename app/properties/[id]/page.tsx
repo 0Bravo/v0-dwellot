@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
   if (!property) {
     return {
-      title: "Property Not Found | Dwellot Ghana",
+      title: "Property Not Found",
       description: "The property you're looking for could not be found. Browse other properties in Ghana.",
     }
   }

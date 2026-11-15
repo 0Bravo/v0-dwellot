@@ -16,7 +16,7 @@ import {
 } from "lucide-react"
 
 export const metadata = {
-  title: "List Your Property | Dwellot",
+  title: "List Your Property",
   description:
     "List your property for sale or rent on Dwellot. Reach thousands of potential buyers and renters across Ghana.",
 }

@@ -4,7 +4,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar"
 import AdminHeader from "@/components/admin/AdminHeader"
 
 export const metadata = {
-  title: "Admin Dashboard | Dwellot",
+  title: "Admin Dashboard",
   description: "Manage properties, users, and site content",
 }
 

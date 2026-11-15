@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Own a Beautiful Home in Ghana — From Anywhere in the World | Dwellot",
+  title: "Own a Beautiful Home in Ghana — From Anywhere in the World",
   description:
     "Browse 500+ verified residential properties across Ghana. Remote purchase support for Ghanaian diaspora worldwide. Get your free property consultation today.",
   keywords:

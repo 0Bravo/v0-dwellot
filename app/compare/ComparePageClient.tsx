@@ -5,12 +5,14 @@ import { useSearchParams, useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { X, Plus, ArrowLeft, Check, Minus } from "lucide-react"
+import { formatListingPrice } from "@/lib/format-price"
 
 interface Property {
   id: string
   title: string
   location: string
   price: number
+  currency?: string | null
   listing_type: string
   property_type: string
   bedrooms: number
@@ -58,9 +60,8 @@ export default function ComparePageClient() {
     }
   }
 
-  const formatPrice = (price: number, listingType: string) => {
-    return `$${price.toLocaleString()}${listingType === "rent" ? "/month" : ""}`
-  }
+  const formatPrice = (price: number, listingType: string, currency?: string | null) =>
+    formatListingPrice(price, currency, listingType)
 
   if (loading) {
     return (
@@ -150,7 +151,7 @@ export default function ComparePageClient() {
                         <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{property.title}</h3>
                         <p className="text-sm text-gray-600 mb-2">{property.location}</p>
                         <div className="text-xl font-bold text-blue-600">
-                          {formatPrice(property.price, property.listing_type)}
+                          {formatPrice(property.price, property.listing_type, property.currency)}
                         </div>
                       </div>
                     </th>

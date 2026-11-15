@@ -34,6 +34,7 @@ import { useRecentlyViewed } from "@/contexts/RecentlyViewedContext"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { trackEnquiry } from "@/lib/utils/track-enquiry"
 import { trackViewContent, trackContact } from "@/lib/facebook-pixel"
+import { formatPrice as formatMoneyPrice, formatListingPrice } from "@/lib/format-price"
 
 // Lazy-load heavy components that are not needed on initial render
 const PropertyPrint = dynamic(() => import("@/components/PropertyPrint"), { ssr: false })
@@ -67,6 +68,7 @@ interface Property {
     phone: string
   }
   view_count: number
+  enquiry_count?: number
   created_at: string
   updated_at: string
 }
@@ -176,9 +178,8 @@ export default function PropertyDetailsClient() {
     }
   }
 
-  const formatPrice = (price: number, listingType: string) => {
-    return `$ ${price.toLocaleString()}${listingType === "rent" ? "/month" : ""}`
-  }
+  const formatPrice = (price: number, listingType: string) =>
+    formatListingPrice(price, property?.currency, listingType)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-GB", {
@@ -319,7 +320,7 @@ export default function PropertyDetailsClient() {
           onClose={() => setShowShareModal(false)}
           url={typeof window !== "undefined" ? window.location.href : ""}
           title={property.title}
-          description={`${property.listing_type === "sale" ? "For Sale" : "For Rent"} - ${property.location}. ${property.bedrooms} bed, ${property.bathrooms} bath. $${property.price.toLocaleString()}`}
+          description={`${property.listing_type === "sale" ? "For Sale" : "For Rent"} - ${property.location}. ${property.bedrooms} bed, ${property.bathrooms} bath. ${formatMoneyPrice(property.price, property.currency)}`}
           imageUrl={property.images?.[0]}
           onShare={(platform) => {
             if (property) {

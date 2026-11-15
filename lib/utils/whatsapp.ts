@@ -1,4 +1,5 @@
 const DEFAULT_DWELLOT_NUMBER = "447576368312"
+import { formatPrice as formatMoneyPrice } from "@/lib/format-price"
 
 function formatPhone(phone: string): string {
   return phone.replace(/[\s\-()]/g, "").replace(/^0/, "233")
@@ -10,6 +11,7 @@ export function generateWhatsAppUrl(
     title: string
     location: string
     price: number
+    currency?: string | null
     bedrooms?: number
     bathrooms?: number
     area?: number
@@ -21,7 +23,7 @@ export function generateWhatsAppUrl(
   const phone = property.agent_phone || property.phone
   const number = phone ? formatPhone(phone) : DEFAULT_DWELLOT_NUMBER
 
-  const priceFormatted = `USD $${property.price?.toLocaleString() ?? "0"}`
+  const priceFormatted = formatMoneyPrice(property.price, property.currency)
   const propertyUrl = `https://dwellot.com/properties/${property.id}`
 
   let message: string

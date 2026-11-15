@@ -17,7 +17,7 @@ function FacebookPixelTracker() {
       initPixel()
       trackPageView()
     }
-    if ("requestIdleCallback" in window) {
+    if (typeof window.requestIdleCallback === "function") {
       const id = window.requestIdleCallback(start, { timeout: 4000 })
       return () => window.cancelIdleCallback(id)
     }

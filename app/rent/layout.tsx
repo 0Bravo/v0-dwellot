@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Properties for Rent in Ghana | Apartments & Houses to Rent | Dwellot",
+  title: "Properties for Rent in Ghana | Apartments & Houses to Rent",
   description: "Find apartments, houses, and commercial spaces for rent in Accra, Kumasi, and across Ghana. Verified listings with photos, prices, and direct agent contact.",
   alternates: { canonical: "https://dwellot.com/rent" },
 }

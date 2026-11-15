@@ -26,6 +26,7 @@ import {
   Building2,
   Landmark,
 } from "lucide-react"
+import { formatPrice as formatMoneyPrice } from "@/lib/format-price"
 
 interface Suggestion {
   label: string
@@ -60,6 +61,7 @@ interface Property {
   title: string
   location: string
   price: number
+  currency?: string | null
   property_type: string
   listing_type: string
   bedrooms: number
@@ -240,7 +242,7 @@ function RentalPropertyCard({ property }: { property: Property }) {
 
         <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
           <span className="text-xl font-bold text-gray-900">
-            ${property.price.toLocaleString()}
+            {formatMoneyPrice(property.price, property.currency)}
             <span className="text-sm font-normal text-gray-500">/mo</span>
           </span>
           <span className="text-xs text-gray-400">

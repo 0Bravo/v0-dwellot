@@ -5,7 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 export const metadata: Metadata = {
-  title: "Ghana Property Blog - Real Estate Tips, Guides & Market Updates | Dwellot",
+  title: "Ghana Property Blog - Real Estate Tips, Guides & Market Updates",
   description:
     "Expert insights on buying, selling, and renting property in Ghana. Property investment tips, area guides, legal advice, and market trends for Accra, Kumasi, East Legon, and beyond.",
   keywords:
