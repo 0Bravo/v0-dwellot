@@ -1,7 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Mortgage Calculator | Dwellot",
+  title: "Ghana Mortgage Calculator: Cedi and US Dollar Home Loans",
+  alternates: { canonical: "https://dwellot.com/mortgage-calculator" },
   description:
     "Calculate monthly mortgage payments for properties in Ghana in cedis or US dollars. Compare rates from Republic Bank, Absa, Stanbic and more, with the current Ghana Reference Rate.",
   openGraph: {

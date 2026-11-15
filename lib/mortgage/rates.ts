@@ -40,6 +40,26 @@ export const GRR_FALLBACK: GrrSnapshot = {
   live: false,
 }
 
+export interface GrrHistoryEntry {
+  /** Month the rate applies to (ISO YYYY-MM) */
+  month: string
+  rate: number
+  /** Effective date (ISO) when known */
+  effectiveDate?: string
+}
+
+/**
+ * Past Ghana Reference Rates, newest first. Add each new month here; the
+ * rate page also shows the live figure automatically if it is newer.
+ */
+export const GRR_HISTORY: GrrHistoryEntry[] = [
+  { month: "2026-11", rate: 10.01, effectiveDate: "2026-11-04" },
+  { month: "2026-10", rate: 10.04, effectiveDate: "2026-10-07" },
+  { month: "2026-09", rate: 10.18, effectiveDate: "2026-09-02" },
+  { month: "2026-08", rate: 10.61 },
+  { month: "2026-04", rate: 10.06 },
+]
+
 /**
  * published  - the bank states this rate on its own website or tariff guide
  * grr-linked - the bank publishes a margin over the GRR; rate = GRR + margin
