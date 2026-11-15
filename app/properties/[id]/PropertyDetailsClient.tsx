@@ -48,6 +48,7 @@ interface Property {
   title: string
   location: string
   price: number
+  currency?: string | null
   listing_type: string
   property_type: string
   bedrooms: number
@@ -553,7 +554,7 @@ export default function PropertyDetailsClient() {
               {property.listing_type === "sale" && (
                 <div className="mb-8">
                   <h2 className="text-2xl font-bold text-gray-900 mb-4">Mortgage Calculator</h2>
-                  <MortgageCalculator propertyPrice={property.price} />
+                  <MortgageCalculator propertyPrice={property.price} currency={property.currency} />
                 </div>
               )}
             </div>

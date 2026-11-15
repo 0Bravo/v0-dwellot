@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 export const metadata: Metadata = {
   title: "Mortgage Calculator | Dwellot",
   description:
-    "Calculate your monthly mortgage payments for properties in Ghana. Compare rates from GCB Bank, Absa, Stanbic, and more. Free mortgage calculator tool.",
+    "Calculate monthly mortgage payments for properties in Ghana in cedis or US dollars. Compare rates from Republic Bank, Absa, Stanbic and more, with the current Ghana Reference Rate.",
   openGraph: {
     title: "Ghana Mortgage Calculator | Dwellot",
     description:
