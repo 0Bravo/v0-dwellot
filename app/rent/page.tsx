@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 }
 
 const SELECT_FIELDS =
-  "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, agent, phone, view_count, created_at"
+  "id, title, location, price, currency, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, agent, phone, view_count, created_at"
 
 async function getRentalProperties(params: Record<string, string | undefined>) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL

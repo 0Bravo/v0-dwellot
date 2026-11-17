@@ -38,7 +38,7 @@ export async function GET(request: Request) {
     let query = supabase
       .from("properties")
       .select(
-        "id, title, location, price, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, featured, status, agent, phone, view_count, created_at",
+        "id, title, location, price, currency, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, featured, status, agent, phone, view_count, created_at",
         { count: "exact" },
       )
     // Admin can see all statuses or filter by specific status
