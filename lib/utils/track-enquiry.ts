@@ -1,7 +1,8 @@
 export type EnquiryType = "whatsapp" | "phone_call" | "email" | "contact_form" | "schedule_viewing"
 
 interface TrackEnquiryParams {
-  property_id: number
+  /** Property IDs are numeric in the database but arrive as strings from the API */
+  property_id: number | string
   enquiry_type: EnquiryType
   source_page: string
   visitor_name?: string

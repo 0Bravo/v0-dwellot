@@ -5,7 +5,7 @@ import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard | Dwellot",
+  title: "Admin Dashboard",
   description: "Manage your Dwellot properties, enquiries, and more",
 }
 

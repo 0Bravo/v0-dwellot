@@ -2,12 +2,14 @@
 
 import Image from "next/image"
 import { MapPin, Bed, Bath, Square, Car, Phone, Mail, Globe } from "lucide-react"
+import { formatListingPrice } from "@/lib/format-price"
 
 interface Property {
   id: string
   title: string
   location: string
   price: number
+  currency?: string | null
   listing_type: string
   property_type: string
   bedrooms: number
@@ -29,9 +31,8 @@ interface PropertyPrintViewProps {
 }
 
 export default function PropertyPrintView({ property }: PropertyPrintViewProps) {
-  const formatPrice = (price: number, listingType: string) => {
-    return `$ ${price.toLocaleString()}${listingType === "rent" ? "/month" : ""}`
-  }
+  const formatPrice = (price: number, listingType: string) =>
+    formatListingPrice(price, property.currency, listingType)
 
   return (
     <div className="print:block hidden">

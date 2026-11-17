@@ -24,6 +24,7 @@ import {
     Landmark,
 } from "lucide-react"
 import { trackSearch } from "@/lib/facebook-pixel"
+import { formatPrice as formatMoneyPrice } from "@/lib/format-price"
 
 interface Suggestion {
     label: string
@@ -68,6 +69,7 @@ interface Property {
     title: string
     location: string
     price: number
+    currency?: string | null
     property_type: string
     listing_type: string
     bedrooms: number
@@ -268,7 +270,7 @@ function PropertyCard({ property }: { property: Property }) {
                       </div>
                       <div className="mt-auto pt-3 border-t border-gray-100 flex items-center justify-between">
                                 <span className="text-xl font-bold text-gray-900">
-                                            ${property.price.toLocaleString()}
+                                            {formatMoneyPrice(property.price, property.currency)}
                                   {property.listing_type === "rent" && (
                               <span className="text-sm font-normal text-gray-500">/mo</span>
                                             )}
@@ -297,7 +299,7 @@ export default function PropertiesClient({ initialProperties, initialTotal, init
     const [showMobileFilters, setShowMobileFilters] = useState(false)
     const [showSuggestions, setShowSuggestions] = useState(false)
     const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1)
-    const searchWrapperRef = useRef<HTMLDivElement | null>(null)
+    const searchWrapperRef = useRef<HTMLFormElement | null>(null)
 
     const { data: suggestionsData } = useSWR("/api/search-suggestions", suggestionFetcher, {
         revalidateOnFocus: false,

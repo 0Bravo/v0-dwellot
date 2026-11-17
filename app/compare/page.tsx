@@ -3,7 +3,7 @@ import { Suspense } from "react"
 import ComparePageClient from "./ComparePageClient"
 
 export const metadata: Metadata = {
-  title: "Compare Properties | Side-by-Side Property Comparison | Dwellot",
+  title: "Compare Properties | Side-by-Side Property Comparison",
   description:
     "Compare properties side by side in Ghana. See differences in price, location, bedrooms, amenities, and more to find your perfect home.",
   alternates: {

@@ -18,6 +18,8 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      // One-off Node maintenance scripts, not part of the app
+      "scripts/**",
     ],
   },
   {

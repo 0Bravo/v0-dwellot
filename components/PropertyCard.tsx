@@ -20,12 +20,14 @@ import {
 } from "lucide-react"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { trackEnquiry } from "@/lib/utils/track-enquiry"
+import { formatPrice as formatMoneyPrice } from "@/lib/format-price"
 
 interface Property {
   id: number
   title: string
   location: string
   price: number
+  currency?: string | null
   property_type: string
   listing_type: string
   bedrooms: number
@@ -145,7 +147,7 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
 
         <div className="absolute bottom-0 left-0 bg-teal-600 text-white px-5 py-3">
           <div className="text-3xl font-bold">
-            {"$"} {property.price.toLocaleString()}
+            {formatMoneyPrice(property.price, property.currency)}
             {property.listing_type === "rent" && <span className="text-base font-normal">/month</span>}
           </div>
           <div className="text-sm opacity-90">{property.listing_type === "rent" ? "To rent" : "Offers Over"}</div>

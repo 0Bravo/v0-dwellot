@@ -7,12 +7,14 @@ import Image from "next/image"
 import { Heart, MapPin, DollarSign, Bed, Bath, Maximize, Loader2 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import FavoriteButton from "@/components/FavoriteButton"
+import { formatPrice as formatMoneyPrice } from "@/lib/format-price"
 
 interface Property {
   id: number
   title: string
   location: string
   price: number
+  currency?: string | null
   bedrooms: number
   bathrooms: number
   area: number
@@ -145,7 +147,7 @@ export default function FavoritesPage() {
 
                     <div className="flex items-center gap-2 mb-4">
                       <DollarSign size={18} className="text-green-600" />
-                      <span className="text-xl font-bold text-green-700">{formatCurrency(property.price)}</span>
+                      <span className="text-xl font-bold text-green-700">{formatMoneyPrice(property.price, property.currency)}</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-3 mb-4 text-sm text-gray-600">

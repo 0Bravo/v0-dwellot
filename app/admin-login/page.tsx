@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import AdminLoginForm from "./AdminLoginForm"
 
 export const metadata: Metadata = {
-  title: "Admin Login | Dwellot",
+  title: "Admin Login",
   description: "Secure admin login for Dwellot property management dashboard",
   robots: { index: false, follow: false },
 }

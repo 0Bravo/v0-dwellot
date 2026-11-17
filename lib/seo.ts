@@ -1,3 +1,4 @@
+import { formatPrice } from "@/lib/format-price"
 import type { Metadata } from "next"
 
 interface PropertySEO {
@@ -5,6 +6,7 @@ interface PropertySEO {
   title: string
   description: string
   price: number
+  currency?: string | null
   location: string
   images: string[]
   property_type: string
@@ -19,8 +21,8 @@ export function generatePropertyMetadata(property: PropertySEO): Metadata {
   const imageUrl = property.images[0] || "/images/hero-bg.jpg"
 
   return {
-    title: `${property.title} - ${property.location} | Dwellot`,
-    description: `${property.listing_type === "sale" ? "Buy" : "Rent"} this ${property.bedrooms} bedroom ${property.property_type} in ${property.location} for $${property.price.toLocaleString()}. ${property.description?.slice(0, 150)}`,
+    title: `${property.title} - ${property.location}`,
+    description: `${property.listing_type === "sale" ? "Buy" : "Rent"} this ${property.bedrooms} bedroom ${property.property_type} in ${property.location} for ${formatPrice(property.price, property.currency)}. ${property.description?.slice(0, 150)}`,
     keywords: `${property.location}, ${property.property_type}, ${property.bedrooms} bedroom, property for ${property.listing_type}, Ghana real estate`,
     openGraph: {
       title: property.title,
@@ -157,10 +159,10 @@ export function generateEnhancedPropertyMetadata(property: PropertySEO): Metadat
   const url = `https://dwellot.com/properties/${property.id}`
   const imageUrl = property.images[0] || "/images/hero-bg.jpg"
 
-  const aiOptimizedDescription = `${property.bedrooms} bedroom ${property.property_type.toLowerCase()} for ${property.listing_type} in ${property.location}, Ghana. $${property.price.toLocaleString()}. ${property.bathrooms} bathroom${property.bathrooms > 1 ? "s" : ""}${property.area ? `, ${property.area}m\u00B2` : ""}. Browse on Dwellot.`
+  const aiOptimizedDescription = `${property.bedrooms} bedroom ${property.property_type.toLowerCase()} for ${property.listing_type} in ${property.location}, Ghana. ${formatPrice(property.price, property.currency)}. ${property.bathrooms} bathroom${property.bathrooms > 1 ? "s" : ""}${property.area ? `, ${property.area}m\u00B2` : ""}. Browse on Dwellot.`
 
   return {
-    title: `${property.title} | ${property.bedrooms} Bed ${property.property_type} in ${property.location} | Dwellot`,
+    title: `${property.title} | ${property.bedrooms} Bed ${property.property_type} in ${property.location}`,
     description: aiOptimizedDescription,
     keywords: [
       `${property.location} property`,
