@@ -33,7 +33,8 @@ export default function AffordabilityCalculator({
   const [income, setIncome] = useState(start.income)
   const [debts, setDebts] = useState(start.debts)
   const [deposit, setDeposit] = useState(start.deposit)
-  const [dsr, setDsr] = useState(40)
+  // Absa and Republic Bank both work to a 50% cap on total debt repayments.
+  const [dsr, setDsr] = useState(50)
   const symbol = currencyLabel(currency)
 
   const result = useMemo(
@@ -111,8 +112,9 @@ export default function AffordabilityCalculator({
               ))}
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              Banks in Ghana typically cap total debt repayments at around 40% to 50% of income. Ask the lender for
-              its limit.
+              Absa and Republic Bank both cap total debt repayments at 50% of net income. That is the maximum they
+              allow, not a target: borrowing at the cap leaves nothing spare for rates, repairs or a change in
+              circumstances. Ask your lender for its own limit.
             </p>
           </div>
         </div>

@@ -17,7 +17,7 @@
 import type { MortgageCurrency } from "./calc"
 
 /** Date this table was last reviewed end to end (ISO, YYYY-MM-DD). */
-export const RATES_REVIEWED = "2026-11-15"
+export const RATES_REVIEWED = "2026-11-17"
 
 export interface GrrSnapshot {
   /** Ghana Reference Rate, percent per annum */
@@ -91,6 +91,19 @@ export interface LenderDefinition {
 }
 
 export const LENDERS: LenderDefinition[] = [
+  {
+    id: "nhf",
+    name: "National Homeownership Fund",
+    rates: {
+      GHS: {
+        basis: "reported",
+        rate: 8.4,
+        maxTermYears: 20,
+        asOf: "2026-08",
+        note: "Government-backed scheme via participating banks; eligibility conditions apply",
+      },
+    },
+  },
   {
     id: "republic",
     name: "Republic Bank",
