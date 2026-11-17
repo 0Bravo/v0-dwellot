@@ -35,6 +35,8 @@ import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { trackEnquiry } from "@/lib/utils/track-enquiry"
 import { trackViewContent, trackContact } from "@/lib/facebook-pixel"
 import { formatPrice as formatMoneyPrice, formatListingPrice } from "@/lib/format-price"
+import { toMortgageCurrency } from "@/lib/mortgage/calc"
+import type { PropertyDetail } from "@/lib/properties/detail"
 
 // Lazy-load heavy components that are not needed on initial render
 const PropertyPrint = dynamic(() => import("@/components/PropertyPrint"), { ssr: false })
@@ -44,59 +46,43 @@ const ShareModal = dynamic(() => import("@/components/ShareModal"), { ssr: false
 const MortgageCalculator = dynamic(() => import("@/components/MortgageCalculator"), { ssr: false })
 const ContactFormModal = dynamic(() => import("@/components/ContactFormModal"), { ssr: false })
 
-interface Property {
-  id: string
-  title: string
-  location: string
-  price: number
-  currency?: string | null
-  listing_type: string
-  property_type: string
-  bedrooms: number
-  bathrooms: number
-  area: number
-  parking: number
-  description: string
-  images: string[]
-  features: string[]
-  featured: boolean
-  status: string
-  users: {
-    id: string
-    name: string
-    email: string
-    phone: string
-  }
-  view_count: number
-  enquiry_count?: number
-  created_at: string
-  updated_at: string
-}
+type Property = PropertyDetail
 
 interface ViewStats {
   view_count: number
   views_today: number
 }
 
-export default function PropertyDetailsClient() {
+interface PropertyDetailsClientProps {
+  /** Rendered on the server so the content is in the HTML for crawlers. */
+  initialProperty?: PropertyDetail | null
+}
+
+export default function PropertyDetailsClient({ initialProperty = null }: PropertyDetailsClientProps) {
   const params = useParams()
   const router = useRouter()
   const { addToRecentlyViewed } = useRecentlyViewed()
-  const [property, setProperty] = useState<Property | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [property, setProperty] = useState<Property | null>(initialProperty)
+  const [loading, setLoading] = useState(!initialProperty)
   const [error, setError] = useState<string | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(false)
   const [showContactForm, setShowContactForm] = useState(false)
-  const [viewStats, setViewStats] = useState<ViewStats>({ view_count: 0, views_today: 0 })
+  const [viewStats, setViewStats] = useState<ViewStats>({
+    view_count: initialProperty?.view_count ?? 0,
+    views_today: 0,
+  })
   const [showLightbox, setShowLightbox] = useState(false)
   const [showShareModal, setShowShareModal] = useState(false)
 
   useEffect(() => {
+    // Already rendered on the server; no need to fetch the same data again.
+    if (initialProperty) return
     if (params.id) {
       fetchProperty(params.id as string)
     }
-  }, [params.id])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id, initialProperty])
 
   useEffect(() => {
     if (property) {
@@ -109,7 +95,7 @@ export default function PropertyDetailsClient() {
         content_ids: [property.id],
         content_type: 'property',
         value: property.price,
-        currency: 'USD',
+        currency: toMortgageCurrency(property.currency),
       })
 
       addToRecentlyViewed({
