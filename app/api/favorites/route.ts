@@ -25,6 +25,7 @@ export async function GET() {
           title,
           location,
           price,
+          currency,
           bedrooms,
           bathrooms,
           area,
