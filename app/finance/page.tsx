@@ -46,6 +46,20 @@ export default async function FinanceHubPage() {
       cta: "See the current rate",
     },
     {
+      href: "/finance/mortgage-salary-requirements",
+      icon: Wallet,
+      title: "What salary do you need?",
+      text: "The net monthly income banks expect, worked through at current cedi rates.",
+      cta: "See the figures",
+    },
+    {
+      href: "/finance/cedi-or-dollar-mortgage",
+      icon: Landmark,
+      title: "Cedi or US dollar?",
+      text: "What each costs per unit borrowed, and the exchange-rate risk that decides it.",
+      cta: "Compare the two",
+    },
+    {
       href: "/properties?listing_type=sale",
       icon: Home,
       title: "Homes for sale",
