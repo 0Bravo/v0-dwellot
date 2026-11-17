@@ -44,11 +44,11 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params
   const result = await getProperty(id)
 
-  // Raise the 404 here rather than in the page body. Metadata is resolved
-  // before the HTML shell starts streaming, so the status can still be set;
-  // once streaming has begun the response is already committed to 200.
   if (!result) {
-    notFound()
+    return {
+      title: "Property Not Found",
+      description: "The property you're looking for could not be found. Browse other properties in Ghana.",
+    }
   }
 
   return generateEnhancedPropertyMetadata(result.row)
