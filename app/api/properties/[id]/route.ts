@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@supabase/supabase-js"
+import { mapPropertyRow } from "@/lib/properties/detail"
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -44,35 +45,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
       agent = agentData
     }
 
-    // Format response
-    const response = {
-      id: property.id.toString(),
-      title: property.title || "",
-      location: property.location || "",
-      price: property.price || 0,
-      currency: property.currency ?? null,
-      listing_type: property.listing_type || "sale",
-      property_type: property.property_type || "House",
-      bedrooms: property.bedrooms || 0,
-      bathrooms: property.bathrooms || 0,
-      area: property.area || 0,
-      parking: property.parking || 0,
-      description: property.description || "",
-      images: property.images || ["https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800"],
-      features: property.features || [],
-      featured: property.featured || false,
-      status: property.status || "active",
-      users: agent || {
-        id: "default",
-        name: property.agent || "Dwellot Estates",
-        email: "support@dwellot.com",
-        phone: property.phone || "0302 000000",
-      },
-      view_count: property.view_count || 0,
-      enquiry_count: property.enquiry_count || 0,
-      created_at: property.created_at || new Date().toISOString(),
-      updated_at: property.updated_at || new Date().toISOString(),
-    }
+    const response = mapPropertyRow(property, agent)
 
     return NextResponse.json({ property: response })
   } catch (err) {

@@ -7,6 +7,7 @@ import {
 } from "@/lib/seo"
 import { createAdminClient } from "@/lib/supabase/admin"
 import PropertyDetailsClient from "./PropertyDetailsClient"
+import { mapPropertyRow, type PropertyAgent } from "@/lib/properties/detail"
 
 export const revalidate = 60
 
@@ -15,12 +16,25 @@ async function getProperty(id: string) {
     const adminClient = createAdminClient()
     const { data, error } = await adminClient
       .from("properties")
-      .select("id, title, description, price, currency, location, property_type, listing_type, bedrooms, bathrooms, area, parking, images, amenities, featured, status, agent, phone, view_count, enquiry_count, created_at, updated_at")
+      .select("*")
       .eq("id", Number.parseInt(id))
       .single()
 
     if (error || !data) return null
-    return data
+
+    // Join the agent so the server-rendered page carries the same contact
+    // details the client API would have returned.
+    let agent: PropertyAgent | null = null
+    if (data.agent_id) {
+      const { data: agentData } = await adminClient
+        .from("users")
+        .select("id, name, email, phone")
+        .eq("id", data.agent_id)
+        .single()
+      agent = (agentData as PropertyAgent) ?? null
+    }
+
+    return { row: data, detail: mapPropertyRow(data, agent) }
   } catch {
     return null
   }
@@ -28,25 +42,27 @@ async function getProperty(id: string) {
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const { id } = await params
-  const property = await getProperty(id)
+  const result = await getProperty(id)
 
-  if (!property) {
+  if (!result) {
     return {
       title: "Property Not Found",
       description: "The property you're looking for could not be found. Browse other properties in Ghana.",
     }
   }
 
-  return generateEnhancedPropertyMetadata(property)
+  return generateEnhancedPropertyMetadata(result.row)
 }
 
 export default async function PropertyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const property = await getProperty(id)
+  const result = await getProperty(id)
 
-  if (!property) {
+  if (!result) {
     notFound()
   }
+
+  const property = result.row
 
   // Build JSON-LD structured data from server-fetched property
   const structuredData = generateEnhancedStructuredData(property)
@@ -68,7 +84,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
       />
-      <PropertyDetailsClient />
+      <PropertyDetailsClient initialProperty={result.detail} />
     </>
   )
 }
