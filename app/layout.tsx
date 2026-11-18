@@ -9,6 +9,7 @@ import { ToastProvider } from "@/components/Toast"
 import { CompareProvider } from "@/contexts/CompareContext"
 import { RecentlyViewedProvider } from "@/contexts/RecentlyViewedContext"
 import FacebookPixel from "@/components/FacebookPixel"
+import GoogleAnalytics from "@/components/GoogleAnalytics"
 import SiteShell from "@/components/SiteShell"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -210,6 +211,7 @@ export default function RootLayout({
         <Analytics />
         <SpeedInsights />
         <FacebookPixel />
+        <GoogleAnalytics />
       </body>
     </html>
   )

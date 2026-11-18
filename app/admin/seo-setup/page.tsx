@@ -117,7 +117,7 @@ const sections: ChecklistSection[] = [
     items: [
       {
         id: "ga4-1",
-        label: "Confirm GA4 measurement ID is set in NEXT_PUBLIC_GA_MEASUREMENT_ID env var",
+        label: "Confirm GA4 measurement ID is set in NEXT_PUBLIC_GA_ID env var",
         link: "https://analytics.google.com/",
         linkLabel: "Open GA4",
       },
