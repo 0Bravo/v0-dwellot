@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeftRight, ArrowRight, Calculator, Info } from "lucide-react"
 import { calculateMortgage, formatMoney } from "@/lib/mortgage/calc"
+import { getCediRates, toCedis } from "@/lib/mortgage/fx"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
 import { RATES_REVIEWED, formatRateDate, resolveLenderRates } from "@/lib/mortgage/rates"
 
@@ -21,12 +22,13 @@ export const metadata: Metadata = {
   },
 }
 
-/** A round loan figure, used in each currency so the rates compare like for like. */
-const LOAN_UNITS = 100000
+/** A representative Dwellot listing price, financed both ways. */
+const PROPERTY_USD = 150000
+const DEPOSIT_PCT = 20
 const TERM_YEARS = 15
 
 export default async function CediOrDollarPage() {
-  const grr = await getGhanaReferenceRate()
+  const [grr, fx] = await Promise.all([getGhanaReferenceRate(), getCediRates()])
 
   const pickTypical = (currency: "GHS" | "USD") => {
     const list = resolveLenderRates(currency, grr.rate)
@@ -38,26 +40,38 @@ export default async function CediOrDollarPage() {
   const ghs = pickTypical("GHS")
   const usd = pickTypical("USD")
 
-  const build = (rate: number, maxTerm: number) => {
+  // The same property, financed in each currency at today's Bank of Ghana rate.
+  const propertyGhs = toCedis(PROPERTY_USD, fx.usdGhs)
+
+  const build = (price: number, rate: number, maxTerm: number) => {
     const term = Math.min(TERM_YEARS, maxTerm)
-    const r = calculateMortgage({ price: LOAN_UNITS, deposit: 0, annualRatePct: rate, termYears: term })
-    return { term, monthly: r.monthlyPayment, totalInterest: r.totalInterest, totalPaid: r.totalPayment }
+    const r = calculateMortgage({
+      price,
+      deposit: price * (DEPOSIT_PCT / 100),
+      annualRatePct: rate,
+      termYears: term,
+    })
+    return { term, monthly: r.monthlyPayment, totalInterest: r.totalInterest, loan: r.loanAmount }
   }
 
-  const cedi = ghs ? build(ghs.rate, ghs.maxTermYears) : null
-  const dollar = usd ? build(usd.rate, usd.maxTermYears) : null
+  const cedi = ghs ? build(propertyGhs, ghs.rate, ghs.maxTermYears) : null
+  const dollar = usd ? build(PROPERTY_USD, usd.rate, usd.maxTermYears) : null
 
-  // How much more of each borrowed unit the cedi loan costs per month.
-  const ratio = cedi && dollar && dollar.monthly > 0 ? cedi.monthly / dollar.monthly : null
+  // The cedi repayment expressed in dollars at today's rate, so the two compare.
+  const cediMonthlyInUsd = cedi && fx.usdGhs > 0 ? cedi.monthly / fx.usdGhs : null
+  const ratio = cediMonthlyInUsd && dollar && dollar.monthly > 0 ? cediMonthlyInUsd / dollar.monthly : null
+  const dollarMonthlyInGbp = dollar && fx.gbpGhs ? (dollar.monthly * fx.usdGhs) / fx.gbpGhs : null
 
   const faqs = [
     {
       question: "Is a dollar mortgage cheaper than a cedi mortgage in Ghana?",
       answer:
-        `The interest rate is much lower. A typical US dollar mortgage is around ${usd?.rate}% against roughly ` +
-        `${ghs?.rate}% in cedis. On the same size of loan over ${cedi?.term ?? TERM_YEARS} years that is a large ` +
-        "difference in the monthly repayment. Whether it is cheaper for you depends on the currency you earn in, " +
-        "because a dollar loan repaid from cedi income costs more every time the cedi weakens.",
+        `The interest rate is much lower: a typical US dollar mortgage is around ${usd?.rate}% against roughly ` +
+        `${ghs?.rate}% in cedis. On a ${formatMoney(PROPERTY_USD, "USD")} home with a ${DEPOSIT_PCT}% deposit over ` +
+        `${cedi?.term ?? TERM_YEARS} years, the cedi repayment works out at about ` +
+        `${ratio ? ratio.toFixed(1) : "two"} times the dollar one at today's exchange rate. Whether it is cheaper ` +
+        "for you depends on the currency you earn in, because a dollar loan repaid from cedi income costs more " +
+        "every time the cedi weakens.",
     },
     {
       question: "Who should take a US dollar mortgage?",
@@ -116,41 +130,65 @@ export default async function CediOrDollarPage() {
         {/* Side by side */}
         {cedi && dollar && ghs && usd && (
           <section className="bg-white rounded-xl border border-gray-200 p-6 md:p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">The same size of loan, priced both ways</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">The same house, financed both ways</h2>
             <p className="text-sm text-gray-600 mb-6">
-              {formatMoney(LOAN_UNITS, "GHS")} borrowed in cedis against ${LOAN_UNITS.toLocaleString("en-US")}{" "}
-              borrowed in dollars, each over {cedi.term} years. Comparing equal numbers of units isolates the effect of
-              the rate; it is not a currency conversion.
+              A {formatMoney(PROPERTY_USD, "USD")} property &mdash; {formatMoney(propertyGhs, "GHS")} at today&apos;s
+              rate &mdash; with a {DEPOSIT_PCT}% deposit over {cedi.term} years.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="bg-gray-50 rounded-xl p-6">
                 <p className="text-sm font-medium text-gray-600 mb-1">Cedi mortgage at {ghs.rate}%</p>
-                <p className="text-3xl font-bold text-gray-900 mb-3">
+                <p className="text-3xl font-bold text-gray-900 mb-1">
                   {formatMoney(cedi.monthly, "GHS")}
                   <span className="text-base font-medium text-gray-600"> a month</span>
                 </p>
+                {cediMonthlyInUsd && (
+                  <p className="text-sm text-gray-600 mb-3">
+                    About {formatMoney(cediMonthlyInUsd, "USD")} at today&apos;s rate
+                  </p>
+                )}
                 <p className="text-sm text-gray-600">
-                  Total interest {formatMoney(cedi.totalInterest, "GHS")} over {cedi.term} years
+                  Total interest {formatMoney(cedi.totalInterest, "GHS")}
                 </p>
               </div>
               <div className="bg-teal-50 rounded-xl p-6">
                 <p className="text-sm font-medium text-teal-700 mb-1">US dollar mortgage at {usd.rate}%</p>
-                <p className="text-3xl font-bold text-teal-700 mb-3">
+                <p className="text-3xl font-bold text-teal-700 mb-1">
                   {formatMoney(dollar.monthly, "USD")}
                   <span className="text-base font-medium text-teal-700"> a month</span>
                 </p>
+                {dollarMonthlyInGbp && (
+                  <p className="text-sm text-teal-700 mb-3">
+                    About &pound;{Math.round(dollarMonthlyInGbp).toLocaleString("en-GB")} a month for a UK earner
+                  </p>
+                )}
                 <p className="text-sm text-teal-700">
-                  Total interest {formatMoney(dollar.totalInterest, "USD")} over {dollar.term} years
+                  Total interest {formatMoney(dollar.totalInterest, "USD")}
                 </p>
               </div>
             </div>
             {ratio && (
               <p className="text-gray-700 mt-6">
-                Per unit borrowed, the cedi mortgage costs about{" "}
-                <strong>{ratio.toFixed(1)} times</strong> as much each month as the dollar one. That gap is the whole
-                argument for borrowing in dollars &mdash; and the reason the exchange rate matters so much if you do.
+                On the same house, the cedi mortgage costs roughly{" "}
+                <strong>{ratio.toFixed(1)} times</strong> as much each month as the dollar one at today&apos;s
+                exchange rate. That gap is the whole argument for borrowing in dollars &mdash; and the reason the
+                exchange rate matters so much if your income is in cedis.
               </p>
             )}
+            <p className="text-xs text-gray-500 mt-4">
+              Converted at {fx.usdGhs} cedis to the dollar
+              {fx.gbpGhs ? `, ${fx.gbpGhs} to the pound` : ""}
+              {fx.asOf ? `, ${formatRateDate(fx.asOf)}` : ""} (source:{" "}
+              <a
+                href={fx.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-teal-600 hover:text-teal-700 underline"
+              >
+                {fx.source}
+              </a>
+              ).
+            </p>
           </section>
         )}
 
@@ -229,9 +267,9 @@ export default async function CediOrDollarPage() {
         <p className="text-xs text-gray-500 flex items-start gap-1.5">
           <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
           <span>
-            Figures are illustrative and exclude fees and insurance. This page compares equal numbers of currency
-            units and does not convert between currencies. Rates reviewed {formatRateDate(RATES_REVIEWED)}. Dwellot is
-            a property marketplace, not a lender or financial adviser.
+            Figures are illustrative and exclude fees and insurance. Exchange rates move daily, so the comparison
+            above is a snapshot, not a forecast. Rates reviewed {formatRateDate(RATES_REVIEWED)}. Dwellot is a
+            property marketplace, not a lender or financial adviser.
           </span>
         </p>
       </div>
