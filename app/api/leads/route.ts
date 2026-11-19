@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { notifyNewLead } from "@/lib/leads/notify"
 
 export async function POST(request: NextRequest) {
   try {
@@ -92,6 +93,8 @@ export async function POST(request: NextRequest) {
         )
       }
 
+      await notifyNewLead({ ...data, isUpdate: true })
+
       return NextResponse.json({
         success: true,
         message: "Your preferences have been updated!",
@@ -129,6 +132,8 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    await notifyNewLead({ ...data, isUpdate: false })
 
     return NextResponse.json({
       success: true,
