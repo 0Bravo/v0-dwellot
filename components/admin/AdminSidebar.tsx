@@ -4,26 +4,14 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import { createBrowserClient } from "@/lib/supabase/client"
-import { 
-  LayoutDashboard, 
-  Home, 
-  Users, 
-  Mail, 
-  MessageSquare, 
-  UserPlus,
-  PlusCircle,
-  Upload,
-  Settings,
-  LogOut,
-  X,
-  Megaphone,
-} from "lucide-react"
+import { Home, Inbox, LayoutDashboard, LogOut, Mail, Megaphone, MessageSquare, PlusCircle, Settings, Upload, UserPlus, Users, X } from "lucide-react"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Properties", href: "/dashboard/properties", icon: Home },
   { name: "Add Property", href: "/dashboard/properties/new", icon: PlusCircle },
   { name: "Bulk Upload", href: "/dashboard/properties/bulk", icon: Upload },
+  { name: "Leads", href: "/dashboard/leads", icon: Inbox },
   { name: "Enquiries", href: "/dashboard/enquiries", icon: MessageSquare },
   { name: "Subscribers", href: "/dashboard/subscribers", icon: Mail },
   { name: "Agent Applications", href: "/dashboard/agent-applications", icon: UserPlus },

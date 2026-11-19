@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { notifyNewLead } from "@/lib/leads/notify"
 
 export async function POST(request: Request) {
   try {
@@ -27,6 +28,15 @@ export async function POST(request: Request) {
       console.error("Campaign inquiry DB error:", error)
       return NextResponse.json({ error: "Failed to save enquiry" }, { status: 500 })
     }
+
+    await notifyNewLead({
+      name: full_name,
+      email,
+      phone,
+      property_type,
+      source: "buy-property-ghana-campaign",
+      notes: `Budget: ${budget_range}${message ? ` | Message: ${message}` : ""}`,
+    })
 
     return NextResponse.json({ success: true })
   } catch (err) {
