@@ -85,6 +85,9 @@ export interface RadialSliderProps {
   size?: number
   /** Tailwind stroke class for the filled arc */
   accentClass?: string
+  /** "dark" for placement on a dark surface, where the light track and
+      near-black figure would otherwise disappear. */
+  tone?: "light" | "dark"
   disabled?: boolean
 }
 
@@ -99,8 +102,15 @@ export function RadialSlider({
   caption,
   size = 240,
   accentClass = "stroke-teal-500",
+  tone = "light",
   disabled = false,
 }: RadialSliderProps) {
+  const dark = tone === "dark"
+  const trackClass = dark ? "stroke-white/20" : "stroke-gray-200"
+  const handleFill = dark ? "fill-teal-950" : "fill-white"
+  const labelClass = dark ? "text-teal-100/70" : "text-gray-500"
+  const valueClass = dark ? "text-white" : "text-gray-900"
+  const captionClass = dark ? "text-teal-100/70" : "text-gray-500"
   const svgRef = useRef<SVGSVGElement>(null)
   const [dragging, setDragging] = useState(false)
   const [focused, setFocused] = useState(false)
@@ -225,7 +235,7 @@ export function RadialSlider({
           fill="none"
           strokeWidth={thickness}
           strokeLinecap="round"
-          className="stroke-gray-200"
+          className={trackClass}
         />
         {/* Fill. A zero-length arc would not render, so nudge the minimum. */}
         <path
@@ -244,7 +254,7 @@ export function RadialSlider({
             r={thickness * 0.78 + 5}
             fill="none"
             strokeWidth={3}
-            className="stroke-teal-600/45"
+            className={dark ? "stroke-teal-300/60" : "stroke-teal-600/45"}
           />
         )}
         {/* Handle */}
@@ -252,7 +262,7 @@ export function RadialSlider({
           cx={handle.x}
           cy={handle.y}
           r={thickness * 0.78}
-          className={`fill-white ${dragging ? "stroke-teal-600" : "stroke-teal-500"}`}
+          className={`${handleFill} ${dragging ? "stroke-teal-400" : "stroke-teal-500"}`}
           strokeWidth={3}
           tabIndex={disabled ? -1 : 0}
           role="slider"
@@ -273,10 +283,10 @@ export function RadialSlider({
       {/* The readout sits outside the SVG so it inherits page type properly,
           and is absolutely positioned so it stays centred at any size. */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[10%] pointer-events-none">
-        <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-gray-500">{label}</p>
-        <p className="text-base sm:text-2xl font-bold text-gray-900 tabular-nums mt-0.5 whitespace-nowrap">{format(value)}</p>
+        <p className={`text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] sm:tracking-[0.14em] ${labelClass}`}>{label}</p>
+        <p className={`text-base sm:text-2xl font-bold ${valueClass} tabular-nums mt-0.5 whitespace-nowrap`}>{format(value)}</p>
         {caption && (
-          <p id={`${id}-caption`} className="text-[10px] sm:text-xs text-gray-500 mt-0.5 leading-tight">
+          <p id={`${id}-caption`} className={`text-[10px] sm:text-xs ${captionClass} mt-0.5 leading-tight`}>
             {caption}
           </p>
         )}

@@ -9,6 +9,8 @@ import {
   type CostLine,
 } from "@/lib/finance/buying-costs"
 import MortgageLeadForm from "@/components/mortgage/MortgageLeadForm"
+import { RadialSlider } from "@/components/ui/RadialSlider"
+import { compactMoney } from "@/lib/finance/format"
 
 interface CostOfBuyingClientProps {
   /** Cedis per US dollar, for display conversion only */
@@ -94,6 +96,41 @@ export default function CostOfBuyingClient({
               {gbpGhs != null && <option value="GBP">Pound sterling</option>}
             </select>
           </label>
+        </div>
+
+        {/* Drag to explore; the fields below take exact figures. The price
+            field accepts any amount, so the dial's ends follow the value
+            rather than pinning it to a ceiling a typed price can exceed. */}
+        <div
+          className={`grid ${
+            usingMortgage ? "grid-cols-2 gap-2 sm:gap-6" : "grid-cols-1 max-w-[220px] mx-auto"
+          } items-start rounded-2xl bg-gray-50 ring-1 ring-gray-100 px-3 sm:px-4 py-3 mb-5`}
+        >
+          <RadialSlider
+            label="Property price"
+            value={price}
+            min={Math.min(50_000, Math.max(0, price))}
+            max={Math.max(10_000_000, Math.ceil(price / 10_000) * 10_000)}
+            step={10_000}
+            onChange={setPrice}
+            format={(v) => compactMoney(v)}
+            caption="Drag to explore"
+            size={200}
+          />
+          {usingMortgage && (
+            <RadialSlider
+              label="Deposit"
+              value={depositPct}
+              min={5}
+              max={50}
+              step={1}
+              onChange={setDepositPct}
+              format={(v) => `${Math.round(v)}%`}
+              caption={fmt(deposit)}
+              size={200}
+              accentClass="stroke-emerald-500"
+            />
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

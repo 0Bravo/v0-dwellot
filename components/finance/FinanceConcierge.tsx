@@ -8,6 +8,8 @@ import { calculateAffordability, formatMoney } from "@/lib/mortgage/calc"
 import { compareLenders } from "@/lib/mortgage/compare"
 import { calculateBuyingCosts, DEFAULT_COSTS_INPUT } from "@/lib/finance/buying-costs"
 import { AnimatedNumber } from "./motion"
+import { RadialSlider } from "@/components/ui/RadialSlider"
+import { compactMoney } from "@/lib/finance/format"
 
 /**
  * The guided entry to the finance section.
@@ -273,6 +275,33 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
             {/* ---------- Budget ---------- */}
             {intent === "budget" && step === 0 && (
               <Questions prompt="What comes in, and what have you saved?" onBack={restart} onNext={() => setStep(1)}>
+                {/* Dials to explore, fields below for exact figures. Both ends
+                    follow the value, because the fields take any amount. */}
+                <div className="sm:col-span-2 grid grid-cols-2 gap-2 sm:gap-8 items-start justify-items-center max-w-md mx-auto">
+                  <RadialSlider
+                    label="Monthly income"
+                    value={income}
+                    min={0}
+                    max={Math.max(50_000, Math.ceil(income / 500) * 500)}
+                    step={500}
+                    onChange={setIncome}
+                    format={(v) => compactMoney(v)}
+                    size={184}
+                    tone="dark"
+                  />
+                  <RadialSlider
+                    label="Deposit saved"
+                    value={savings}
+                    min={0}
+                    max={Math.max(2_000_000, Math.ceil(savings / 10_000) * 10_000)}
+                    step={10_000}
+                    onChange={setSavings}
+                    format={(v) => compactMoney(v)}
+                    size={184}
+                    tone="dark"
+                    accentClass="stroke-emerald-400"
+                  />
+                </div>
                 <Field label="Net monthly income (GH₵)" id="c-income">
                   <input id="c-income" type="number" min={0} value={income} className={inputClass}
                     onChange={(e) => setIncome(Math.max(0, Number(e.target.value)))} />
@@ -359,17 +388,35 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
                 onBack={restart}
                 onNext={() => setStep(1)}
               >
+                <div className="sm:col-span-2 grid grid-cols-2 gap-2 sm:gap-8 items-start justify-items-center max-w-md mx-auto">
+                  <RadialSlider
+                    label="Asking price"
+                    value={price}
+                    min={Math.min(50_000, Math.max(0, price))}
+                    max={Math.max(10_000_000, Math.ceil(price / 10_000) * 10_000)}
+                    step={10_000}
+                    onChange={setPrice}
+                    format={(v) => compactMoney(v)}
+                    size={184}
+                    tone="dark"
+                  />
+                  <RadialSlider
+                    label="Deposit"
+                    value={depositPct}
+                    min={5}
+                    max={50}
+                    step={1}
+                    onChange={setDepositPct}
+                    format={(v) => `${Math.round(v)}%`}
+                    caption={formatMoney(Math.round((price * depositPct) / 100), "GHS")}
+                    size={184}
+                    tone="dark"
+                    accentClass="stroke-emerald-400"
+                  />
+                </div>
                 <Field label="Price (GH₵)" id="c-price">
                   <input id="c-price" type="number" min={0} value={price} className={inputClass}
                     onChange={(e) => setPrice(Math.max(0, Number(e.target.value)))} />
-                </Field>
-                <Field
-                  label={`Deposit: ${depositPct}% (${formatMoney(Math.round((price * depositPct) / 100), "GHS")})`}
-                  id="c-dep"
-                >
-                  <input id="c-dep" type="range" min={5} max={50} step={1} value={depositPct}
-                    className="w-full accent-white mt-3"
-                    onChange={(e) => setDepositPct(Number(e.target.value))} />
                 </Field>
               </Questions>
             )}
