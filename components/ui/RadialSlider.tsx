@@ -201,13 +201,18 @@ export function RadialSlider({
   }
 
   return (
-    <div className="relative inline-flex select-none" style={{ width: size, height: size }}>
+    /* Caps at 38vw so two dials stay side by side on a phone instead of
+       stacking into a screen-high block above the inputs. The SVG scales with
+       the box; pointer maths normalises by the rendered width, so a scaled
+       dial still reads accurately. */
+    <div
+      className="relative inline-flex aspect-square select-none"
+      style={{ width: size, maxWidth: "38vw" }}
+    >
       <svg
         ref={svgRef}
-        width={size}
-        height={size}
         viewBox={`0 0 ${size} ${size}`}
-        className={`touch-none ${disabled ? "opacity-60" : "cursor-pointer"}`}
+        className={`w-full h-full touch-none ${disabled ? "opacity-60" : "cursor-pointer"}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -268,10 +273,10 @@ export function RadialSlider({
       {/* The readout sits outside the SVG so it inherits page type properly,
           and is absolutely positioned so it stays centred at any size. */}
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[10%] pointer-events-none">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">{label}</p>
-        <p className="text-2xl font-bold text-gray-900 tabular-nums mt-0.5 whitespace-nowrap">{format(value)}</p>
+        <p className="text-[9px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-gray-500">{label}</p>
+        <p className="text-base sm:text-2xl font-bold text-gray-900 tabular-nums mt-0.5 whitespace-nowrap">{format(value)}</p>
         {caption && (
-          <p id={`${id}-caption`} className="text-xs text-gray-500 mt-0.5">
+          <p id={`${id}-caption`} className="text-[10px] sm:text-xs text-gray-500 mt-0.5 leading-tight">
             {caption}
           </p>
         )}
