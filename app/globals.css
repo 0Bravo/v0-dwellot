@@ -210,6 +210,7 @@ h1 {
     radial-gradient(40rem 28rem at 86% 0%, rgba(52, 211, 153, 0.5), transparent 64%),
     radial-gradient(38rem 32rem at 70% 96%, rgba(13, 148, 136, 0.55), transparent 62%),
     radial-gradient(30rem 24rem at 40% 60%, rgba(6, 182, 212, 0.28), transparent 66%);
+  mix-blend-mode: screen;
   animation: hero-drift 26s ease-in-out infinite alternate;
   pointer-events: none;
 }

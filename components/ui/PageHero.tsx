@@ -47,7 +47,7 @@ export function PageHero({
       {/* Fade into whatever follows, so the edge is not a hard line */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-b from-transparent to-gray-50/90"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-16 bg-gradient-to-b from-transparent to-gray-50/70"
       />
 
       <div
