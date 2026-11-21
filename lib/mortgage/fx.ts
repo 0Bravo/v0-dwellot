@@ -80,8 +80,27 @@ export function parseBogPair(text: string, code: "USD" | "GBP"): number | null {
   return inBounds(code, mid) ? mid : null
 }
 
+/**
+ * The Bank of Ghana serves the same daily interbank table at more than one
+ * path, and the one under /treasury-and-the-markets/ has been seen carrying
+ * much older data than the one under /markets/. Both are tried, newest-known
+ * path first, before falling back to a secondary feed, because the central
+ * bank's own mid rate is the figure worth quoting.
+ */
+export const BOG_FX_URLS = [
+  "https://www.bog.gov.gh/markets/daily-interbank-fx-rates",
+  "https://www.bog.gov.gh/treasury-and-the-markets/daily-interbank-fx-rates/",
+] as const
+
 async function fetchBog(): Promise<FxSnapshot | null> {
-  const url = FX_FALLBACK.sourceUrl
+  for (const url of BOG_FX_URLS) {
+    const snapshot = await fetchBogUrl(url)
+    if (snapshot) return snapshot
+  }
+  return null
+}
+
+async function fetchBogUrl(url: string): Promise<FxSnapshot | null> {
   const controller = new AbortController()
   const timeout = setTimeout(() => controller.abort(), 8000)
   try {
@@ -133,7 +152,9 @@ async function fetchMarketFeed(): Promise<FxSnapshot | null> {
     if (!usd || !inBounds("USD", usd)) return null
 
     return {
-      usdGhs: usd,
+      // Rounded like the GBP figure below: this feed returns full float
+      // precision, which rendered as 11.783525 in the UI.
+      usdGhs: Number(usd.toFixed(4)),
       gbpGhs: gbpPerUsd ? Number((usd / gbpPerUsd).toFixed(4)) : null,
       asOf: data.time_last_update_utc ? parseDate(data.time_last_update_utc) : null,
       source: "exchangerate-api.com",
