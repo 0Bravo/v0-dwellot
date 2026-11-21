@@ -147,20 +147,21 @@ export default async function FinanceHubPage() {
     <div className="min-h-screen bg-gray-50">
       <PageHero
         icon={Landmark}
+        image={{ src: "/images/hero-bg.jpg", alt: "Rooftops of a residential neighbourhood in Ghana" }}
+        eyebrow="Property finance"
         title="Paying for a home in Ghana"
-        subtitle="Work out what you can afford, compare every lender, and see the full cost before you commit"
-      />
+        subtitle="Work out what you can afford, compare every lender, and see the full cost before you commit."
+      >
+        <FinanceConcierge grrRate={grr.rate} usdGhs={fx.usdGhs} gbpGhs={fx.gbpGhs} />
+      </PageHero>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-        {/* Guided entry */}
-        <FinanceConcierge grrRate={grr.rate} usdGhs={fx.usdGhs} gbpGhs={fx.gbpGhs} />
-
         {/* Live figures */}
         <section>
           <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {facts.map((fact) => (
               <StaggerItem key={fact.label}>
-                <div className="h-full bg-white rounded-xl border border-gray-200 p-5 transition hover:border-teal-300 hover:shadow-sm">
+                <div className="card-lift h-full bg-white rounded-2xl border border-gray-200 p-5 hover:border-teal-300">
                   <p className="text-sm text-gray-600">{fact.label}</p>
                   <p className="text-2xl md:text-3xl font-bold text-teal-700 mt-1">
                     <AnimatedNumber value={fact.value} decimals={fact.decimals} suffix={fact.suffix} />
@@ -195,7 +196,7 @@ export default async function FinanceHubPage() {
                 <StaggerItem key={href} className="h-full">
                 <Link
                   href={href}
-                  className="group flex h-full flex-col bg-white rounded-xl border border-gray-200 p-6 hover:border-teal-300 hover:shadow-sm hover:-translate-y-0.5 transition"
+                  className="card-lift group flex h-full flex-col bg-white rounded-2xl border border-gray-200 p-6 hover:border-teal-300"
                 >
                   <Icon className="w-6 h-6 text-teal-600 mb-3" aria-hidden="true" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>

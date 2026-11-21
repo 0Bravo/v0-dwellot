@@ -179,3 +179,90 @@
     print-color-adjust: exact;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Display type and surfaces.
+
+   Headings use Plus Jakarta Sans; body copy stays Inter. Tightening the
+   tracking at display sizes is what stops large headings looking loose.
+   --------------------------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  letter-spacing: -0.03em;
+}
+
+/* A layered wash for dark hero surfaces: three offset radial gradients drift
+   slowly against each other, which reads as depth rather than a flat fill. */
+.hero-mesh::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(46rem 30rem at 16% 6%, rgba(45, 212, 191, 0.55), transparent 62%),
+    radial-gradient(40rem 28rem at 86% 0%, rgba(52, 211, 153, 0.5), transparent 64%),
+    radial-gradient(38rem 32rem at 70% 96%, rgba(13, 148, 136, 0.55), transparent 62%),
+    radial-gradient(30rem 24rem at 40% 60%, rgba(6, 182, 212, 0.28), transparent 66%);
+  mix-blend-mode: screen;
+  animation: hero-drift 26s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes hero-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(-3%, 2%, 0) scale(1.08);
+  }
+}
+
+/* Cards that lift. The shadow carries the weight, not a heavier border. */
+.card-lift {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 2px rgba(15, 50, 48, 0.04),
+    0 12px 28px -12px rgba(15, 50, 48, 0.18);
+}
+
+/* Anyone who has asked for less movement gets none of it. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-mesh::before {
+    animation: none;
+  }
+
+  .card-lift,
+  .card-lift:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* Behind a photograph the full mesh competes with the image, so this is the
+   same wash at a fraction of the strength: enough to tie the hero to the
+   section's colour without washing the picture out. */
+.hero-mesh-soft::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(44rem 28rem at 14% 4%, rgba(45, 212, 191, 0.18), transparent 64%),
+    radial-gradient(36rem 26rem at 88% 100%, rgba(16, 185, 129, 0.16), transparent 64%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
