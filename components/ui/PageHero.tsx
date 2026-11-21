@@ -55,17 +55,17 @@ export function PageHero({
             fill
             priority
             sizes="100vw"
-            className="object-cover object-center"
+            className="object-cover object-[50%_72%]"
           />
           {/* Scrim: heavier on the left, where the text sits, so the headline
               keeps its contrast while the picture stays readable on the right. */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-teal-950/95 via-teal-950/80 to-teal-900/45"
+            className="absolute inset-0 bg-gradient-to-r from-teal-950/90 via-teal-950/55 to-teal-950/15"
           />
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-teal-950/85 via-transparent to-teal-950/40"
+            className="absolute inset-0 bg-gradient-to-t from-teal-950/70 via-transparent to-transparent"
           />
         </>
       )}
