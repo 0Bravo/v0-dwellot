@@ -361,13 +361,6 @@ export default function CompareClient({ grrRate, grrEffectiveDate, ratesReviewed
       {/* ---- Lead capture ---- */}
       {cheapest && (
         <section id="quotes" className="bg-white rounded-xl border border-gray-200 p-6 md:p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Get real quotes</h2>
-          <p className="text-gray-600 text-sm mb-6">
-            The figures above are indicative. Send us your numbers and we will come back to you with lenders
-            that fit, and properties in your budget. Your comparison:{" "}
-            {money(price)} property, {money(safeDeposit)} deposit, {money(result.loanAmount)} over {termYears}{" "}
-            years, cheapest here {cheapest.name} at {cheapest.display}.
-          </p>
           <MortgageLeadForm
             source="mortgage_comparison"
             context={{
