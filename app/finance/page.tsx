@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Activity, ArrowRight, Calculator, Home, Landmark, Receipt, Scale, Wallet } from "lucide-react"
+import FinanceConcierge from "@/components/finance/FinanceConcierge"
+import { AnimatedNumber, Reveal, Stagger, StaggerItem } from "@/components/finance/motion"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
 import { getCediRates } from "@/lib/mortgage/fx"
 import { formatRateDate, resolveLenderRates } from "@/lib/mortgage/rates"
@@ -106,28 +108,39 @@ export default async function FinanceHubPage() {
     },
   ]
 
+  // Decimals follow the figure: 8.4% should not render as 8.40%.
+  const dp = (v: number) => (Number.isInteger(v) ? 0 : Number.isInteger(v * 10) ? 1 : 2)
+
   const facts = [
     {
       label: "Ghana Reference Rate",
-      value: `${grr.rate}%`,
+      value: grr.rate,
+      decimals: dp(grr.rate),
+      suffix: "%",
       note: grr.effectiveDate ? `Effective ${formatRateDate(grr.effectiveDate)}` : "Current published rate",
     },
     cheapestGhs && {
       label: "Cedi mortgages from",
-      value: `${cheapestGhs.rate}%`,
+      value: cheapestGhs.rate,
+      decimals: dp(cheapestGhs.rate),
+      suffix: "%",
       note: `${cheapestGhs.name}, ${formatRateDate(cheapestGhs.asOf)}`,
     },
     cheapestUsd && {
       label: "US dollar mortgages from",
-      value: `${cheapestUsd.rate}%`,
+      value: cheapestUsd.rate,
+      decimals: dp(cheapestUsd.rate),
+      suffix: "%",
       note: `${cheapestUsd.name}, ${formatRateDate(cheapestUsd.asOf)}`,
     },
     {
       label: "Cedi to the US dollar",
-      value: fx.usdGhs.toFixed(2),
+      value: fx.usdGhs,
+      decimals: 2,
+      suffix: "",
       note: `${fx.source}${fx.asOf ? `, ${formatRateDate(fx.asOf)}` : ""}`,
     },
-  ].filter(Boolean) as Array<{ label: string; value: string; note: string }>
+  ].filter(Boolean) as Array<{ label: string; value: number; decimals: number; suffix: string; note: string }>
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -146,17 +159,24 @@ export default async function FinanceHubPage() {
       </section>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+        {/* Guided entry */}
+        <FinanceConcierge grrRate={grr.rate} usdGhs={fx.usdGhs} gbpGhs={fx.gbpGhs} />
+
         {/* Live figures */}
         <section>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <Stagger className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {facts.map((fact) => (
-              <div key={fact.label} className="bg-white rounded-xl border border-gray-200 p-5">
-                <p className="text-sm text-gray-600">{fact.label}</p>
-                <p className="text-2xl md:text-3xl font-bold text-teal-700 mt-1">{fact.value}</p>
-                <p className="text-xs text-gray-500 mt-1">{fact.note}</p>
-              </div>
+              <StaggerItem key={fact.label}>
+                <div className="h-full bg-white rounded-xl border border-gray-200 p-5 transition hover:border-teal-300 hover:shadow-sm">
+                  <p className="text-sm text-gray-600">{fact.label}</p>
+                  <p className="text-2xl md:text-3xl font-bold text-teal-700 mt-1">
+                    <AnimatedNumber value={fact.value} decimals={fact.decimals} suffix={fact.suffix} />
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">{fact.note}</p>
+                </div>
+              </StaggerItem>
             ))}
-          </div>
+          </Stagger>
           <p className="text-xs text-gray-500 mt-3">
             The reference rate is read automatically from {grr.source}, and the exchange rate from{" "}
             {fx.source}. Bank mortgage figures are indicative and exclude fees and insurance; each one shows
@@ -166,7 +186,8 @@ export default async function FinanceHubPage() {
 
         {/* Journey */}
         {stages.map((stage) => (
-          <section key={stage.step}>
+          <Reveal key={stage.step}>
+            <section>
             <div className="flex items-start gap-3 mb-4">
               <span className="flex-shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-full bg-teal-700 text-white text-sm font-bold">
                 {stage.step}
@@ -176,12 +197,12 @@ export default async function FinanceHubPage() {
                 <p className="text-sm text-gray-600 mt-0.5">{stage.blurb}</p>
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Stagger className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {stage.tools.map(({ href, icon: Icon, title, text, cta }) => (
+                <StaggerItem key={href} className="h-full">
                 <Link
-                  key={href}
                   href={href}
-                  className="group bg-white rounded-xl border border-gray-200 p-6 hover:border-teal-300 hover:shadow-sm transition"
+                  className="group flex h-full flex-col bg-white rounded-xl border border-gray-200 p-6 hover:border-teal-300 hover:shadow-sm hover:-translate-y-0.5 transition"
                 >
                   <Icon className="w-6 h-6 text-teal-600 mb-3" aria-hidden="true" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
@@ -191,9 +212,11 @@ export default async function FinanceHubPage() {
                     <ArrowRight className="w-4 h-4" aria-hidden="true" />
                   </span>
                 </Link>
+                </StaggerItem>
               ))}
-            </div>
-          </section>
+            </Stagger>
+            </section>
+          </Reveal>
         ))}
 
         {/* Diaspora note */}
