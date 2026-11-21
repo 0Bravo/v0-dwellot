@@ -61,7 +61,7 @@ export function PageHero({
               keeps its contrast while the picture stays readable on the right. */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-r from-teal-950/90 via-teal-950/55 to-teal-950/15"
+            className="absolute inset-0 bg-gradient-to-r from-teal-950/92 via-teal-950/72 to-teal-950/20"
           />
           <div
             aria-hidden="true"
@@ -96,12 +96,12 @@ export function PageHero({
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-teal-300 mb-3">{eyebrow}</p>
         )}
 
-        <h1 className="text-4xl md:text-6xl font-extrabold text-white text-balance max-w-3xl leading-[1.05]">
+        <h1 className="text-4xl md:text-6xl font-extrabold text-white text-balance max-w-3xl leading-[1.05] [text-shadow:0_2px_24px_rgb(4_47_46_/_0.5)]">
           {title}
         </h1>
 
         {subtitle && (
-          <p className="text-lg md:text-xl text-teal-100/80 mt-4 max-w-2xl leading-relaxed">{subtitle}</p>
+          <p className="text-lg md:text-xl text-teal-50 mt-4 max-w-2xl leading-relaxed [text-shadow:0_1px_12px_rgb(4_47_46_/_0.6)]">{subtitle}</p>
         )}
 
         {children && <div className="mt-9">{children}</div>}
