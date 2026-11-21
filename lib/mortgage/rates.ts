@@ -19,6 +19,21 @@ import type { MortgageCurrency } from "./calc"
 /** Date this table was last reviewed end to end (ISO, YYYY-MM-DD). */
 export const RATES_REVIEWED = "2026-11-17"
 
+/**
+ * Reported maximum loan-to-value per lender, i.e. the largest share of the
+ * price the lender will lend. 100 minus this figure is the smallest deposit
+ * it is reported to accept.
+ *
+ * These are third-party figures, not quotes: LTV is negotiable, depends on
+ * the borrower and the property, and is usually tighter for diaspora buyers
+ * than for residents. The comparison flags a deposit that looks too small
+ * rather than ruling a lender out.
+ */
+export const LTV_SOURCE = {
+  label: "Reported lender terms",
+  asOf: "2026-04",
+} as const
+
 export interface GrrSnapshot {
   /** Ghana Reference Rate, percent per annum */
   rate: number
@@ -87,6 +102,8 @@ interface RateSpec {
 export interface LenderDefinition {
   id: string
   name: string
+  /** Reported maximum loan-to-value, percent. See LTV_SOURCE. */
+  reportedMaxLtvPct?: number
   rates: Partial<Record<MortgageCurrency, RateSpec>>
 }
 
@@ -107,6 +124,7 @@ export const LENDERS: LenderDefinition[] = [
   {
     id: "republic",
     name: "Republic Bank",
+    reportedMaxLtvPct: 90,
     rates: {
       GHS: { basis: "published", rate: 18, maxTermYears: 20, asOf: "2026-09", note: "Fixed, individuals" },
       USD: { basis: "published", rate: 11.5, maxTermYears: 15, asOf: "2026-09", note: "Fixed" },
@@ -129,6 +147,7 @@ export const LENDERS: LenderDefinition[] = [
   {
     id: "absa",
     name: "Absa Bank Ghana",
+    reportedMaxLtvPct: 80,
     rates: {
       GHS: { basis: "reported", rate: 22, maxTermYears: 20, asOf: "2026-05" },
       USD: { basis: "reported", rate: 10.5, maxTermYears: 20, asOf: "2026-05" },
@@ -137,6 +156,7 @@ export const LENDERS: LenderDefinition[] = [
   {
     id: "stanbic",
     name: "Stanbic Bank",
+    reportedMaxLtvPct: 80,
     rates: {
       GHS: { basis: "estimate", range: [22, 26], maxTermYears: 20, asOf: "2026-05" },
       USD: { basis: "estimate", range: [11, 12], maxTermYears: 20, asOf: "2026-05" },
@@ -145,6 +165,8 @@ export const LENDERS: LenderDefinition[] = [
   {
     id: "fnb",
     name: "First National Bank",
+    // Absorbed GHL Bank (Ghana Home Loans), so there is no separate GHL entry.
+    reportedMaxLtvPct: 100,
     rates: {
       GHS: { basis: "estimate", range: [22, 25], maxTermYears: 20, asOf: "2026-05" },
       USD: { basis: "estimate", range: [10.5, 12], maxTermYears: 20, asOf: "2026-05" },
@@ -153,6 +175,7 @@ export const LENDERS: LenderDefinition[] = [
   {
     id: "fidelity",
     name: "Fidelity Bank",
+    reportedMaxLtvPct: 80,
     rates: {
       GHS: { basis: "estimate", range: [22, 25], maxTermYears: 20, asOf: "2026-05" },
     },
@@ -160,6 +183,7 @@ export const LENDERS: LenderDefinition[] = [
   {
     id: "calbank",
     name: "CalBank",
+    reportedMaxLtvPct: 85,
     rates: {
       GHS: { basis: "estimate", range: [23, 26], maxTermYears: 20, asOf: "2026-05" },
     },
@@ -167,6 +191,7 @@ export const LENDERS: LenderDefinition[] = [
   {
     id: "ecobank",
     name: "Ecobank Ghana",
+    reportedMaxLtvPct: 100,
     rates: {
       GHS: { basis: "estimate", range: [24, 26], maxTermYears: 15, asOf: "2026-05" },
     },
