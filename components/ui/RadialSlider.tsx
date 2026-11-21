@@ -201,13 +201,13 @@ export function RadialSlider({
   }
 
   return (
-    /* Caps at 38vw so two dials stay side by side on a phone instead of
-       stacking into a screen-high block above the inputs. The SVG scales with
+    /* Never wider than its slot, so the parent decides how it shrinks rather
+       than this component guessing at the page's padding. The SVG scales with
        the box; pointer maths normalises by the rendered width, so a scaled
-       dial still reads accurately. */
+       dial still reads the drag accurately. */
     <div
-      className="relative inline-flex aspect-square select-none"
-      style={{ width: size, maxWidth: "38vw" }}
+      className="relative inline-flex aspect-square select-none mx-auto"
+      style={{ width: size, maxWidth: "100%" }}
     >
       <svg
         ref={svgRef}

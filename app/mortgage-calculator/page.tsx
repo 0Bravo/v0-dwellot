@@ -171,7 +171,7 @@ export default function MortgageCalculatorPage() {
                 {/* Dials. Drag to explore; the fields below stay for exact
                     figures, because a dial spanning the whole price range
                     cannot land on a specific asking price. */}
-                <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-2xl bg-gray-50 ring-1 ring-gray-100 px-4 py-3">
+                <div className="grid grid-cols-2 items-center gap-2 sm:gap-6 rounded-2xl bg-gray-50 ring-1 ring-gray-100 px-3 sm:px-4 py-3">
                   <RadialSlider
                     label="Property price"
                     value={propertyPrice}
