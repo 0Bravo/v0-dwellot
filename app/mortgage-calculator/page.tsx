@@ -16,6 +16,7 @@ import {
   Activity,
 } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
+import { RadialSlider } from "@/components/ui/RadialSlider"
 import {
   calculateMortgage,
   clampDeposit,
@@ -144,6 +145,34 @@ export default function MortgageCalculatorPage() {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* Dials. Drag to explore; the fields below stay for exact
+                    figures, because a dial spanning the whole price range
+                    cannot land on a specific asking price. */}
+                <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 py-2">
+                  <RadialSlider
+                    label="Property price"
+                    value={propertyPrice}
+                    min={limits.min}
+                    max={limits.max}
+                    step={limits.step}
+                    onChange={handlePriceChange}
+                    format={(v) => formatMoney(v, currency)}
+                    size={212}
+                  />
+                  <RadialSlider
+                    label="Deposit"
+                    value={calculations.depositPercent}
+                    min={5}
+                    max={60}
+                    step={1}
+                    onChange={(pct) => setDownPayment(clampDeposit(Math.round((propertyPrice * pct) / 100), propertyPrice))}
+                    format={(v) => `${Math.round(v)}%`}
+                    caption={formatMoney(downPayment, currency)}
+                    size={212}
+                    accentClass="stroke-emerald-500"
+                  />
                 </div>
 
                 {/* Property Price */}
