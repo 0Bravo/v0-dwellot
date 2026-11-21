@@ -16,6 +16,28 @@ import {
   Activity,
 } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
+import { RadialSlider } from "@/components/ui/RadialSlider"
+
+/**
+ * Whole percentages read as whole; a percentage left fractional by a price
+ * change keeps one decimal rather than rounding to a figure that contradicts
+ * the deposit shown elsewhere on the page.
+ */
+function formatDepositPct(value: number) {
+  const r = Math.round(value * 10) / 10
+  return `${Number.isInteger(r) ? r : r.toFixed(1)}%`
+}
+
+/** Short money for the middle of a dial: GH₵ 1.2M, GH₵ 950K. */
+function compactMoney(value: number, symbol: string) {
+  const abs = Math.abs(value)
+  if (abs >= 1_000_000) {
+    const m = value / 1_000_000
+    return `${symbol} ${(m >= 10 ? Math.round(m) : Number(m.toFixed(1))).toLocaleString()}M`
+  }
+  if (abs >= 1_000) return `${symbol} ${Math.round(value / 1_000).toLocaleString()}K`
+  return `${symbol} ${Math.round(value).toLocaleString()}`
+}
 import {
   calculateMortgage,
   clampDeposit,
@@ -144,6 +166,40 @@ export default function MortgageCalculatorPage() {
                       </button>
                     ))}
                   </div>
+                </div>
+
+                {/* Dials. Drag to explore; the fields below stay for exact
+                    figures, because a dial spanning the whole price range
+                    cannot land on a specific asking price. */}
+                <div className="grid grid-cols-2 items-center gap-2 sm:gap-6 rounded-2xl bg-gray-50 ring-1 ring-gray-100 px-3 sm:px-4 py-3">
+                  <RadialSlider
+                    label="Property price"
+                    value={propertyPrice}
+                    min={limits.min}
+                    max={limits.max}
+                    step={limits.step}
+                    onChange={handlePriceChange}
+                    format={(v) => compactMoney(v, symbol)}
+                    caption="Drag to explore"
+                    size={200}
+                  />
+                  <RadialSlider
+                    label="Deposit"
+                    value={calculations.depositPercent}
+                    /* clampDeposit holds the deposit in 0..price, so the real
+                       range is the full 0-100%. Declaring a narrower band let
+                       the value fall outside it when raising the price pushed
+                       the percentage down, which parks the handle at the wrong
+                       end and reports an aria-valuenow below aria-valuemin. */
+                    min={0}
+                    max={100}
+                    step={1}
+                    onChange={(pct) => setDownPayment(clampDeposit(Math.round((propertyPrice * pct) / 100), propertyPrice))}
+                    format={formatDepositPct}
+                    caption={formatMoney(downPayment, currency)}
+                    size={200}
+                    accentClass="stroke-emerald-500"
+                  />
                 </div>
 
                 {/* Property Price */}
