@@ -490,6 +490,17 @@ export default function MortgageCalculatorPage() {
         </div>
 
         <p className="mt-6 text-sm text-gray-600">
+          Want every lender ranked on these numbers at once?{" "}
+          <Link
+            href="/finance/compare-mortgage-rates"
+            className="text-teal-600 hover:text-teal-700 font-medium underline"
+          >
+            Compare mortgage rates side by side
+          </Link>
+          .
+        </p>
+
+        <p className="mt-3 text-sm text-gray-600">
           More on financing a home in Ghana:{" "}
           <Link href="/finance" className="text-teal-600 hover:text-teal-700 font-medium underline">
             Dwellot property finance hub

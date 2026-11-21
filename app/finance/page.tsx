@@ -39,6 +39,13 @@ export default async function FinanceHubPage() {
       cta: "Check affordability",
     },
     {
+      href: "/finance/compare-mortgage-rates",
+      icon: Landmark,
+      title: "Compare every lender",
+      text: "Rank all the mortgage lenders we can source on your own price, deposit and term.",
+      cta: "Compare lenders",
+    },
+    {
       href: "/finance/ghana-reference-rate",
       icon: Activity,
       title: "Ghana Reference Rate",
