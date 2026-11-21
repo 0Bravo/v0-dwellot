@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Landmark, ShieldCheck } from "lucide-react"
+import { FinanceHero } from "@/components/finance/surfaces"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
 import { RATES_REVIEWED, formatRateDate, resolveLenderRates } from "@/lib/mortgage/rates"
 import { formatMoney } from "@/lib/mortgage/calc"
@@ -111,19 +112,11 @@ export default async function CompareMortgageRatesPage() {
     <div className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <section className="bg-teal-700 py-12">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <Landmark className="w-8 h-8 text-white" aria-hidden="true" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-balance">
-            Compare mortgage rates in Ghana
-          </h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            Every lender we can source, ranked on your price, deposit and term — in cedis or US dollars
-          </p>
-        </div>
-      </section>
+      <FinanceHero
+        icon={Landmark}
+        title="Compare mortgage rates in Ghana"
+        subtitle="Every lender we can source, ranked on your price, deposit and term — in cedis or US dollars"
+      />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         {/* Static summary: readable before any JavaScript runs */}
