@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Activity,
 } from "lucide-react"
+import { FinanceHero } from "@/components/finance/surfaces"
 import {
   calculateMortgage,
   clampDeposit,
@@ -100,24 +101,17 @@ export default function MortgageCalculatorPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="bg-teal-700 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <Calculator className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-balance">
-            Ghana Mortgage Calculator
-          </h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            Estimate your monthly mortgage payments for properties in Ghana, in cedis or US dollars
-          </p>
-          <p className="inline-flex items-center gap-2 mt-5 px-4 py-2 rounded-full bg-teal-800/60 text-teal-50 text-sm">
-            <Activity className="w-4 h-4" />
-            Ghana Reference Rate: <span className="font-semibold">{grr.rate}%</span>
-            {grr.effectiveDate && <span>effective {formatRateDate(grr.effectiveDate)}</span>}
-          </p>
-        </div>
-      </section>
+      <FinanceHero
+        icon={Calculator}
+        title="Ghana Mortgage Calculator"
+        subtitle="Estimate your monthly repayments on a property in Ghana, in cedis or US dollars"
+      >
+        <p className="inline-flex flex-wrap items-center gap-2 px-4 py-2 rounded-full bg-white/10 ring-1 ring-white/15 text-teal-50 text-sm">
+          <Activity className="w-4 h-4" aria-hidden="true" />
+          Ghana Reference Rate: <span className="font-semibold text-white">{grr.rate}%</span>
+          {grr.effectiveDate && <span className="text-teal-200">effective {formatRateDate(grr.effectiveDate)}</span>}
+        </p>
+      </FinanceHero>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -375,30 +369,38 @@ export default function MortgageCalculatorPage() {
               <h3 className="text-lg font-bold text-gray-900 mb-6">Your Estimate</h3>
 
               {/* Monthly Payment */}
-              <div className="bg-teal-50 rounded-xl p-6 mb-6 text-center">
-                <p className="text-sm text-teal-700 font-medium mb-1">Monthly Payment</p>
-                <p className="text-3xl md:text-4xl font-bold text-teal-700">
-                  {formatMoney(calculations.monthlyPayment, currency)}
-                </p>
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-900 via-teal-800 to-emerald-800 p-6 mb-6">
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
+                />
+                <div className="relative">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200">
+                    Monthly payment
+                  </p>
+                  <p className="text-4xl md:text-5xl font-bold text-white tracking-tight tabular-nums mt-1.5">
+                    {formatMoney(calculations.monthlyPayment, currency)}
+                  </p>
+                </div>
               </div>
 
               {/* Breakdown */}
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
                   <span className="text-gray-600">Loan Amount</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-900 tabular-nums">
                     {formatMoney(calculations.loanAmount, currency)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
                   <span className="text-gray-600">Total Interest</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-900 tabular-nums">
                     {formatMoney(calculations.totalInterest, currency)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 border-b border-gray-100">
                   <span className="text-gray-600">Total Payment</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="font-semibold text-gray-900 tabular-nums">
                     {formatMoney(calculations.totalPayment, currency)}
                   </span>
                 </div>
