@@ -107,8 +107,16 @@ export default function MortgageCalculatorPage() {
   }
 
   const handlePriceChange = (value: number) => {
+    /* Hold the deposit percentage, not the cash amount. Clamping the amount
+       meant retyping a price destroyed the deposit: every keystroke clamped
+       it to the partial figure, so "20000000" took a 200,000 deposit down to
+       2 cedis on the first digit and left it there. Holding the percentage
+       also matches the cost-of-buying page and the concierge, which both
+       store a percentage, and is what the deposit dial implies. */
+    const pct =
+      propertyPrice > 0 ? downPayment / propertyPrice : defaults.depositPct / 100
     setPropertyPrice(value)
-    setDownPayment((current) => clampDeposit(current, value))
+    setDownPayment(clampDeposit(Math.round(value * pct), value))
   }
 
   const applyLender = (rate: number, maxTermYears: number) => {
