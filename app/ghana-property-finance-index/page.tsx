@@ -12,7 +12,8 @@ const PATH = "/ghana-property-finance-index"
 
 export async function generateMetadata(): Promise<Metadata> {
   const e = await buildFinanceIndexEdition()
-  const title = `Ghana Property Finance Index, ${e.editionLabel} | Dwellot`
+  /* The layout template already appends the brand. */
+  const title = `Ghana Property Finance Index, ${e.editionLabel}`
   const description =
     `Ghana's property finance benchmarks for ${e.editionLabel}: policy rate ${e.policy.rate}%, ` +
     `Ghana Reference Rate ${e.grr.rate}%, mortgage terms by lender, stamp duty and Lands ` +
@@ -154,12 +155,17 @@ export default async function FinanceIndexPage() {
                 <tbody className="divide-y divide-gray-100">
                   {e.lenderTerms.published.map((r) => (
                     <tr key={`${r.id}-${r.currency}`}>
-                      <td className="py-2.5 pr-4 font-medium text-gray-900">{r.name}</td>
+                      <td className="py-2.5 pr-4 font-medium text-gray-900">
+                        {r.name}
+                        {r.note && (
+                          <span className="block text-xs font-normal text-gray-500">{r.note}</span>
+                        )}
+                      </td>
                       <td className="py-2.5 pr-4 text-gray-600">{r.currency}</td>
                       <td className="py-2.5 pr-4 text-gray-900 tabular-nums">{r.display}</td>
                       <td className="py-2.5 pr-4 text-gray-600 tabular-nums">{r.maxTermYears} yr</td>
                       <td className="py-2.5 pr-4 text-gray-600">{r.basis}</td>
-                      <td className="py-2.5 text-gray-600">{formatRateDate(`${r.asOf}-01`)}</td>
+                      <td className="py-2.5 text-gray-600">{formatRateDate(r.asOf)}</td>
                     </tr>
                   ))}
                 </tbody>
