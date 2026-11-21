@@ -112,14 +112,27 @@ export function AnimatedNumber({
   const reduce = useReducedMotion()
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, margin: "-40px" })
-  const [shown, setShown] = useState(reduce ? value : 0)
-  const fromRef = useRef(0)
+  // Starts at the real figure, not zero. The server renders this markup, so
+  // beginning at zero shipped "0.00%" in the HTML: visible to anyone whose
+  // JavaScript is slow or blocked, and read by anything that extracts text
+  // from the page. The count-up starts from zero only once we are on the
+  // client and the element is in view.
+  const [shown, setShown] = useState(value)
+  const fromRef = useRef(value)
+  const startedRef = useRef(false)
 
   useEffect(() => {
     if (reduce || !inView) {
       setShown(value)
       fromRef.current = value
       return
+    }
+
+    // First time in view on the client: count up from zero. After that,
+    // animate from wherever the figure currently sits so input changes glide.
+    if (!startedRef.current) {
+      startedRef.current = true
+      fromRef.current = 0
     }
 
     const from = fromRef.current
@@ -148,16 +161,11 @@ export function AnimatedNumber({
     maximumFractionDigits: decimals,
   })}${suffix}`
 
-  // The accessible value is always the real one, never a mid-animation frame.
+  // One span only. A second, screen-reader copy of the figure meant the page
+  // text read "0.00% 10.01%" wherever it was extracted.
   return (
     <span ref={ref} className={className}>
-      <span aria-hidden="true">{text}</span>
-      <span className="sr-only">
-        {`${prefix}${value.toLocaleString("en-GB", {
-          minimumFractionDigits: decimals,
-          maximumFractionDigits: decimals,
-        })}${suffix}`}
-      </span>
+      {text}
     </span>
   )
 }
