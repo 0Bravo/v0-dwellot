@@ -15,7 +15,7 @@ import {
   ChevronRight,
   Activity,
 } from "lucide-react"
-import { FinanceHero } from "@/components/finance/surfaces"
+import { PageHero } from "@/components/ui/PageHero"
 import {
   calculateMortgage,
   clampDeposit,
@@ -101,7 +101,7 @@ export default function MortgageCalculatorPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <FinanceHero
+      <PageHero
         icon={Calculator}
         title="Ghana Mortgage Calculator"
         subtitle="Estimate your monthly repayments on a property in Ghana, in cedis or US dollars"
@@ -111,7 +111,7 @@ export default function MortgageCalculatorPage() {
           Ghana Reference Rate: <span className="font-semibold text-white">{grr.rate}%</span>
           {grr.effectiveDate && <span className="text-teal-200">effective {formatRateDate(grr.effectiveDate)}</span>}
         </p>
-      </FinanceHero>
+      </PageHero>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

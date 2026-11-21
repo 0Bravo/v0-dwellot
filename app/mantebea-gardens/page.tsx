@@ -623,7 +623,7 @@ export default function MantebeaGardensPage() {
       </section>
 
       {/* ── Bottom CTA ─────────────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-r from-teal-800 to-teal-600 text-white py-16">
+      <section className="bg-gradient-to-br from-teal-900 via-teal-800 to-emerald-800 text-white py-16">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Own at Mantebea Gardens?</h2>
           <p className="text-teal-100 mb-8 text-lg">

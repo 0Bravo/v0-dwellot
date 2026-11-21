@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Calculator, Info, Wallet } from "lucide-react"
-import { FinanceHero } from "@/components/finance/surfaces"
+import { PageHero } from "@/components/ui/PageHero"
 import { calculateMortgage, formatMoney } from "@/lib/mortgage/calc"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
 import { RATES_REVIEWED, formatRateDate, resolveLenderRates } from "@/lib/mortgage/rates"
@@ -107,7 +107,7 @@ export default async function SalaryRequirementsPage() {
     <div className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <FinanceHero
+      <PageHero
         icon={Wallet}
         title="What salary do you need for a mortgage in Ghana?"
         subtitle="Banks cap what you spend on repayments as a share of income. Here is what that works out to at today’s rates."

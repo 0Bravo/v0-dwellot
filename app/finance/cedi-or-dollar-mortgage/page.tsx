@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeftRight, ArrowRight, Calculator, Info } from "lucide-react"
-import { FinanceHero } from "@/components/finance/surfaces"
+import { PageHero } from "@/components/ui/PageHero"
 import { calculateMortgage, formatMoney } from "@/lib/mortgage/calc"
 import { getCediRates, toCedis } from "@/lib/mortgage/fx"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
@@ -113,7 +113,7 @@ export default async function CediOrDollarPage() {
     <div className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <FinanceHero
+      <PageHero
         icon={ArrowLeftRight}
         title="Cedi or US dollar mortgage?"
         subtitle="The rates are not close. Neither is the risk. Which matters more depends on the currency you are paid in."
