@@ -18,6 +18,16 @@ import {
 import { PageHero } from "@/components/ui/PageHero"
 import { RadialSlider } from "@/components/ui/RadialSlider"
 
+/**
+ * Whole percentages read as whole; a percentage left fractional by a price
+ * change keeps one decimal rather than rounding to a figure that contradicts
+ * the deposit shown elsewhere on the page.
+ */
+function formatDepositPct(value: number) {
+  const r = Math.round(value * 10) / 10
+  return `${Number.isInteger(r) ? r : r.toFixed(1)}%`
+}
+
 /** Short money for the middle of a dial: GH₵ 1.2M, GH₵ 950K. */
 function compactMoney(value: number, symbol: string) {
   const abs = Math.abs(value)
@@ -176,11 +186,16 @@ export default function MortgageCalculatorPage() {
                   <RadialSlider
                     label="Deposit"
                     value={calculations.depositPercent}
-                    min={5}
-                    max={60}
+                    /* clampDeposit holds the deposit in 0..price, so the real
+                       range is the full 0-100%. Declaring a narrower band let
+                       the value fall outside it when raising the price pushed
+                       the percentage down, which parks the handle at the wrong
+                       end and reports an aria-valuenow below aria-valuemin. */
+                    min={0}
+                    max={100}
                     step={1}
                     onChange={(pct) => setDownPayment(clampDeposit(Math.round((propertyPrice * pct) / 100), propertyPrice))}
-                    format={(v) => `${Math.round(v)}%`}
+                    format={formatDepositPct}
                     caption={formatMoney(downPayment, currency)}
                     size={200}
                     accentClass="stroke-emerald-500"
