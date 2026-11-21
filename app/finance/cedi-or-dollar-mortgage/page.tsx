@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowLeftRight, ArrowRight, Calculator, Info } from "lucide-react"
+import { FinanceHero } from "@/components/finance/surfaces"
 import { calculateMortgage, formatMoney } from "@/lib/mortgage/calc"
 import { getCediRates, toCedis } from "@/lib/mortgage/fx"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
@@ -112,19 +113,11 @@ export default async function CediOrDollarPage() {
     <div className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <section className="bg-teal-700 py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <ArrowLeftRight className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-balance">
-            Cedi or US dollar mortgage?
-          </h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            The rates are not close. Neither is the risk. Which matters more depends on the currency you are paid in.
-          </p>
-        </div>
-      </section>
+      <FinanceHero
+        icon={ArrowLeftRight}
+        title="Cedi or US dollar mortgage?"
+        subtitle="The rates are not close. Neither is the risk. Which matters more depends on the currency you are paid in."
+      />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
         {/* Side by side */}

@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Activity, ArrowRight, Calculator, Home, Landmark, Receipt, Scale, Wallet } from "lucide-react"
+import { FinanceHero } from "@/components/finance/surfaces"
 import FinanceConcierge from "@/components/finance/FinanceConcierge"
 import { AnimatedNumber, Reveal, Stagger, StaggerItem } from "@/components/finance/motion"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
@@ -144,19 +145,11 @@ export default async function FinanceHubPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <section className="bg-teal-700 py-12">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <Landmark className="w-8 h-8 text-white" aria-hidden="true" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-balance">
-            Paying for a home in Ghana
-          </h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            Work out what you can afford, compare every lender, and see the full cost before you commit
-          </p>
-        </div>
-      </section>
+      <FinanceHero
+        icon={Landmark}
+        title="Paying for a home in Ghana"
+        subtitle="Work out what you can afford, compare every lender, and see the full cost before you commit"
+      />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
         {/* Guided entry */}

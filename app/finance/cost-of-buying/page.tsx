@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Receipt } from "lucide-react"
+import { FinanceHero } from "@/components/finance/surfaces"
 import { getCediRates } from "@/lib/mortgage/fx"
 import { formatRateDate } from "@/lib/mortgage/rates"
 import {
@@ -111,19 +112,11 @@ export default async function CostOfBuyingPage() {
     <div className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <section className="bg-teal-700 py-12">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <Receipt className="w-8 h-8 text-white" aria-hidden="true" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-balance">
-            What buying a home in Ghana really costs
-          </h1>
-          <p className="text-teal-100 text-lg max-w-2xl mx-auto">
-            Every fee and tax on top of the price — stamp duty, registration, legal, lender and insurance
-          </p>
-        </div>
-      </section>
+      <FinanceHero
+        icon={Receipt}
+        title="What buying a home in Ghana really costs"
+        subtitle="Every fee and tax on top of the price — stamp duty, registration, legal, lender and insurance"
+      />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         <section className="bg-white rounded-xl border border-gray-200 p-6 md:p-8">

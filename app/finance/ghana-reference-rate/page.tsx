@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Activity, ArrowRight, Calculator, Info, TrendingDown, TrendingUp } from "lucide-react"
+import { FinanceHero } from "@/components/finance/surfaces"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
 import {
   BASIS_LABEL,
@@ -104,32 +105,38 @@ export default async function GhanaReferenceRatePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       {/* Hero */}
-      <section className="bg-teal-700 py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <Activity className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 text-balance">Ghana Reference Rate</h1>
-          <p className="text-6xl md:text-7xl font-bold text-white my-4">{grr.rate}%</p>
-          <p className="text-teal-100 text-lg">
-            {grr.effectiveDate ? `Effective ${formatRateDate(grr.effectiveDate)}` : "Current published rate"}
+      <FinanceHero
+        icon={Activity}
+        title="Ghana Reference Rate"
+        subtitle="The benchmark banks price cedi loans from, read automatically from the published figure."
+      >
+        <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
+          <p className="text-6xl md:text-7xl font-bold text-white tracking-tight tabular-nums">{grr.rate}%</p>
+          <div className="pb-2">
+            <p className="text-teal-100">
+              {grr.effectiveDate ? `Effective ${formatRateDate(grr.effectiveDate)}` : "Current published rate"}
+            </p>
             {previous && change !== 0 && (
-              <span className="inline-flex items-center gap-1 ml-3">
-                {change < 0 ? <TrendingDown className="w-4 h-4" /> : <TrendingUp className="w-4 h-4" />}
-                {change < 0 ? "down" : "up"} {Math.abs(change).toFixed(2)} points from {previous.rate}% in{" "}
+              <p className="inline-flex items-center gap-1.5 text-sm text-teal-200 mt-1">
+                {change < 0 ? (
+                  <TrendingDown className="w-4 h-4" aria-hidden="true" />
+                ) : (
+                  <TrendingUp className="w-4 h-4" aria-hidden="true" />
+                )}
+                {change < 0 ? "Down" : "Up"} {Math.abs(change).toFixed(2)} points from {previous.rate}% in{" "}
                 {formatRateDate(previous.month)}
-              </span>
+              </p>
             )}
-          </p>
-          <p className="text-teal-200 text-sm mt-3">
-            Source:{" "}
-            <a href={grr.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
-              {grr.source}
-            </a>
-            . This page checks the published rate automatically.
-          </p>
+          </div>
         </div>
-      </section>
+        <p className="text-sm text-teal-200/80 mt-5">
+          Source:{" "}
+          <a href={grr.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-white">
+            {grr.source}
+          </a>
+          . This page checks the published rate automatically.
+        </p>
+      </FinanceHero>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
         {/* What it means */}
