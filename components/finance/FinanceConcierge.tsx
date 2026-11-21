@@ -277,7 +277,7 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
               <Questions prompt="What comes in, and what have you saved?" onBack={restart} onNext={() => setStep(1)}>
                 {/* Dials to explore, fields below for exact figures. Both ends
                     follow the value, because the fields take any amount. */}
-                <div className="grid grid-cols-2 gap-2 sm:gap-6 items-start">
+                <div className="sm:col-span-2 grid grid-cols-2 gap-2 sm:gap-8 items-start justify-items-center max-w-md mx-auto">
                   <RadialSlider
                     label="Monthly income"
                     value={income}
@@ -388,7 +388,7 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
                 onBack={restart}
                 onNext={() => setStep(1)}
               >
-                <div className="grid grid-cols-2 gap-2 sm:gap-6 items-start">
+                <div className="sm:col-span-2 grid grid-cols-2 gap-2 sm:gap-8 items-start justify-items-center max-w-md mx-auto">
                   <RadialSlider
                     label="Asking price"
                     value={price}
