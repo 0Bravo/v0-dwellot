@@ -37,7 +37,7 @@ export function PageHero({
 }) {
   return (
     <section
-      className={`hero-mesh relative isolate overflow-hidden bg-teal-950 ${overlap ? "pb-28 md:pb-36" : ""}`}
+      className={`hero-mesh relative isolate overflow-hidden bg-teal-900 ${overlap ? "pb-28 md:pb-36" : ""}`}
     >
       {/* Fine dot grid, over the wash */}
       <div
