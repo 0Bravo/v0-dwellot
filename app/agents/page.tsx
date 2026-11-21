@@ -13,6 +13,7 @@ import {
   Phone,
   Landmark,
 } from "lucide-react"
+import { PageHero } from "@/components/ui/PageHero"
 
 const PLACEHOLDER_AGENTS = [
   {
@@ -86,16 +87,11 @@ export default function AgentsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="bg-teal-700 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 text-balance">
-            Find Real Estate Agents in Ghana
-          </h1>
-          <p className="text-teal-100 text-lg md:text-xl max-w-2xl mx-auto text-pretty">
-            Connect with verified property professionals across Ghana
-          </p>
-        </div>
-      </section>
+      <PageHero
+        width="wide"
+        title="Find Real Estate Agents in Ghana"
+        subtitle="Connect with verified property professionals across Ghana"
+      />
 
       {/* Why Use a Dwellot Agent */}
       <section className="py-16 bg-white">

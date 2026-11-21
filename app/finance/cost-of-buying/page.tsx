@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Receipt } from "lucide-react"
-import { FinanceHero } from "@/components/finance/surfaces"
+import { PageHero } from "@/components/ui/PageHero"
 import { getCediRates } from "@/lib/mortgage/fx"
 import { formatRateDate } from "@/lib/mortgage/rates"
 import {
@@ -112,7 +112,7 @@ export default async function CostOfBuyingPage() {
     <div className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <FinanceHero
+      <PageHero
         icon={Receipt}
         title="What buying a home in Ghana really costs"
         subtitle="Every fee and tax on top of the price — stamp duty, registration, legal, lender and insurance"

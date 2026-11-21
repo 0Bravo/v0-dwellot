@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Activity, ArrowRight, Calculator, Home, Landmark, Receipt, Scale, Wallet } from "lucide-react"
-import { FinanceHero } from "@/components/finance/surfaces"
+import { PageHero } from "@/components/ui/PageHero"
 import FinanceConcierge from "@/components/finance/FinanceConcierge"
 import { AnimatedNumber, Reveal, Stagger, StaggerItem } from "@/components/finance/motion"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
@@ -145,7 +145,7 @@ export default async function FinanceHubPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <FinanceHero
+      <PageHero
         icon={Landmark}
         title="Paying for a home in Ghana"
         subtitle="Work out what you can afford, compare every lender, and see the full cost before you commit"

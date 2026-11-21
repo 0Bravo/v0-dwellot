@@ -14,6 +14,7 @@ import {
   ChevronRight,
   LogIn,
 } from "lucide-react"
+import { PageHero } from "@/components/ui/PageHero"
 
 export const metadata = {
   title: "List Your Property",
@@ -35,35 +36,29 @@ export default async function AddPropertyPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero */}
-      <section className="bg-teal-700 py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-teal-600 rounded-full mb-4">
-            <Home className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 text-balance">
-            List Your Property on Dwellot
-          </h1>
-          <p className="text-teal-100 text-lg md:text-xl max-w-2xl mx-auto mb-8">
-            Reach thousands of buyers and renters looking for properties in Ghana
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/auth?redirect=/dashboard/properties/new"
-              className="inline-flex items-center justify-center gap-2 bg-white text-teal-700 px-8 py-4 rounded-lg font-bold text-lg hover:bg-teal-50 transition"
-            >
-              <LogIn className="w-5 h-5" />
-              Sign In to List Property
-            </Link>
-            <Link
-              href="/agent-collection-form"
-              className="inline-flex items-center justify-center gap-2 bg-teal-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-teal-500 transition border border-teal-500"
-            >
-              Register as Agent
-              <ChevronRight className="w-5 h-5" />
-            </Link>
-          </div>
+      <PageHero
+        icon={Home}
+        width="wide"
+        title="List Your Property on Dwellot"
+        subtitle="Reach thousands of buyers and renters looking for properties in Ghana"
+      >
+        <div className="flex flex-col sm:flex-row gap-4">
+          <Link
+            href="/auth?redirect=/dashboard/properties/new"
+            className="inline-flex items-center justify-center gap-2 bg-white text-teal-700 px-8 py-4 rounded-lg font-bold text-lg hover:bg-teal-50 transition"
+          >
+            <LogIn className="w-5 h-5" />
+            Sign In to List Property
+          </Link>
+          <Link
+            href="/agent-collection-form"
+            className="inline-flex items-center justify-center gap-2 bg-teal-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:bg-teal-500 transition border border-teal-500"
+          >
+            Register as Agent
+            <ChevronRight className="w-5 h-5" />
+          </Link>
         </div>
-      </section>
+      </PageHero>
 
       {/* How It Works */}
       <section className="py-16 bg-white">

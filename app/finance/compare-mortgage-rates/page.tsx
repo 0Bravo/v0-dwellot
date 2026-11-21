@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, Landmark, ShieldCheck } from "lucide-react"
-import { FinanceHero } from "@/components/finance/surfaces"
+import { PageHero } from "@/components/ui/PageHero"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
 import { RATES_REVIEWED, formatRateDate, resolveLenderRates } from "@/lib/mortgage/rates"
 import { formatMoney } from "@/lib/mortgage/calc"
@@ -112,7 +112,7 @@ export default async function CompareMortgageRatesPage() {
     <div className="min-h-screen bg-gray-50">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <FinanceHero
+      <PageHero
         icon={Landmark}
         title="Compare mortgage rates in Ghana"
         subtitle="Every lender we can source, ranked on your price, deposit and term — in cedis or US dollars"

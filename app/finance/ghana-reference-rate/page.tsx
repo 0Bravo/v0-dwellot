@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { Activity, ArrowRight, Calculator, Info, TrendingDown, TrendingUp } from "lucide-react"
-import { FinanceHero } from "@/components/finance/surfaces"
+import { PageHero } from "@/components/ui/PageHero"
 import { getGhanaReferenceRate } from "@/lib/mortgage/grr"
 import {
   BASIS_LABEL,
@@ -105,7 +105,7 @@ export default async function GhanaReferenceRatePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       {/* Hero */}
-      <FinanceHero
+      <PageHero
         icon={Activity}
         title="Ghana Reference Rate"
         subtitle="The benchmark banks price cedi loans from, read automatically from the published figure."
@@ -136,7 +136,7 @@ export default async function GhanaReferenceRatePage() {
           </a>
           . This page checks the published rate automatically.
         </p>
-      </FinanceHero>
+      </PageHero>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8">
         {/* What it means */}
