@@ -103,6 +103,7 @@ export function RadialSlider({
 }: RadialSliderProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const [dragging, setDragging] = useState(false)
+  const [focused, setFocused] = useState(false)
   const id = useId()
 
   const cx = size / 2
@@ -229,6 +230,18 @@ export function RadialSlider({
           strokeLinecap="round"
           className={accentClass}
         />
+        {/* Focus ring. Drawn as a circle because the default outline boxes a
+            round handle; visible focus is kept, only its shape changes. */}
+        {focused && (
+          <circle
+            cx={handle.x}
+            cy={handle.y}
+            r={thickness * 0.78 + 5}
+            fill="none"
+            strokeWidth={3}
+            className="stroke-teal-600/45"
+          />
+        )}
         {/* Handle */}
         <circle
           cx={handle.x}
@@ -246,15 +259,17 @@ export function RadialSlider({
           aria-disabled={disabled || undefined}
           aria-describedby={`${id}-caption`}
           onKeyDown={onKeyDown}
-          style={{ outlineOffset: 4 }}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
+          style={{ outline: "none" }}
         />
       </svg>
 
       {/* The readout sits outside the SVG so it inherits page type properly,
           and is absolutely positioned so it stays centred at any size. */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[18%] pointer-events-none">
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-[10%] pointer-events-none">
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gray-500">{label}</p>
-        <p className="text-2xl md:text-3xl font-bold text-gray-900 tabular-nums mt-0.5">{format(value)}</p>
+        <p className="text-2xl font-bold text-gray-900 tabular-nums mt-0.5 whitespace-nowrap">{format(value)}</p>
         {caption && (
           <p id={`${id}-caption`} className="text-xs text-gray-500 mt-0.5">
             {caption}
