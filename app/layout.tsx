@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import { Inter, Plus_Jakarta_Sans } from "next/font/google"
 import "./globals.css"
 import { AuthProvider } from "@/lib/auth-context"
 import { Analytics } from "@vercel/analytics/react"
@@ -12,7 +12,17 @@ import FacebookPixel from "@/components/FacebookPixel"
 import GoogleAnalytics from "@/components/GoogleAnalytics"
 import SiteShell from "@/components/SiteShell"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" })
+
+// Headings get their own face. Inter everywhere reads as a default rather
+// than a decision; a second family gives the page a voice without costing
+// legibility in body copy, which stays Inter.
+const display = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["600", "700", "800"],
+  variable: "--font-display",
+  display: "swap",
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://dwellot.com"),
@@ -198,7 +208,7 @@ export default function RootLayout({
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(searchActionSchema) }} />
       </head>
-      <body className={inter.className}>
+      <body className={`${inter.variable} ${display.variable} ${inter.className}`}>
         <ToastProvider>
           <RecentlyViewedProvider>
             <CompareProvider>

@@ -179,3 +179,73 @@
     print-color-adjust: exact;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Display type and surfaces.
+
+   Headings use Plus Jakarta Sans; body copy stays Inter. Tightening the
+   tracking at display sizes is what stops large headings looking loose.
+   --------------------------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), var(--font-body), system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  letter-spacing: -0.03em;
+}
+
+/* A layered wash for dark hero surfaces: three offset radial gradients drift
+   slowly against each other, which reads as depth rather than a flat fill. */
+.hero-mesh::before {
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(42rem 28rem at 18% 12%, rgba(45, 212, 191, 0.35), transparent 60%),
+    radial-gradient(38rem 26rem at 82% 8%, rgba(16, 185, 129, 0.28), transparent 62%),
+    radial-gradient(34rem 30rem at 62% 92%, rgba(6, 148, 162, 0.3), transparent 60%);
+  animation: hero-drift 26s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes hero-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(-3%, 2%, 0) scale(1.08);
+  }
+}
+
+/* Cards that lift. The shadow carries the weight, not a heavier border. */
+.card-lift {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.25s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 2px rgba(15, 50, 48, 0.04),
+    0 12px 28px -12px rgba(15, 50, 48, 0.18);
+}
+
+/* Anyone who has asked for less movement gets none of it. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-mesh::before {
+    animation: none;
+  }
+
+  .card-lift,
+  .card-lift:hover {
+    transition: none;
+    transform: none;
+  }
+}

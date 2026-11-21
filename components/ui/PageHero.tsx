@@ -5,54 +5,86 @@ import type { LucideIcon } from "lucide-react"
  * The site's page hero.
  *
  * Started life in the finance section, which is why it was briefly called
- * FinanceHero, but nothing about it is finance-specific and three pages
- * outside that section need the same treatment. It lives here so there is
- * one hero in the codebase rather than one per page.
+ * FinanceHero, but nothing about it is finance-specific and pages outside
+ * that section need the same treatment.
  *
- * A server component: no state, so pages using it stay static.
+ * The depth comes from three offset radial gradients drifting slowly against
+ * each other (.hero-mesh in globals.css) rather than a flat linear fill,
+ * with a fine dot grid over the top and a soft fade into the page below.
+ * All CSS, so this stays a server component and pages using it stay static,
+ * and all of it stops under prefers-reduced-motion.
  */
 export function PageHero({
   icon: Icon,
+  eyebrow,
   title,
   subtitle,
   width = "narrow",
+  overlap = false,
   children,
 }: {
   /** Optional: some pages lead with the headline alone */
   icon?: LucideIcon
+  /** Small label above the headline */
+  eyebrow?: string
   title: string
   subtitle?: string
   /** "narrow" matches the finance section; "wide" matches the listings pages */
   width?: "narrow" | "wide"
-  /** Figures, a rate pill, call-to-action buttons */
+  /** Leaves room for the next section to pull up into the hero */
+  overlap?: boolean
   children?: ReactNode
 }) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-teal-900 via-teal-800 to-emerald-800">
+    <section
+      className={`hero-mesh relative isolate overflow-hidden bg-teal-950 ${overlap ? "pb-28 md:pb-36" : ""}`}
+    >
+      {/* Fine dot grid, over the wash */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
+        className="pointer-events-none absolute inset-0 z-[1] opacity-[0.06] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:24px_24px]"
       />
+      {/* Fade into whatever follows, so the edge is not a hard line */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 -right-32 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-24 bg-gradient-to-b from-transparent to-gray-50/90"
       />
+
       <div
-        className={`relative ${
+        className={`relative z-[2] ${
           width === "wide" ? "max-w-7xl" : "max-w-5xl"
-        } mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20`}
+        } mx-auto px-4 sm:px-6 lg:px-8 pt-16 md:pt-24 ${overlap ? "pb-0" : "pb-16 md:pb-24"}`}
       >
         {Icon && (
-          <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 ring-1 ring-white/15 mb-6">
-            <Icon className="w-7 h-7 text-white" aria-hidden="true" />
+          <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur-sm mb-6 shadow-lg shadow-teal-950/30">
+            <Icon className="w-7 h-7 text-teal-50" aria-hidden="true" />
           </span>
         )}
-        <h1 className="text-3xl md:text-5xl font-bold text-white tracking-tight text-balance max-w-3xl">
+
+        {eyebrow && (
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-teal-300 mb-3">{eyebrow}</p>
+        )}
+
+        <h1 className="text-4xl md:text-6xl font-extrabold text-white text-balance max-w-3xl leading-[1.05]">
           {title}
         </h1>
-        {subtitle && <p className="text-teal-100/90 text-lg mt-3 max-w-2xl">{subtitle}</p>}
-        {children && <div className="mt-8">{children}</div>}
+
+        {subtitle && (
+          <p className="text-lg md:text-xl text-teal-100/80 mt-4 max-w-2xl leading-relaxed">{subtitle}</p>
+        )}
+
+        {children && <div className="mt-9">{children}</div>}
       </div>
     </section>
+  )
+}
+
+/**
+ * Pulls the following section up into a hero rendered with overlap, so the
+ * two interlock instead of stacking as separate bands.
+ */
+export function HeroOverlap({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return (
+    <div className={`relative z-10 -mt-20 md:-mt-28 ${className}`}>{children}</div>
   )
 }

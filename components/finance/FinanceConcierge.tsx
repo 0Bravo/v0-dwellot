@@ -184,23 +184,9 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
 
   return (
     <section
-      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-900 via-teal-800 to-emerald-800 shadow-2xl shadow-teal-900/20"
+      className="relative overflow-hidden rounded-3xl bg-white/[0.07] ring-1 ring-white/15 backdrop-blur-md shadow-2xl shadow-teal-950/30"
       aria-labelledby="concierge-heading"
     >
-      {/* Decorative depth. Pure ornament, hidden from assistive tech. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
-      />
-      {!reduce && (
-        <motion.div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-32 -right-24 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl"
-          animate={{ scale: [1, 1.18, 1], opacity: [0.35, 0.6, 0.35] }}
-          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
-        />
-      )}
-
       <div className="relative p-6 md:p-10">
         <div className="flex items-start justify-between gap-4 mb-7">
           <div>
@@ -210,7 +196,7 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
             </p>
             <h2
               id="concierge-heading"
-              className="text-3xl md:text-5xl font-bold text-white tracking-tight text-balance"
+              className="text-2xl md:text-3xl font-bold text-white text-balance"
             >
               {intent === null ? "What brings you here?" : "Let's work it out"}
             </h2>
@@ -263,7 +249,7 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
                     key={id}
                     type="button"
                     onClick={() => choose(id)}
-                    className="group relative text-left rounded-2xl bg-white/[0.07] ring-1 ring-white/10 p-5 md:p-6 backdrop-blur-sm hover:bg-white/[0.14] hover:ring-white/25 transition-colors"
+                    className="group relative text-left rounded-2xl bg-white/[0.10] ring-1 ring-white/15 p-5 md:p-6 hover:bg-white/[0.18] hover:ring-white/30 transition-colors"
                     initial={reduce ? false : { opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={reduce ? { duration: 0 } : { duration: 0.45, delay: i * 0.07, ease: EASE }}
