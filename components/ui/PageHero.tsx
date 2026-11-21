@@ -55,7 +55,7 @@ export function PageHero({
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[50%_72%]"
+            className="object-cover object-bottom scale-[1.45] origin-bottom"
           />
           {/* Scrim: heavier on the left, where the text sits, so the headline
               keeps its contrast while the picture stays readable on the right. */}
