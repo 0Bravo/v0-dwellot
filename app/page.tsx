@@ -11,7 +11,9 @@ export const revalidate = 60
    is the old positioning and the first thing a searcher reads. The homepage
    says what it now leads with; every other page keeps the default. */
 export const metadata: Metadata = {
-  title: "Ghana Property and Mortgages for Buyers Abroad",
+  /* The layout template does not reach the root page, so the brand is
+     spelled out here: a title with no name in it is anonymous in a result. */
+  title: "Ghana Property and Mortgages for Buyers Abroad | Dwellot",
   description:
     "Work out what you can afford in Ghana, what a purchase really costs once stamp duty, " +
     "Lands Commission and lender fees are counted, and which lender is cheapest \u2014 then browse " +
