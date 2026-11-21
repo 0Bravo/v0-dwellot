@@ -1,6 +1,6 @@
 import type React from "react"
 import type { Metadata } from "next"
-import { Inter, Plus_Jakarta_Sans } from "next/font/google"
+import localFont from "next/font/local"
 import "./globals.css"
 import { AuthProvider } from "@/lib/auth-context"
 import { Analytics } from "@vercel/analytics/react"
@@ -12,14 +12,23 @@ import FacebookPixel from "@/components/FacebookPixel"
 import GoogleAnalytics from "@/components/GoogleAnalytics"
 import SiteShell from "@/components/SiteShell"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-body", display: "swap" })
+// Both faces are served from the repo rather than fetched from Google at
+// build time. next/font/google downloads the files during the build, so a
+// blip at Google's end fails the whole deploy, which it already did once.
+// These are the upstream variable woff2 files, vendored.
+const inter = localFont({
+  src: "./fonts/inter-latin-wght-normal.woff2",
+  weight: "100 900",
+  variable: "--font-body",
+  display: "swap",
+})
 
 // Headings get their own face. Inter everywhere reads as a default rather
 // than a decision; a second family gives the page a voice without costing
 // legibility in body copy, which stays Inter.
-const display = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
+const display = localFont({
+  src: "./fonts/plus-jakarta-sans-latin-wght-normal.woff2",
+  weight: "200 800",
   variable: "--font-display",
   display: "swap",
 })

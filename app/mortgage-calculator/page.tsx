@@ -17,27 +17,23 @@ import {
 } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
 import { RadialSlider } from "@/components/ui/RadialSlider"
+import { compactMoney } from "@/lib/finance/format"
 
 /**
  * Whole percentages read as whole; a percentage left fractional by a price
  * change keeps one decimal rather than rounding to a figure that contradicts
  * the deposit shown elsewhere on the page.
  */
+function formatRatePct(value: number) {
+  const r = Math.round(value * 100) / 100
+  return `${Number.isInteger(r) ? r : r.toFixed(2).replace(/0$/, "")}%`
+}
+
 function formatDepositPct(value: number) {
   const r = Math.round(value * 10) / 10
   return `${Number.isInteger(r) ? r : r.toFixed(1)}%`
 }
 
-/** Short money for the middle of a dial: GH₵ 1.2M, GH₵ 950K. */
-function compactMoney(value: number, symbol: string) {
-  const abs = Math.abs(value)
-  if (abs >= 1_000_000) {
-    const m = value / 1_000_000
-    return `${symbol} ${(m >= 10 ? Math.round(m) : Number(m.toFixed(1))).toLocaleString()}M`
-  }
-  if (abs >= 1_000) return `${symbol} ${Math.round(value / 1_000).toLocaleString()}K`
-  return `${symbol} ${Math.round(value).toLocaleString()}`
-}
 import {
   calculateMortgage,
   clampDeposit,
@@ -81,6 +77,12 @@ export default function MortgageCalculatorPage() {
   const limits = PRICE_LIMITS[currency]
   const defaults = MORTGAGE_DEFAULTS[currency]
   const symbol = currencyLabel(currency)
+
+  /* The price field takes any figure, so a typed price above the dial's
+     nominal ceiling would sit outside its own declared range. The dial's
+     ends follow the value instead of pinning it. */
+  const priceDialMin = Math.min(limits.min, Math.max(0, propertyPrice))
+  const priceDialMax = Math.max(limits.max, Math.ceil(propertyPrice / limits.step) * limits.step)
 
   const calculations = useMemo(
     () =>
@@ -171,12 +173,12 @@ export default function MortgageCalculatorPage() {
                 {/* Dials. Drag to explore; the fields below stay for exact
                     figures, because a dial spanning the whole price range
                     cannot land on a specific asking price. */}
-                <div className="grid grid-cols-2 items-center gap-2 sm:gap-6 rounded-2xl bg-gray-50 ring-1 ring-gray-100 px-3 sm:px-4 py-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 items-start gap-2 sm:gap-4 rounded-2xl bg-gray-50 ring-1 ring-gray-100 px-3 sm:px-4 py-3">
                   <RadialSlider
                     label="Property price"
                     value={propertyPrice}
-                    min={limits.min}
-                    max={limits.max}
+                    min={priceDialMin}
+                    max={priceDialMax}
                     step={limits.step}
                     onChange={handlePriceChange}
                     format={(v) => compactMoney(v, symbol)}
@@ -199,6 +201,33 @@ export default function MortgageCalculatorPage() {
                     caption={formatMoney(downPayment, currency)}
                     size={200}
                     accentClass="stroke-emerald-500"
+                  />
+                  <RadialSlider
+                    label="Rate"
+                    value={interestRate}
+                    /* Matches the number field's ceiling rather than the old
+                       slider's 5-40, so a typed rate cannot land outside the
+                       dial's declared range. */
+                    min={0}
+                    max={60}
+                    step={0.25}
+                    onChange={setInterestRate}
+                    format={formatRatePct}
+                    caption="a year"
+                    size={200}
+                    accentClass="stroke-amber-500"
+                  />
+                  <RadialSlider
+                    label="Term"
+                    value={loanTerm}
+                    min={5}
+                    max={30}
+                    step={1}
+                    onChange={setLoanTerm}
+                    format={(v) => `${Math.round(v)} yr`}
+                    caption={`${Math.round(loanTerm * 12)} payments`}
+                    size={200}
+                    accentClass="stroke-sky-500"
                   />
                 </div>
 
