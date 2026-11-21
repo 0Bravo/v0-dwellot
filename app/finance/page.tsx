@@ -147,6 +147,7 @@ export default async function FinanceHubPage() {
     <div className="min-h-screen bg-gray-50">
       <PageHero
         icon={Landmark}
+        image={{ src: "/images/hero-bg.jpg", alt: "Rooftops of a residential neighbourhood in Ghana" }}
         eyebrow="Property finance"
         title="Paying for a home in Ghana"
         subtitle="Work out what you can afford, compare every lender, and see the full cost before you commit."

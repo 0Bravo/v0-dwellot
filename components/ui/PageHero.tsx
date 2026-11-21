@@ -1,3 +1,4 @@
+import Image from "next/image"
 import type { ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
 
@@ -21,6 +22,7 @@ export function PageHero({
   subtitle,
   width = "narrow",
   overlap = false,
+  image,
   children,
 }: {
   /** Optional: some pages lead with the headline alone */
@@ -33,12 +35,41 @@ export function PageHero({
   width?: "narrow" | "wide"
   /** Leaves room for the next section to pull up into the hero */
   overlap?: boolean
+  /** A photograph behind the hero, under a scrim heavy enough to keep text legible */
+  image?: { src: string; alt: string }
   children?: ReactNode
 }) {
   return (
     <section
-      className={`hero-mesh relative isolate overflow-hidden bg-teal-900 ${overlap ? "pb-28 md:pb-36" : ""}`}
+      className={`${image ? "hero-mesh-soft" : "hero-mesh"} relative isolate overflow-hidden bg-teal-900 ${
+        overlap ? "pb-28 md:pb-36" : ""
+      }`}
     >
+      {image && (
+        <>
+          {/* The photograph sits under everything. priority because on pages
+              that use one it is the largest contentful paint. */}
+          <Image
+            src={image.src}
+            alt={image.alt}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          {/* Scrim: heavier on the left, where the text sits, so the headline
+              keeps its contrast while the picture stays readable on the right. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-r from-teal-950/95 via-teal-950/80 to-teal-900/45"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-teal-950/85 via-transparent to-teal-950/40"
+          />
+        </>
+      )}
+
       {/* Fine dot grid, over the wash */}
       <div
         aria-hidden="true"
