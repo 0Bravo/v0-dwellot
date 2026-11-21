@@ -17,6 +17,17 @@ import {
 } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
 import { RadialSlider } from "@/components/ui/RadialSlider"
+
+/** Short money for the middle of a dial: GH₵ 1.2M, GH₵ 950K. */
+function compactMoney(value: number, symbol: string) {
+  const abs = Math.abs(value)
+  if (abs >= 1_000_000) {
+    const m = value / 1_000_000
+    return `${symbol} ${(m >= 10 ? Math.round(m) : Number(m.toFixed(1))).toLocaleString()}M`
+  }
+  if (abs >= 1_000) return `${symbol} ${Math.round(value / 1_000).toLocaleString()}K`
+  return `${symbol} ${Math.round(value).toLocaleString()}`
+}
 import {
   calculateMortgage,
   clampDeposit,
@@ -150,7 +161,7 @@ export default function MortgageCalculatorPage() {
                 {/* Dials. Drag to explore; the fields below stay for exact
                     figures, because a dial spanning the whole price range
                     cannot land on a specific asking price. */}
-                <div className="flex flex-wrap justify-center gap-x-10 gap-y-4 py-2">
+                <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 rounded-2xl bg-gray-50 ring-1 ring-gray-100 px-4 py-3">
                   <RadialSlider
                     label="Property price"
                     value={propertyPrice}
@@ -158,8 +169,9 @@ export default function MortgageCalculatorPage() {
                     max={limits.max}
                     step={limits.step}
                     onChange={handlePriceChange}
-                    format={(v) => formatMoney(v, currency)}
-                    size={212}
+                    format={(v) => compactMoney(v, symbol)}
+                    caption="Drag to explore"
+                    size={200}
                   />
                   <RadialSlider
                     label="Deposit"
@@ -170,7 +182,7 @@ export default function MortgageCalculatorPage() {
                     onChange={(pct) => setDownPayment(clampDeposit(Math.round((propertyPrice * pct) / 100), propertyPrice))}
                     format={(v) => `${Math.round(v)}%`}
                     caption={formatMoney(downPayment, currency)}
-                    size={212}
+                    size={200}
                     accentClass="stroke-emerald-500"
                   />
                 </div>
