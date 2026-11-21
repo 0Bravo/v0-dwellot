@@ -111,8 +111,8 @@ export default function CostOfBuyingClient({
             />
             {display !== "GHS" && (
               <p className="text-xs text-gray-500 mt-1">
-                About {fmt(price)} at {display === "USD" ? usdGhs : gbpGhs} cedis to the{" "}
-                {display === "USD" ? "dollar" : "pound"}
+                About {fmt(price)} at {(display === "USD" ? usdGhs : (gbpGhs ?? usdGhs)).toFixed(2)} cedis
+                to the {display === "USD" ? "dollar" : "pound"}
               </p>
             )}
           </div>
@@ -325,10 +325,10 @@ export default function CostOfBuyingClient({
         <div className="space-y-2 text-xs text-gray-500">
           <p>
             Figures convert at{" "}
-            {fxLive ? "today's" : "the last recorded"} Bank of Ghana interbank mid rate, {usdGhs} to the
-            dollar{gbpGhs != null ? ` and ${gbpGhs} to the pound` : ""}
-            {fxAsOf ? `, ${fxAsOf}` : ""} ({fxSource}). Statutory fees are set in cedis, so a buyer
-            earning abroad carries the exchange-rate risk on all of this.
+            {fxLive ? "the latest" : "the last recorded"} rate from {fxSource}, {usdGhs.toFixed(2)} to the
+            dollar{gbpGhs != null ? ` and ${gbpGhs.toFixed(2)} to the pound` : ""}
+            {fxAsOf ? `, ${fxAsOf}` : ""}. Statutory fees are set in cedis, so a buyer earning abroad carries
+            the exchange-rate risk on all of this.
           </p>
           <p>
             Not tax or legal advice. Stamp duty is assessed on the instrument and the Lands Commission assesses

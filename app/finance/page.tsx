@@ -124,7 +124,7 @@ export default async function FinanceHubPage() {
     },
     {
       label: "Cedi to the US dollar",
-      value: `${fx.usdGhs}`,
+      value: fx.usdGhs.toFixed(2),
       note: `${fx.source}${fx.asOf ? `, ${formatRateDate(fx.asOf)}` : ""}`,
     },
   ].filter(Boolean) as Array<{ label: string; value: string; note: string }>
@@ -158,9 +158,9 @@ export default async function FinanceHubPage() {
             ))}
           </div>
           <p className="text-xs text-gray-500 mt-3">
-            The reference rate and the exchange rate are read automatically from the Ghana Association of Banks
-            and the Bank of Ghana. Bank mortgage figures are indicative and exclude fees and insurance; each
-            one shows its source on the comparison.
+            The reference rate is read automatically from {grr.source}, and the exchange rate from{" "}
+            {fx.source}. Bank mortgage figures are indicative and exclude fees and insurance; each one shows
+            its source on the comparison.
           </p>
         </section>
 

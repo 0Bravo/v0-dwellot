@@ -133,7 +133,9 @@ async function fetchMarketFeed(): Promise<FxSnapshot | null> {
     if (!usd || !inBounds("USD", usd)) return null
 
     return {
-      usdGhs: usd,
+      // Rounded like the GBP figure below: this feed returns full float
+      // precision, which rendered as 11.783525 in the UI.
+      usdGhs: Number(usd.toFixed(4)),
       gbpGhs: gbpPerUsd ? Number((usd / gbpPerUsd).toFixed(4)) : null,
       asOf: data.time_last_update_utc ? parseDate(data.time_last_update_utc) : null,
       source: "exchangerate-api.com",
