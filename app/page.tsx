@@ -1,5 +1,7 @@
 import { createClient } from "@supabase/supabase-js"
 import HomeClient from "./HomeClient"
+import { buildFinanceIndexEdition } from "@/lib/finance/index-edition"
+import type { MoneySnapshot } from "@/components/home/MoneyFirst"
 
 // Rebuild at most once a minute; listings change rarely.
 export const revalidate = 60
@@ -48,8 +50,34 @@ async function getHomeProperties() {
   }
 }
 
-export default async function HomePage() {
-  const { featured, all, total } = await getHomeProperties()
+/**
+ * The index's own figures, so the homepage and the page we ask people to
+ * cite cannot disagree. Never fatal: the homepage is not worth failing over
+ * a rate fetch.
+ */
+async function getMoneySnapshot(): Promise<MoneySnapshot | null> {
+  try {
+    const e = await buildFinanceIndexEdition()
+    return {
+      policyRate: e.policy.rate,
+      policyChangeBp: e.policy.changeBp,
+      grr: e.grr.rate,
+      usdGhs: e.fx.usdGhs,
+      editionLabel: e.editionLabel,
+      feesPctOfPrice: e.workedExample.feesPctOfPrice,
+    }
+  } catch {
+    return null
+  }
+}
 
-  return <HomeClient initialFeatured={featured} initialAll={all} initialTotal={total} />
+export default async function HomePage() {
+  const [{ featured, all, total }, money] = await Promise.all([
+    getHomeProperties(),
+    getMoneySnapshot(),
+  ])
+
+  return (
+    <HomeClient initialFeatured={featured} initialAll={all} initialTotal={total} money={money} />
+  )
 }

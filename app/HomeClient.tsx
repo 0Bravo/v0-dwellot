@@ -16,6 +16,7 @@ import dynamic from "next/dynamic"
 import HeroSearchBar from "@/components/HeroSearchBar"
 import { generateGeneralWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { FeaturedPropertyCard, PropertyListCard } from "@/components/PropertyCard"
+import { MoneyFirst, type MoneySnapshot } from "@/components/home/MoneyFirst"
 
 const RecentlyViewedWidget = dynamic(() => import("@/components/RecentlyViewedWidget"), { ssr: false })
 const PWAInstallPrompt = dynamic(() => import("@/components/PWAInstallPrompt"), { ssr: false })
@@ -51,7 +52,8 @@ export default function HomeClient({
   initialFeatured = [],
   initialAll = [],
   initialTotal = 0,
-}: HomeClientProps) {
+  money = null,
+}: HomeClientProps & { money?: MoneySnapshot | null }) {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>(initialFeatured)
   const [allProperties, setAllProperties] = useState<Property[]>(initialAll)
   const [totalCount, setTotalCount] = useState(initialTotal)
@@ -129,10 +131,10 @@ export default function HomeClient({
             <div className="relative z-20 py-12 md:py-16 px-6 md:px-12">
               <div className="text-center mb-8">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3">
-                  <span className="text-emerald-400">discover</span> your perfect home
+                  know what it <span className="text-emerald-400">really costs</span> to buy in Ghana
                 </h1>
                 <p className="text-xl md:text-2xl text-white font-medium">
-                  with Ghana&apos;s most comprehensive property marketplace
+                  Then find the house. Property and finance, for buyers abroad.
                 </p>
               </div>
 
@@ -156,6 +158,9 @@ export default function HomeClient({
           </div>
         </div>
       </section>
+
+      {/* The money question, above the listings. */}
+      <MoneyFirst snapshot={money} />
 
       {/* Recently Viewed Widget Section */}
       <section className="py-8 bg-white">
