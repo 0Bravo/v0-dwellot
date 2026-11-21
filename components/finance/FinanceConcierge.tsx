@@ -17,6 +17,11 @@ import { AnimatedNumber } from "./motion"
  * compareLenders, calculateAffordability and calculateBuyingCosts — then
  * hands off to the page that goes deeper. Nothing here is a separate
  * calculation, so it cannot disagree with the rest of the section.
+ *
+ * It sits on a dark teal surface rather than another white card, so the
+ * section opens with one thing to look at instead of six equal ones. Teal
+ * is the site's own colour: #14b8a6 is the theme colour and teal outnumbers
+ * green roughly four to one across the app.
  */
 
 type Intent = "budget" | "found" | "abroad" | "browse"
@@ -31,37 +36,63 @@ const EASE = [0.22, 1, 0.36, 1] as const
 const TERM_YEARS = 15
 const DSR_PCT = 50
 
-const INTENTS: Array<{ id: Intent; icon: typeof Wallet; title: string; blurb: string }> = [
-  { id: "budget", icon: Wallet, title: "Work out what I can afford", blurb: "Start from my income and savings" },
-  { id: "found", icon: Home, title: "I've found a place", blurb: "Tell me what it really costs" },
-  { id: "abroad", icon: Globe2, title: "I'm buying from abroad", blurb: "I earn in dollars or pounds" },
-  { id: "browse", icon: Compass, title: "Just looking around", blurb: "Show me today's rates" },
+const INTENTS: Array<{
+  id: Intent
+  icon: typeof Wallet
+  title: string
+  blurb: string
+  chip: string
+}> = [
+  {
+    id: "budget",
+    icon: Wallet,
+    title: "Work out what I can afford",
+    blurb: "Start from my income and savings",
+    chip: "bg-amber-400/20 text-amber-200 ring-amber-300/30",
+  },
+  {
+    id: "found",
+    icon: Home,
+    title: "I've found a place",
+    blurb: "Tell me what it really costs",
+    chip: "bg-sky-400/20 text-sky-200 ring-sky-300/30",
+  },
+  {
+    id: "abroad",
+    icon: Globe2,
+    title: "I'm buying from abroad",
+    blurb: "I earn in dollars or pounds",
+    chip: "bg-violet-400/20 text-violet-200 ring-violet-300/30",
+  },
+  {
+    id: "browse",
+    icon: Compass,
+    title: "Just looking around",
+    blurb: "Show me today's rates",
+    chip: "bg-emerald-400/20 text-emerald-200 ring-emerald-300/30",
+  },
 ]
 
 const inputClass =
-  "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+  "w-full px-4 py-3 rounded-xl bg-white text-gray-900 placeholder-gray-400 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/70"
 
 export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
   const reduce = useReducedMotion()
   const [intent, setIntent] = useState<Intent | null>(null)
   const [step, setStep] = useState(0)
 
-  // Budget branch
   const [income, setIncome] = useState(8000)
   const [debts, setDebts] = useState(0)
   const [savings, setSavings] = useState(150_000)
-
-  // Found-a-place branch
   const [price, setPrice] = useState(1_000_000)
   const [depositPct, setDepositPct] = useState(20)
-
-  // Abroad branch
   const [earnIn, setEarnIn] = useState<"USD" | "GBP">("GBP")
 
   const cediLenders = useMemo(
     () => compareLenders({ currency: "GHS", propertyPrice: 1_000_000, deposit: 200_000, termYears: TERM_YEARS, grrRate }),
     [grrRate],
   )
+
   // Affordability is quoted at the cheapest rate a bank publishes on its own
   // terms, not the cheapest rate in the table. The lowest figure we can source
   // is a government scheme with eligibility conditions, and sizing someone's
@@ -73,11 +104,8 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
   const baselineRate = baseline?.rate ?? 18
   const baselineName = baseline?.name ?? "the cheapest lender"
 
-  // Shown as an upside only, when a cheaper scheme exists.
   const upside =
-    cediLenders.cheapest && baseline && cediLenders.cheapest.rate < baseline.rate
-      ? cediLenders.cheapest
-      : null
+    cediLenders.cheapest && baseline && cediLenders.cheapest.rate < baseline.rate ? cediLenders.cheapest : null
 
   const affordability = useMemo(
     () =>
@@ -109,13 +137,7 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
 
   const foundResult = useMemo(() => {
     const deposit = Math.round((price * depositPct) / 100)
-    const lenders = compareLenders({
-      currency: "GHS",
-      propertyPrice: price,
-      deposit,
-      termYears: TERM_YEARS,
-      grrRate,
-    })
+    const lenders = compareLenders({ currency: "GHS", propertyPrice: price, deposit, termYears: TERM_YEARS, grrRate })
     const costs = calculateBuyingCosts({
       ...DEFAULT_COSTS_INPUT,
       priceGhs: price,
@@ -128,11 +150,10 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
   const abroadResult = useMemo(() => {
     const deposit = Math.round(price * 0.3)
     const usdPrice = price / usdGhs
-    const usdDeposit = usdPrice * 0.3
     const lenders = compareLenders({
       currency: "USD",
       propertyPrice: usdPrice,
-      deposit: usdDeposit,
+      deposit: usdPrice * 0.3,
       termYears: TERM_YEARS,
       grrRate,
     })
@@ -159,37 +180,41 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
 
   const totalSteps = intent === "browse" ? 1 : 2
   const panelKey = `${intent ?? "start"}-${step}`
-
-  const transition = reduce
-    ? { duration: 0 }
-    : { duration: 0.35, ease: EASE }
+  const transition = reduce ? { duration: 0 } : { duration: 0.35, ease: EASE }
 
   return (
     <section
-      className="relative overflow-hidden rounded-2xl border border-teal-100 bg-gradient-to-br from-white via-white to-teal-50/60 shadow-sm"
+      className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-teal-900 via-teal-800 to-emerald-800 shadow-2xl shadow-teal-900/20"
       aria-labelledby="concierge-heading"
     >
-      {/* Soft moving wash behind the panel. Decorative only. */}
+      {/* Decorative depth. Pure ornament, hidden from assistive tech. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(circle_at_1px_1px,white_1px,transparent_0)] [background-size:22px_22px]"
+      />
       {!reduce && (
         <motion.div
           aria-hidden="true"
-          className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-teal-200/30 blur-3xl"
-          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.75, 0.5] }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
+          className="pointer-events-none absolute -top-32 -right-24 h-96 w-96 rounded-full bg-emerald-400/20 blur-3xl"
+          animate={{ scale: [1, 1.18, 1], opacity: [0.35, 0.6, 0.35] }}
+          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut" }}
         />
       )}
 
-      <div className="relative p-6 md:p-8">
-        <div className="flex items-start justify-between gap-4 mb-5">
+      <div className="relative p-6 md:p-10">
+        <div className="flex items-start justify-between gap-4 mb-7">
           <div>
-            <p className="inline-flex items-center gap-1.5 text-xs font-medium text-teal-700 bg-teal-100 rounded-full px-2.5 py-1 mb-3">
+            <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200 bg-white/10 ring-1 ring-white/15 rounded-full px-3 py-1 mb-4">
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
               Guided
             </p>
-            <h2 id="concierge-heading" className="text-2xl md:text-3xl font-bold text-gray-900 text-balance">
+            <h2
+              id="concierge-heading"
+              className="text-3xl md:text-5xl font-bold text-white tracking-tight text-balance"
+            >
               {intent === null ? "What brings you here?" : "Let's work it out"}
             </h2>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-teal-100/90 mt-2 max-w-xl">
               {intent === null
                 ? "Two questions and you get a real number, not a brochure."
                 : "Figures come from the same engines as the full calculators."}
@@ -200,23 +225,22 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
             <button
               type="button"
               onClick={restart}
-              className="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-teal-700"
+              className="flex-shrink-0 inline-flex items-center gap-1.5 text-sm font-medium text-teal-100 hover:text-white transition"
             >
               <RotateCcw className="w-4 h-4" aria-hidden="true" />
-              Start again
+              <span className="hidden sm:inline">Start again</span>
             </button>
           )}
         </div>
 
-        {/* Progress */}
         {intent !== null && (
-          <div className="flex items-center gap-1.5 mb-5" aria-hidden="true">
+          <div className="flex items-center gap-2 mb-7" aria-hidden="true">
             {Array.from({ length: totalSteps + 1 }).map((_, i) => (
               <motion.span
                 key={i}
-                className={`h-1.5 rounded-full ${i <= step ? "bg-teal-600" : "bg-gray-200"}`}
+                className={`h-1.5 rounded-full ${i <= step ? "bg-white" : "bg-white/25"}`}
                 initial={false}
-                animate={{ width: i === step ? 40 : 16 }}
+                animate={{ width: i === step ? 48 : 18 }}
                 transition={transition}
               />
             ))}
@@ -226,44 +250,43 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
         <AnimatePresence mode="wait">
           <motion.div
             key={panelKey}
-            initial={reduce ? false : { opacity: 0, x: 24 }}
+            initial={reduce ? false : { opacity: 0, x: 28 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={reduce ? undefined : { opacity: 0, x: -24 }}
+            exit={reduce ? undefined : { opacity: 0, x: -28 }}
             transition={transition}
           >
-            {/* ---------- Step: choose intent ---------- */}
+            {/* ---------- Choose intent ---------- */}
             {intent === null && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {INTENTS.map(({ id, icon: Icon, title, blurb }, i) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                {INTENTS.map(({ id, icon: Icon, title, blurb, chip }, i) => (
                   <motion.button
                     key={id}
                     type="button"
                     onClick={() => choose(id)}
-                    className="group text-left rounded-xl border border-gray-200 bg-white p-5 hover:border-teal-400 hover:shadow-md transition"
-                    initial={reduce ? false : { opacity: 0, y: 14 }}
+                    className="group relative text-left rounded-2xl bg-white/[0.07] ring-1 ring-white/10 p-5 md:p-6 backdrop-blur-sm hover:bg-white/[0.14] hover:ring-white/25 transition-colors"
+                    initial={reduce ? false : { opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={reduce ? { duration: 0 } : { duration: 0.4, delay: i * 0.06, ease: EASE }}
-                    whileHover={reduce ? undefined : { y: -3 }}
+                    transition={reduce ? { duration: 0 } : { duration: 0.45, delay: i * 0.07, ease: EASE }}
+                    whileHover={reduce ? undefined : { y: -4 }}
+                    whileTap={reduce ? undefined : { scale: 0.99 }}
                   >
-                    <Icon className="w-6 h-6 text-teal-600 mb-3" aria-hidden="true" />
-                    <span className="block font-semibold text-gray-900">{title}</span>
-                    <span className="block text-sm text-gray-600 mt-0.5">{blurb}</span>
-                    <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-teal-600 group-hover:gap-2 transition-all">
+                    <span className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ring-1 mb-4 ${chip}`}>
+                      <Icon className="w-5 h-5" aria-hidden="true" />
+                    </span>
+                    <span className="block text-lg font-semibold text-white leading-snug">{title}</span>
+                    <span className="block text-sm text-teal-100/80 mt-1">{blurb}</span>
+                    <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-white">
                       Start
-                      <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                      <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
                     </span>
                   </motion.button>
                 ))}
               </div>
             )}
 
-            {/* ---------- Budget branch ---------- */}
+            {/* ---------- Budget ---------- */}
             {intent === "budget" && step === 0 && (
-              <Questions
-                prompt="What comes in, and what have you saved?"
-                onBack={restart}
-                onNext={() => setStep(1)}
-              >
+              <Questions prompt="What comes in, and what have you saved?" onBack={restart} onNext={() => setStep(1)}>
                 <Field label="Net monthly income (GH₵)" id="c-income">
                   <input id="c-income" type="number" min={0} value={income} className={inputClass}
                     onChange={(e) => setIncome(Math.max(0, Number(e.target.value)))} />
@@ -283,29 +306,36 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
               <Answer onBack={() => setStep(0)}>
                 {affordability.maxLoan > 0 ? (
                   <>
-                    <Headline label="You could be looking at homes up to">
+                    <Figure label="You could be looking at homes up to">
                       <AnimatedNumber value={Math.round(affordability.maxPropertyPrice)} prefix="GH₵" />
-                    </Headline>
-                    <p className="text-sm text-gray-700">
-                      That is a loan of about {formatMoney(affordability.maxLoan, "GHS")} on top of your{" "}
-                      {formatMoney(savings, "GHS")} deposit, repaying roughly{" "}
-                      <strong>{formatMoney(affordability.maxMonthlyPayment, "GHS")} a month</strong> over{" "}
-                      {TERM_YEARS} years at {baselineRate}% — the lowest rate a bank publishes on its own
+                    </Figure>
+                    <Stats
+                      items={[
+                        { label: "Mortgage needed", value: formatMoney(affordability.maxLoan, "GHS") },
+                        { label: "Monthly repayment", value: formatMoney(affordability.maxMonthlyPayment, "GHS") },
+                        { label: "Your deposit", value: formatMoney(savings, "GHS") },
+                      ]}
+                    />
+                    <Body>
+                      Over {TERM_YEARS} years at {baselineRate}% — the lowest rate a bank publishes on its own
                       terms ({baselineName}).
-                    </p>
-                    {upside && upsideAffordability && (
-                      <p className="text-sm text-gray-700">
-                        If you qualify for {upside.name} at {upside.display}, the same income and deposit
-                        stretch to about{" "}
-                        <strong>{formatMoney(upsideAffordability.maxPropertyPrice, "GHS")}</strong>
-                        {upside.note ? `. ${upside.note}.` : "."}
-                      </p>
-                    )}
-                    <p className="text-xs text-gray-500">
+                      {upside && upsideAffordability && (
+                        <>
+                          {" "}
+                          If you qualify for {upside.name} at {upside.display}, the same income and deposit
+                          stretch to about{" "}
+                          <strong className="text-white">
+                            {formatMoney(upsideAffordability.maxPropertyPrice, "GHS")}
+                          </strong>
+                          {upside.note ? `. ${upside.note}.` : "."}
+                        </>
+                      )}
+                    </Body>
+                    <Caveat>
                       Worked at the {DSR_PCT}% of net income that Absa and Republic Bank both cap total debt
                       repayments at. That is their maximum, not a target — borrowing right at it leaves nothing
                       for rates, repairs or a bad month.
-                    </p>
+                    </Caveat>
                     <Onward
                       links={[
                         { href: "/mortgage-calculator#affordability", label: "Refine the affordability check" },
@@ -316,15 +346,15 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
                   </>
                 ) : (
                   <>
-                    <Headline label="On these figures, a mortgage would not clear a lender's test">
-                      <span>—</span>
-                    </Headline>
-                    <p className="text-sm text-gray-700">
-                      Your existing repayments of {formatMoney(debts, "GHS")} already use the{" "}
-                      {DSR_PCT}% of {formatMoney(income, "GHS")} that a lender would allow, so there is nothing
-                      left for a mortgage payment. Clearing or reducing existing credit, or a larger deposit,
-                      changes this quickly.
-                    </p>
+                    <Figure label="On these figures, a mortgage would not clear a lender's test">
+                      <span className="text-4xl">Not yet</span>
+                    </Figure>
+                    <Body>
+                      Your existing repayments of {formatMoney(debts, "GHS")} already use the {DSR_PCT}% of{" "}
+                      {formatMoney(income, "GHS")} that a lender would allow, so there is nothing left for a
+                      mortgage payment. Clearing or reducing existing credit, or a larger deposit, changes this
+                      quickly.
+                    </Body>
                     <Onward
                       links={[
                         { href: "/mortgage-calculator#affordability", label: "Try different figures" },
@@ -338,14 +368,21 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
 
             {/* ---------- Found a place ---------- */}
             {intent === "found" && step === 0 && (
-              <Questions prompt="What is the asking price, and what can you put down?" onBack={restart} onNext={() => setStep(1)}>
+              <Questions
+                prompt="What is the asking price, and what can you put down?"
+                onBack={restart}
+                onNext={() => setStep(1)}
+              >
                 <Field label="Price (GH₵)" id="c-price">
                   <input id="c-price" type="number" min={0} value={price} className={inputClass}
                     onChange={(e) => setPrice(Math.max(0, Number(e.target.value)))} />
                 </Field>
-                <Field label={`Deposit: ${depositPct}% (${formatMoney(Math.round((price * depositPct) / 100), "GHS")})`} id="c-dep">
+                <Field
+                  label={`Deposit: ${depositPct}% (${formatMoney(Math.round((price * depositPct) / 100), "GHS")})`}
+                  id="c-dep"
+                >
                   <input id="c-dep" type="range" min={5} max={50} step={1} value={depositPct}
-                    className="w-full accent-teal-600"
+                    className="w-full accent-white mt-3"
                     onChange={(e) => setDepositPct(Number(e.target.value))} />
                 </Field>
               </Questions>
@@ -353,31 +390,38 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
 
             {intent === "found" && step === 1 && (
               <Answer onBack={() => setStep(0)}>
-                <Headline label="To complete, you need in cash">
+                <Figure label="To complete, you need in cash">
                   <AnimatedNumber value={Math.round(foundResult.costs.cashNeeded)} prefix="GH₵" />
-                </Headline>
-                <p className="text-sm text-gray-700">
-                  That is your {formatMoney(foundResult.deposit, "GHS")} deposit plus{" "}
-                  {formatMoney(foundResult.costs.feesTotal, "GHS")} in fees, taxes and first-year insurance —{" "}
-                  {foundResult.costs.feesPctOfPrice}% of the price on top of the price.
-                  {foundResult.lenders.cheapest && (
-                    <>
-                      {" "}
-                      The cheapest lender we can source for the remaining{" "}
-                      {formatMoney(foundResult.lenders.cheapest.loanAmount, "GHS")} is{" "}
-                      <strong>{foundResult.lenders.cheapest.name}</strong> at{" "}
-                      {foundResult.lenders.cheapest.display}, about{" "}
-                      {formatMoney(foundResult.lenders.cheapest.monthlyPayment, "GHS")} a month over{" "}
-                      {TERM_YEARS} years
-                      {foundResult.lenders.cheapest.note ? ` — ${foundResult.lenders.cheapest.note.toLowerCase()}` : ""}.
-                    </>
-                  )}
-                </p>
+                </Figure>
+                <Stats
+                  items={[
+                    { label: "Deposit", value: formatMoney(foundResult.deposit, "GHS") },
+                    {
+                      label: `Fees and taxes (${foundResult.costs.feesPctOfPrice}%)`,
+                      value: formatMoney(foundResult.costs.feesTotal, "GHS"),
+                    },
+                    foundResult.lenders.cheapest
+                      ? {
+                          label: "Monthly, cheapest lender",
+                          value: formatMoney(foundResult.lenders.cheapest.monthlyPayment, "GHS"),
+                        }
+                      : { label: "Monthly", value: "—" },
+                  ]}
+                />
+                {foundResult.lenders.cheapest && (
+                  <Body>
+                    The cheapest lender we can source for the remaining{" "}
+                    {formatMoney(foundResult.lenders.cheapest.loanAmount, "GHS")} is{" "}
+                    <strong className="text-white">{foundResult.lenders.cheapest.name}</strong> at{" "}
+                    {foundResult.lenders.cheapest.display} over {TERM_YEARS} years
+                    {foundResult.lenders.cheapest.note ? ` — ${foundResult.lenders.cheapest.note.toLowerCase()}` : ""}.
+                  </Body>
+                )}
                 {foundResult.lenders.spread > 0 && (
-                  <p className="text-xs text-gray-500">
-                    Picking the dearest lender instead would cost{" "}
-                    {formatMoney(foundResult.lenders.spread, "GHS")} more over the term.
-                  </p>
+                  <Caveat>
+                    Picking the dearest lender instead would cost {formatMoney(foundResult.lenders.spread, "GHS")}{" "}
+                    more over the term.
+                  </Caveat>
                 )}
                 <Onward
                   links={[
@@ -390,7 +434,11 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
 
             {/* ---------- Abroad ---------- */}
             {intent === "abroad" && step === 0 && (
-              <Questions prompt="What are you looking at, and where do you earn?" onBack={restart} onNext={() => setStep(1)}>
+              <Questions
+                prompt="What are you looking at, and where do you earn?"
+                onBack={restart}
+                onNext={() => setStep(1)}
+              >
                 <Field label="Price (GH₵)" id="c-aprice">
                   <input id="c-aprice" type="number" min={0} value={price} className={inputClass}
                     onChange={(e) => setPrice(Math.max(0, Number(e.target.value)))} />
@@ -407,30 +455,40 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
 
             {intent === "abroad" && step === 1 && (
               <Answer onBack={() => setStep(0)}>
-                <Headline label="The cash you need to complete, in your currency">
+                <Figure label="The cash you need to complete, in your currency">
                   <AnimatedNumber
                     value={Math.round(abroadResult.costs.cashNeeded / abroadResult.divisor)}
                     prefix={abroadResult.symbol}
                   />
-                </Headline>
-                <p className="text-sm text-gray-700">
-                  On a {formatMoney(price, "GHS")} home with a 30% deposit — the larger deposit lenders
-                  typically want from non-residents — that is {formatMoney(abroadResult.costs.cashNeeded, "GHS")}{" "}
-                  in cedis, including {formatMoney(abroadResult.costs.feesTotal, "GHS")} of fees and taxes.
+                </Figure>
+                <Stats
+                  items={[
+                    { label: "In cedis", value: formatMoney(abroadResult.costs.cashNeeded, "GHS") },
+                    { label: "Of which fees", value: formatMoney(abroadResult.costs.feesTotal, "GHS") },
+                    abroadResult.lenders.cheapest
+                      ? {
+                          label: "Monthly, US dollar loan",
+                          value: formatMoney(abroadResult.lenders.cheapest.monthlyPayment, "USD"),
+                        }
+                      : { label: "Monthly", value: "—" },
+                  ]}
+                />
+                <Body>
+                  On a {formatMoney(price, "GHS")} home with a 30% deposit — the larger deposit lenders typically
+                  want from non-residents.
                   {abroadResult.lenders.cheapest && (
                     <>
                       {" "}
                       A US dollar mortgage is the usual route: the cheapest we can source is{" "}
-                      <strong>{abroadResult.lenders.cheapest.name}</strong> at{" "}
-                      {abroadResult.lenders.cheapest.display}, roughly{" "}
-                      {formatMoney(abroadResult.lenders.cheapest.monthlyPayment, "USD")} a month.
+                      <strong className="text-white">{abroadResult.lenders.cheapest.name}</strong> at{" "}
+                      {abroadResult.lenders.cheapest.display}.
                     </>
                   )}
-                </p>
-                <p className="text-xs text-gray-500">
+                </Body>
+                <Caveat>
                   Stamp duty and Lands Commission fees are set in cedis, so the amount you send moves with the
                   exchange rate between now and completion. That risk is yours, not the seller&rsquo;s.
-                </p>
+                </Caveat>
                 <Onward
                   links={[
                     { href: "/finance/cedi-or-dollar-mortgage", label: "Cedi or dollar mortgage?" },
@@ -444,14 +502,22 @@ export default function FinanceConcierge({ grrRate, usdGhs, gbpGhs }: Props) {
             {/* ---------- Browse ---------- */}
             {intent === "browse" && (
               <Answer onBack={restart}>
-                <Headline label="The Ghana Reference Rate today">
+                <Figure label="The Ghana Reference Rate today">
                   <AnimatedNumber value={grrRate} decimals={2} suffix="%" />
-                </Headline>
-                <p className="text-sm text-gray-700">
-                  That is the benchmark banks add their margin to when pricing a cedi loan, so it sets the floor
-                  under every cedi mortgage in the country. One US dollar is about{" "}
-                  {usdGhs.toFixed(2)} cedis.
-                </p>
+                </Figure>
+                <Stats
+                  items={[
+                    { label: "One US dollar", value: `GH₵${usdGhs.toFixed(2)}` },
+                    cediLenders.cheapest
+                      ? { label: "Cheapest cedi mortgage", value: cediLenders.cheapest.display }
+                      : { label: "Cheapest cedi mortgage", value: "—" },
+                    { label: "Lowest on bank's own terms", value: `${baselineRate}%` },
+                  ]}
+                />
+                <Body>
+                  The reference rate is the benchmark banks add their margin to when pricing a cedi loan, so it
+                  sets the floor under every cedi mortgage in the country.
+                </Body>
                 <Onward
                   links={[
                     { href: "/finance/ghana-reference-rate", label: "How the reference rate works" },
@@ -481,13 +547,13 @@ function Questions({
 }) {
   return (
     <div>
-      <p className="text-base font-medium text-gray-900 mb-4">{prompt}</p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">{children}</div>
-      <div className="flex items-center justify-between mt-6">
+      <p className="text-lg font-medium text-white mb-5">{prompt}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">{children}</div>
+      <div className="flex items-center justify-between mt-8">
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-100 hover:text-white transition"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           Back
@@ -495,10 +561,10 @@ function Questions({
         <button
           type="button"
           onClick={onNext}
-          className="inline-flex items-center gap-2 px-5 py-3 bg-teal-600 text-white rounded-lg font-semibold hover:bg-teal-700 transition"
+          className="group inline-flex items-center gap-2 px-6 py-3.5 bg-white text-teal-900 rounded-xl font-semibold hover:bg-teal-50 transition shadow-lg shadow-teal-950/20"
         >
           Show me
-          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -508,13 +574,13 @@ function Questions({
 function Answer({ children, onBack }: { children: React.ReactNode; onBack: () => void }) {
   return (
     <div>
-      <div className="space-y-3" aria-live="polite">
+      <div className="space-y-5" aria-live="polite">
         {children}
       </div>
       <button
         type="button"
         onClick={onBack}
-        className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900"
+        className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-teal-100 hover:text-white transition"
       >
         <ArrowLeft className="w-4 h-4" aria-hidden="true" />
         Change my answers
@@ -523,19 +589,40 @@ function Answer({ children, onBack }: { children: React.ReactNode; onBack: () =>
   )
 }
 
-function Headline({ label, children }: { label: string; children: React.ReactNode }) {
+function Figure({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <p className="text-sm text-gray-600">{label}</p>
-      <p className="text-3xl md:text-4xl font-bold text-teal-700 mt-1">{children}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-teal-200">{label}</p>
+      <p className="text-5xl md:text-6xl font-bold text-white tracking-tight mt-2 tabular-nums">{children}</p>
     </div>
   )
+}
+
+function Stats({ items }: { items: Array<{ label: string; value: string }> }) {
+  return (
+    <dl className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {items.map((item) => (
+        <div key={item.label} className="rounded-xl bg-white/[0.08] ring-1 ring-white/10 px-4 py-3">
+          <dt className="text-[11px] font-medium uppercase tracking-wider text-teal-200">{item.label}</dt>
+          <dd className="text-lg font-semibold text-white mt-0.5 tabular-nums">{item.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
+function Body({ children }: { children: React.ReactNode }) {
+  return <p className="text-sm md:text-base text-teal-50/90 leading-relaxed">{children}</p>
+}
+
+function Caveat({ children }: { children: React.ReactNode }) {
+  return <p className="text-xs text-teal-200/80 leading-relaxed border-t border-white/10 pt-4">{children}</p>
 }
 
 function Field({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1">
+      <label htmlFor={id} className="block text-sm font-medium text-teal-100 mb-2">
         {label}
       </label>
       {children}
@@ -545,19 +632,19 @@ function Field({ label, id, children }: { label: string; id: string; children: R
 
 function Onward({ links }: { links: Array<{ href: string; label: string }> }) {
   return (
-    <div className="flex flex-wrap gap-2 pt-2">
+    <div className="flex flex-wrap gap-2.5 pt-1">
       {links.map((l, i) => (
         <Link
           key={l.href}
           href={l.href}
-          className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg font-medium text-sm transition ${
+          className={`group inline-flex items-center gap-1.5 px-5 py-3 rounded-xl font-semibold text-sm transition ${
             i === 0
-              ? "bg-teal-600 text-white hover:bg-teal-700"
-              : "border border-gray-300 text-gray-800 hover:border-teal-400"
+              ? "bg-white text-teal-900 hover:bg-teal-50 shadow-lg shadow-teal-950/20"
+              : "bg-white/10 text-white ring-1 ring-white/20 hover:bg-white/20"
           }`}
         >
           {l.label}
-          <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
         </Link>
       ))}
     </div>
