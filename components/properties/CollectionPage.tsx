@@ -218,9 +218,17 @@ function RelatedLinks({ collection }: { collection: Collection }) {
           </div>
         </div>
       )}
+      <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <Link className="text-teal-700 font-semibold" href={COLLECTION_BASE[kind]}>
+          All {kind === "location" ? "locations" : kind === "estate" ? "developments" : "developers"}
+        </Link>
+        <Link className="text-teal-700 font-semibold" href="/ghana-property-finance-index">
+          This month&apos;s rates and costs
+        </Link>
+      </div>
       <Link
         href="/finance"
-        className="mt-8 inline-flex items-center gap-1.5 font-semibold text-teal-700"
+        className="mt-6 inline-flex items-center gap-1.5 font-semibold text-teal-700"
       >
         Work out what you can afford
         <ArrowRight className="w-4 h-4" aria-hidden="true" />
