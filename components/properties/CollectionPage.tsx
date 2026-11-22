@@ -93,6 +93,16 @@ export async function CollectionPage({ collection }: { collection: Collection })
               <p className="mt-2 text-sm text-gray-600">
                 On the cheapest listing on this page, {money(entry, currency)}, with a 20% deposit
                 over 15 years at {cheapest.rate}% from {cheapest.name}.
+                {/* The listing is priced in dollars and the costs are cedi ones,
+                    so the row would otherwise mix currencies without saying so. */}
+                {currency !== "GHS" && (
+                  <>
+                    {" "}
+                    Costs are shown in cedis, converted at {"\u20b5"}
+                    {fx.usdGhs.toFixed(2)} to the dollar
+                    {fx.asOf ? ` (${fx.source}, ${fx.asOf})` : ""}.
+                  </>
+                )}
               </p>
               <dl className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-5">
                 <Figure term="Entry price" value={money(entry, currency)} />
