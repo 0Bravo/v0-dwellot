@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { buildFinanceIndexEdition } from "@/lib/finance/index-edition"
 import { buildSystemPrompt } from "@/lib/finance/assistant-prompt"
+import { allowRequest } from "@/lib/rate-limit"
 
 /**
  * The index assistant.
@@ -41,24 +42,6 @@ const CUT_SHORT =
   "a licensed adviser can look at your own position. Ask me about a rate, a fee or a " +
   "repayment figure in the index and I can answer that."
 
-/* Per-instance and therefore approximate: serverless runs many copies, so a
-   determined caller gets MAX_PER_WINDOW per instance rather than overall. It
-   stops casual abuse and costs nothing. A shared store is the real fix if
-   this ever matters. */
-const hits = new Map<string, { count: number; resetAt: number }>()
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now()
-  const entry = hits.get(ip)
-  if (!entry || now > entry.resetAt) {
-    hits.set(ip, { count: 1, resetAt: now + WINDOW_MS })
-    if (hits.size > 5000) hits.clear()
-    return false
-  }
-  entry.count += 1
-  return entry.count > MAX_PER_WINDOW
-}
-
 interface ChatMessage {
   role: "user" | "assistant"
   content: string
@@ -74,7 +57,7 @@ export async function POST(request: Request) {
     request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     request.headers.get("x-real-ip") ||
     "unknown"
-  if (rateLimited(ip)) {
+  if (!(await allowRequest(`finance-assistant:${ip}`, MAX_PER_WINDOW, WINDOW_MS / 1000))) {
     return NextResponse.json(
       { error: "That is a lot of questions at once. Give it a minute." },
       { status: 429 },
