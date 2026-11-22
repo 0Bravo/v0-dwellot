@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
 import { RadialSlider } from "@/components/ui/RadialSlider"
+import { CalculatorAssistant, type CalculatorInputs } from "@/components/finance/CalculatorAssistant"
 import { compactMoney } from "@/lib/finance/format"
 
 /**
@@ -94,6 +95,19 @@ export default function MortgageCalculatorPage() {
       }),
     [propertyPrice, downPayment, interestRate, loanTerm],
   )
+
+  /* The assistant has already run these through calculateMortgage; setting
+     them here just shows the visitor the inputs behind the answer it gave.
+     Set directly rather than through switchCurrency, which resets the rest
+     to defaults and would undo the other four. */
+  const applyAssistantInputs = (next: CalculatorInputs) => {
+    setCurrency(next.currency)
+    setPropertyPrice(next.price)
+    setDownPayment(clampDeposit(next.deposit, next.price))
+    setInterestRate(next.annualRatePct)
+    setLoanTerm(next.termYears)
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
 
   const switchCurrency = (next: MortgageCurrency) => {
     if (next === currency) return
@@ -553,6 +567,10 @@ export default function MortgageCalculatorPage() {
             </div>
           </div>
         </div>
+
+        {/* Sits directly under the dials it moves, so the connection between
+            what you typed and what changed is visible without scrolling. */}
+        <CalculatorAssistant onApply={applyAssistantInputs} />
 
         {/* Affordability */}
         <div className="mt-8">
