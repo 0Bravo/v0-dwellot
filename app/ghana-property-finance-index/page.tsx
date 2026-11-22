@@ -4,6 +4,7 @@ import { Activity, Landmark, Scale, TrendingDown } from "lucide-react"
 import { PageHero, HeroOverlap } from "@/components/ui/PageHero"
 import { buildFinanceIndexEdition } from "@/lib/finance/index-edition"
 import { formatRateDate } from "@/lib/mortgage/rates"
+import { IndexAssistant } from "@/components/finance/IndexAssistant"
 
 /* Twice a day: the GRR and FX legs move, the rest is monthly. */
 export const revalidate = 43200
@@ -251,6 +252,10 @@ export default async function FinanceIndexPage() {
               </p>
             </div>
           </section>
+
+          {/* Only when there is a key to answer with: a chat box that
+              always errors is worse than no chat box. */}
+          {process.env.ANTHROPIC_API_KEY ? <IndexAssistant /> : null}
 
           {/* Method and reuse */}
           <section className="mt-8 bg-white rounded-2xl ring-1 ring-gray-200 p-6 sm:p-8">
