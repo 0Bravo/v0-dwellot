@@ -45,9 +45,24 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const result = await getProperty(id)
 
   if (!result) {
+    /* A listing that no longer exists.
+     *
+     * Next cannot send a 404 here: once a streamed response has started the
+     * status is fixed at 200, and the not-found UI arrives after that. Next
+     * injects its own <meta name="robots" content="noindex"> to compensate,
+     * but the layout's default then adds "index, follow" beside it, so the
+     * page went out telling Google both things at once, with a canonical
+     * pointing at the homepage for good measure. Google called the result a
+     * soft 404, forty times over.
+     *
+     * We cannot fix the status from here, so we make the instruction
+     * unambiguous instead: noindex, agreeing with what Next already said,
+     * and no canonical claiming to be another page. */
     return {
       title: "Property Not Found",
       description: "The property you're looking for could not be found. Browse other properties in Ghana.",
+      robots: { index: false, follow: true },
+      alternates: { canonical: `https://dwellot.com/properties/${id}` },
     }
   }
 
