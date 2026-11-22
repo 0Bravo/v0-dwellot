@@ -100,7 +100,7 @@ export const CalculatorAssistant = forwardRef<
       setError("Could not reach the assistant.")
     } finally {
       setBusy(false)
-      requestAnimationFrame(() => endRef.current?.scrollIntoView({ behavior: "smooth" }))
+      requestAnimationFrame(() => endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" }))
     }
   }
 
