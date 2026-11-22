@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { createAdminClient } from "@/lib/supabase/admin"
+import { COLLECTION_BASE, listCollectionValues, type CollectionKind } from "@/lib/properties/collections"
 
 const BASE_URL = "https://dwellot.com"
 
@@ -82,5 +83,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("[Sitemap] Error fetching properties:", error)
   }
 
-  return [...staticPages, ...locationUrls, ...propertyTypeUrls, ...propertyUrls]
+  /* Location, estate and developer pages. These are the entries worth
+     submitting: each is a distinct subject with its own listings and its own
+     costs, unlike the filtered URLs, which are one page wearing hats. */
+  let collectionUrls: MetadataRoute.Sitemap = []
+  try {
+    const kinds: CollectionKind[] = ["location", "estate", "developer"]
+    const groups = await Promise.all(kinds.map((k) => listCollectionValues(k)))
+    collectionUrls = kinds.flatMap((kind, i) =>
+      groups[i].map((v) => ({
+        url: `${BASE_URL}${COLLECTION_BASE[kind]}/${v.slug}`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.75,
+      })),
+    )
+  } catch {
+    // A sitemap short of these pages beats no sitemap at all.
+  }
+
+  return [...staticPages, ...collectionUrls, ...locationUrls, ...propertyTypeUrls, ...propertyUrls]
 }
