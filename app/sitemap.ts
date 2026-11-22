@@ -6,6 +6,7 @@ import {
   listComboValues,
   type CollectionKind,
 } from "@/lib/properties/collections"
+import { listPosts } from "@/lib/blog/posts"
 
 const BASE_URL = "https://dwellot.com"
 
@@ -124,5 +125,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // As above.
   }
 
-  return [...staticPages, ...collectionUrls, ...comboUrls, ...locationUrls, ...propertyTypeUrls, ...propertyUrls]
+  const postUrls: MetadataRoute.Sitemap = listPosts().map((post) => ({
+    url: `${BASE_URL}/blog/${post.slug}`,
+    lastModified: new Date(post.published),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }))
+
+  return [...staticPages, ...postUrls, ...collectionUrls, ...comboUrls, ...locationUrls, ...propertyTypeUrls, ...propertyUrls]
 }
