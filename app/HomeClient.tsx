@@ -286,21 +286,17 @@ export default function HomeClient({
             <div className="bg-gradient-to-br from-teal-600 to-emerald-600 text-white rounded-xl p-6">
               <h3 className="text-xl font-bold mb-2">Are you a Real Estate Agent?</h3>
               <p className="text-teal-100 mb-4">
-                Join Ghana&apos;s fastest growing property platform and reach thousands of potential buyers.
+                Put your listings in front of Ghanaians abroad who are working out what they can afford.
               </p>
               <div className="space-y-3 mb-6">
                 <div className="flex items-center gap-2 text-sm">
                   <CheckCircle className="w-4 h-4" />
                   <span>List unlimited properties</span>
                 </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle className="w-4 h-4" />
-                  <span>Get verified agent badge</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle className="w-4 h-4" />
-                  <span>Mobile Money payments accepted</span>
-                </div>
+              <div className="flex items-center gap-2 text-sm">
+                <CheckCircle className="w-4 h-4" />
+                <span>Your listings sit beside the finance tools buyers come for</span>
+              </div>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
@@ -354,32 +350,40 @@ export default function HomeClient({
       {/* Why Choose Dwellot */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-12 text-center">Why Choose Dwellot?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3 text-center">What Dwellot does</h2>
+          <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+            Three things, stated plainly, with nothing claimed that we do not do.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <HomeIcon className="w-8 h-8 text-teal-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Verified Properties</h3>
-              <p className="text-gray-600">
-                All properties are verified by our team to ensure quality and authenticity
-              </p>
+              <h3 className="text-xl font-semibold mb-2">The numbers, published</h3>
+                <p className="text-gray-600">
+                  Lender rates, statutory fees and exchange rates, each with its source and the date
+                  it was checked. Free to read and free to quote.
+                </p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <MapPin className="w-8 h-8 text-emerald-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Prime Locations</h3>
-              <p className="text-gray-600">Properties in Ghana&apos;s most sought-after neighborhoods and cities</p>
+              <h3 className="text-xl font-semibold mb-2">The full cost, before you commit</h3>
+                <p className="text-gray-600">
+                  Stamp duty, Lands Commission charges, legal and lender fees — separated into what
+                  the law fixes and what you can negotiate.
+                </p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Heart className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">Expert Support</h3>
-              <p className="text-gray-600">
-                Our team of experts is here to guide you through every step of your journey
-              </p>
+              <h3 className="text-xl font-semibold mb-2">Built for buying from abroad</h3>
+                <p className="text-gray-600">
+                  Cedi or dollar, what lenders here ask of a diaspora applicant, and listings from
+                  agents and developers in Ghana.
+                </p>
             </div>
           </div>
         </div>

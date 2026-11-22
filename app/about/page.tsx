@@ -39,7 +39,7 @@ export default function AboutPage() {
               what traditional platforms offer.
             </p>
             <p className="text-lg text-gray-600 leading-relaxed">
-              We believe everyone deserves access to verified property information, transparent pricing,
+              We believe everyone deserves property information they can check themselves, clear pricing,
               and a seamless experience &mdash; whether you are buying your first home in Accra or
               investing from London.
             </p>
@@ -114,10 +114,11 @@ export default function AboutPage() {
                 <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
                   <CheckCircle className="w-6 h-6 text-teal-600" />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">Verified Properties</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  Every listing on Dwellot is reviewed for accuracy. Real properties, real prices, real agents.
-                </p>
+                <h3 className="font-bold text-gray-900 mb-2">Costs you can check</h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    We publish what borrowing and buying cost, with the source and date beside every
+                    figure, so you can check us rather than take our word for it.
+                  </p>
               </CardContent>
             </Card>
 
@@ -156,9 +157,10 @@ export default function AboutPage() {
             <div className="bg-white border-l-4 border-teal-600 rounded-lg p-8 shadow-sm">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Our Mission</h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Dwellot is committed to simplifying the property buying, selling, and renting process in Ghana.
-                We provide a transparent, secure, and efficient platform that connects property seekers with
-                verified listings and trusted agents &mdash; making real estate transactions accessible to everyone.
+                Buying property in Ghana from abroad fails on information long before it fails on money. Dwellot
+                publishes what a purchase actually costs &mdash; lender rates, stamp duty, Lands Commission
+                charges, professional fees &mdash; with the source and the date beside every figure, and lists
+                homes from agents and developers in Ghana alongside it.
               </p>
             </div>
           </div>
@@ -171,8 +173,10 @@ export default function AboutPage() {
                 <div className="w-14 h-14 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Home className="h-7 w-7 text-teal-600" />
                 </div>
-                <h3 className="font-bold text-gray-900 mb-2">Quality Listings</h3>
-                <p className="text-sm text-gray-600">Only verified, high-quality properties on our platform</p>
+                <h3 className="font-bold text-gray-900 mb-2">Homes and the money together</h3>
+                <p className="text-sm text-gray-600">
+                  Listings from agents and developers in Ghana, beside the cost of buying them
+                </p>
               </CardContent>
             </Card>
 
