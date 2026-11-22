@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { createClient } from "@supabase/supabase-js"
 import PropertiesClient from "./PropertiesClient"
+import { PropertiesHero } from "@/components/properties/PropertiesHero"
 
 export const revalidate = 60
 
@@ -142,7 +143,9 @@ export default async function PropertiesPage({
   const { properties, total } = await getInitialProperties(params)
 
   return (
-    <PropertiesClient
+    <>
+      <PropertiesHero />
+      <PropertiesClient
       initialProperties={properties}
       initialTotal={total}
       initialFilters={{
@@ -155,6 +158,7 @@ export default async function PropertiesPage({
         max_price: params.max_price || "",
         sort: params.sort || "newest",
       }}
-    />
+      />
+    </>
   )
 }

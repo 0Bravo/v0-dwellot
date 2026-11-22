@@ -227,7 +227,7 @@ function RelatedLinks({ collection }: { collection: Collection }) {
         </Link>
       </div>
       <Link
-        href="/finance"
+        href="/"
         className="mt-6 inline-flex items-center gap-1.5 font-semibold text-teal-700"
       >
         Work out what you can afford

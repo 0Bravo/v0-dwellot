@@ -143,7 +143,7 @@ export default function HomeClient({
                   now leads on. */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link
-                  href="/finance"
+                  href="/"
                   className="px-7 py-4 bg-emerald-400 hover:bg-emerald-500 text-gray-900 font-bold rounded-lg transition text-center"
                 >
                   Work out what you can afford

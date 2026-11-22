@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation"
  * opened with Properties contradicted its own front page.
  */
 const FINANCE_LINKS = [
-  { href: "/finance", label: "Start here", hint: "Work out what you can afford" },
+  { href: "/", label: "Start here", hint: "Work out what you can afford" },
   { href: "/ghana-property-finance-index", label: "Property Finance Index", hint: "This month's rates and costs" },
   { href: "/finance/cost-of-buying", label: "Cost of buying", hint: "Every fee on top of the price" },
   { href: "/finance/compare-mortgage-rates", label: "Compare lenders", hint: "Ranked over the same term" },

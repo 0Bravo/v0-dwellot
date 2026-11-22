@@ -130,7 +130,7 @@ export default async function Page() {
         add {ghs(e.workedExample.feesTotal)} on top of the price —{" "}
         {e.workedExample.feesPctOfPrice}% — so the cash needed to complete is{" "}
         {ghs(e.workedExample.cashNeeded)}, not just the deposit. Run your own figures with the{" "}
-        <Link href="/finance">affordability tool</Link>, or work the fees through the{" "}
+        <Link href="/">affordability tool</Link>, or work the fees through the{" "}
         <Link href="/finance/cost-of-buying">cost of buying calculator</Link>.
       </p>
     </Article>

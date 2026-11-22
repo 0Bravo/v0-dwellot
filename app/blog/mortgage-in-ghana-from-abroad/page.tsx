@@ -120,7 +120,7 @@ export default async function Page() {
       <h2>Before you commit</h2>
       <p>
         Two steps, in this order. Run your income through the{" "}
-        <Link href="/finance">affordability tool</Link> to see what a Ghanaian bank would actually
+        <Link href="/">affordability tool</Link> to see what a Ghanaian bank would actually
         advance you, which is often less than you would expect at these rates. Then pay for an
         official Lands Commission search on the specific property before any money moves. It costs
         a few hundred cedis and it is the only step that tells you the seller can sell.

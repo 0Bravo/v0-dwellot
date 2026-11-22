@@ -246,7 +246,7 @@ export default async function GhanaReferenceRatePage() {
 
         <p className="text-sm text-gray-600">
           Back to the{" "}
-          <Link href="/finance" className="text-teal-600 hover:text-teal-700 font-medium underline">
+          <Link href="/" className="text-teal-600 hover:text-teal-700 font-medium underline">
             Dwellot property finance hub
           </Link>
           . Dwellot is a property marketplace, not a lender or financial adviser.
