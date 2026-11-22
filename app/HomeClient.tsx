@@ -138,7 +138,23 @@ export default function HomeClient({
                 </p>
               </div>
 
-              <HeroSearchBar popularFilters={popularFilters} />
+              {/* The search box moved down to sit with the listings. The first
+                  thing asked here is the money question, which is what the page
+                  now leads on. */}
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link
+                  href="/finance"
+                  className="px-7 py-4 bg-emerald-400 hover:bg-emerald-500 text-gray-900 font-bold rounded-lg transition text-center"
+                >
+                  Work out what you can afford
+                </Link>
+                <Link
+                  href="/ghana-property-finance-index"
+                  className="px-7 py-4 bg-white/10 hover:bg-white/20 ring-1 ring-white/40 text-white font-semibold rounded-lg transition text-center backdrop-blur-sm"
+                >
+                  This month&apos;s rates and costs
+                </Link>
+              </div>
             </div>
 
             <div className="mt-8 bg-gray-100 rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -166,6 +182,14 @@ export default function HomeClient({
       <section className="py-8 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <RecentlyViewedWidget />
+        </div>
+      </section>
+
+      {/* Browse: the search box, with the listings it drives. It brings its
+          own panel, so it needs no wrapper of its own here. */}
+      <section className="pt-10 pb-2 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <HeroSearchBar popularFilters={popularFilters} />
         </div>
       </section>
 
