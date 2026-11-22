@@ -42,7 +42,6 @@ export function pagesSection(): MetadataRoute.Sitemap {
     p("/finance/compare-mortgage-rates", "weekly", 0.9),
     p("/sell", "daily", 0.9),
     p("/rent", "daily", 0.9),
-    p("/finance", "weekly", 0.85),
     p("/mortgage-calculator", "weekly", 0.85),
     p("/finance/cost-of-buying", "monthly", 0.85),
     p("/finance/ghana-reference-rate", "weekly", 0.85),

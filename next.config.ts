@@ -33,6 +33,12 @@ const nextConfig: NextConfig = {
           // Tree-shake icon/library imports (reduces unused JavaScript)
           optimizePackageImports: ["lucide-react"],
     },
+    /* The finance hub is now the homepage. Only the exact /finance path
+       moves: everything under /finance/... is a page in its own right and
+       must keep its URL. */
+    async redirects() {
+          return [{ source: "/finance", destination: "/", permanent: true }]
+    },
     async headers() {
           return [
             {

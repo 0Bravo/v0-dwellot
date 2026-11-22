@@ -597,7 +597,7 @@ export default function MortgageCalculatorPage() {
 
         <p className="mt-3 text-sm text-gray-600">
           More on financing a home in Ghana:{" "}
-          <Link href="/finance" className="text-teal-600 hover:text-teal-700 font-medium underline">
+          <Link href="/" className="text-teal-600 hover:text-teal-700 font-medium underline">
             Dwellot property finance hub
           </Link>{" "}
           and the{" "}

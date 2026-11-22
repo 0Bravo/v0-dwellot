@@ -119,7 +119,7 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-[#0A1F44] rounded-2xl p-6 shadow-2xl">
+      <div className="glass-panel rounded-2xl p-6 shadow-2xl">
         <h2 className="text-white text-base md:text-lg font-semibold mb-4">
           Find your next home in Ghana
         </h2>
