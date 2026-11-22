@@ -185,12 +185,11 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* Browse: the search box, with the listings it drives */}
-      <section className="pt-12 pb-2 bg-white">
+      {/* Browse: the search box, with the listings it drives. It brings its
+          own panel, so it needs no wrapper of its own here. */}
+      <section className="pt-10 pb-2 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl bg-slate-900 p-5 sm:p-6">
-            <HeroSearchBar popularFilters={popularFilters} />
-          </div>
+          <HeroSearchBar popularFilters={popularFilters} />
         </div>
       </section>
 
