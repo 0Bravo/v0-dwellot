@@ -7,6 +7,23 @@ export const revalidate = 60
 const SELECT_FIELDS =
   "id, title, location, price, currency, property_type, listing_type, bedrooms, bathrooms, area, parking, description, images, agent, phone, view_count, created_at"
 
+/** The canonical URL for a filtered listings page. */
+function canonicalFor(filters: {
+  property_type?: string
+  listing_type?: string
+  location?: string
+}): string {
+  /* encodeURIComponent, not URLSearchParams: the sitemap encodes a space as
+     %20 and URLSearchParams as +. Both parse the same, but they are different
+     strings to a crawler, and a canonical that does not match the submitted
+     URL character for character is the bug this function exists to fix. */
+  const pairs: string[] = []
+  if (filters.property_type) pairs.push(`property_type=${encodeURIComponent(filters.property_type)}`)
+  if (filters.listing_type) pairs.push(`listing_type=${encodeURIComponent(filters.listing_type)}`)
+  if (filters.location) pairs.push(`location=${encodeURIComponent(filters.location)}`)
+  return `https://dwellot.com/properties${pairs.length ? `?${pairs.join("&")}` : ""}`
+}
+
 export async function generateMetadata({
   searchParams,
 }: {
@@ -18,20 +35,32 @@ export async function generateMetadata({
   const property_type = params.property_type
 
   const parts: string[] = []
-  if (property_type) parts.push(property_type.charAt(0).toUpperCase() + property_type.slice(1) + "s")
+  /* Without a property type this started at "for Sale & Rent", so the title
+     read "for Sale & Rent in Cantonments Ghana" — a sentence with its subject
+     missing, which is what a searcher saw in the result. */
+  parts.push(property_type ? property_type.charAt(0).toUpperCase() + property_type.slice(1) + "s" : "Properties")
   if (listing_type === "sale") parts.push("for Sale")
   else if (listing_type === "rent") parts.push("for Rent")
   else parts.push("for Sale & Rent")
   if (location) parts.push(`in ${location}`)
   parts.push("Ghana")
 
-  const title = parts.length > 1 ? `${parts.join(" ")} | Dwellot` : "Properties for Sale & Rent in Ghana | Dwellot"
+  /* No brand here: the layout template appends it, and spelling it out made
+     every one of these titles end "| Dwellot | Dwellot Ghana". */
+  const title = parts.join(" ")
   const description = `Browse properties ${parts.join(" ").toLowerCase()}. Filter by location, price, bedrooms. Houses, apartments, land, and commercial properties on Dwellot.`
 
   return {
     title,
     description,
-    alternates: { canonical: "https://dwellot.com/properties" },
+    /* Self-referential for the filters we submit in the sitemap. This was
+       pinned to /properties for every filtered URL, so the sitemap asked
+       Google to index 36 filtered pages while each one told Google to index
+       something else instead. They could never rank. Only the three filters
+       that change the page's subject are kept, in a fixed order, so sorting
+       and paging still fold into the filtered page rather than spawning
+       endless variants. */
+    alternates: { canonical: canonicalFor({ property_type, listing_type, location }) },
   }
 }
 
