@@ -185,26 +185,30 @@ export default function HeroSearchBar({ popularFilters }: { popularFilters: Popu
             )}
           </div>
 
-          <Link
-            href={
-              searchQuery.trim()
-                ? `/properties?listing_type=sale&search=${encodeURIComponent(searchQuery)}`
-                : "/properties?listing_type=sale"
-            }
-            className="px-8 py-4 bg-emerald-400 hover:bg-emerald-500 text-gray-900 font-bold rounded-lg transition text-center whitespace-nowrap"
-          >
-            For sale
-          </Link>
-          <Link
-            href={
-              searchQuery.trim()
-                ? `/rent?search=${encodeURIComponent(searchQuery)}`
-                : "/rent"
-            }
-            className="px-8 py-4 bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-bold rounded-lg transition text-center whitespace-nowrap"
-          >
-            To rent
-          </Link>
+          {/* Paired in their own row: stacked, each button took a whole
+              line on a phone and pushed the filters below the fold. */}
+          <div className="flex gap-3">
+            <Link
+              href={
+                searchQuery.trim()
+                  ? `/properties?listing_type=sale&search=${encodeURIComponent(searchQuery)}`
+                  : "/properties?listing_type=sale"
+              }
+              className="flex-1 md:flex-none px-6 md:px-8 py-4 bg-emerald-400 hover:bg-emerald-500 text-gray-900 font-bold rounded-lg transition text-center whitespace-nowrap"
+            >
+              For sale
+            </Link>
+            <Link
+              href={
+                searchQuery.trim()
+                  ? `/rent?search=${encodeURIComponent(searchQuery)}`
+                  : "/rent"
+              }
+              className="flex-1 md:flex-none px-6 md:px-8 py-4 bg-cyan-400 hover:bg-cyan-500 text-gray-900 font-bold rounded-lg transition text-center whitespace-nowrap"
+            >
+              To rent
+            </Link>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-2 mt-4">
