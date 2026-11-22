@@ -36,11 +36,16 @@ const display = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL("https://dwellot.com"),
   title: {
-    default: "Dwellot - Ghana's #1 Property Marketplace | Houses, Apartments for Sale & Rent",
+    /* Was "Ghana's #1 Property Marketplace", on a site with 90 listings and
+        no ranking to point at. It sat in the site title, so it was in every
+        page's title and every search result. The replacement says what the
+        site is actually for and targets the money question the homepage now
+        leads with. */
+    default: "Dwellot - Ghana Mortgage Rates, Buying Costs and Property Listings",
     template: "%s | Dwellot Ghana",
   },
   description:
-    "Find your dream property in Ghana. Browse houses, apartments, and commercial properties for sale and rent in Accra, Kumasi, East Legon, Airport Hills, Appolonia City, and across Ghana. Ghana's most trusted property marketplace.",
+    "Compare Ghanaian mortgage rates in cedis and dollars, see the deposit, stamp duty and Lands Commission fees a purchase needs, and browse houses, apartments and land for sale and rent in Accra, Kumasi, East Legon, Airport Hills and Appolonia City.",
   keywords: [
     // Primary keywords (High volume)
     "Ghana property",
@@ -125,23 +130,23 @@ export const metadata: Metadata = {
     locale: "en_GH",
     url: "https://dwellot.com",
     siteName: "Dwellot",
-    title: "Dwellot - Ghana's #1 Property Marketplace",
+    title: "Dwellot - Ghana Mortgage Rates and Property Listings",
     description:
-      "Discover your perfect home in Ghana. Properties for sale and rent in Accra, Kumasi, and across Ghana, with what buying one actually costs.",
+      "Properties for sale and rent across Ghana, with the mortgage rate, deposit, duties and monthly repayment a purchase actually needs.",
     images: [
       {
         url: "/images/hero-bg.jpg",
         width: 1200,
         height: 630,
-        alt: "Dwellot - Ghana's Premier Property Marketplace",
+        alt: "Rooftops of a residential neighbourhood in Ghana",
         type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dwellot - Ghana's #1 Property Marketplace",
-    description: "Find your dream property in Ghana. Browse listings, and see what buying one actually costs.",
+    title: "Dwellot - Ghana Mortgage Rates and Property Listings",
+    description: "Ghanaian mortgage rates, the real cost of buying, and listings across Accra and beyond.",
     images: ["/images/hero-bg.jpg"],
     creator: "@dwellot",
     site: "@dwellot",
@@ -176,7 +181,8 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "RealEstateAgent",
     name: "Dwellot",
-    description: "Ghana's premier property marketplace connecting buyers, sellers, and renters.",
+    description:
+      "Ghana property listings alongside the mortgage rates, deposit, duties and fees a purchase needs.",
     url: "https://dwellot.com",
     logo: "https://dwellot.com/icon-512.png",
     address: {

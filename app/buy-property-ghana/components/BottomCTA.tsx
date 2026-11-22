@@ -20,8 +20,8 @@ export default function BottomCTA() {
           Ready to Find Your Home in Ghana?
         </h2>
         <p className="text-white/80 text-lg leading-relaxed mb-10 max-w-xl mx-auto">
-          Join over 1,200 buyers who found their dream home with Dwellot. Our team is ready to help
-          you every step of the way.
+          Browse listings with the deposit, duties and monthly repayment worked out, and talk to
+          whoever is handling the property directly.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link

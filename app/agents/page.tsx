@@ -102,9 +102,10 @@ export default function AgentsPage() {
               <div className="w-14 h-14 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-5">
                 <Shield className="w-7 h-7 text-teal-700" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Verified Professionals</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Deal With the Person Handling It</h3>
               <p className="text-gray-600 leading-relaxed">
-                All agents verified with ID and license checks. Only trusted professionals make it onto our platform.
+                Every agent profile carries their own listings and their own contact details, so your
+                enquiry reaches whoever is actually handling the property.
               </p>
             </div>
             <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-100">
@@ -212,7 +213,7 @@ export default function AgentsPage() {
       <section className="py-16 bg-teal-700">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-balance">
-            {"Join Ghana's Fastest Growing Property Platform"}
+            {"List Your Properties on Dwellot"}
           </h2>
           <p className="text-teal-100 text-lg mb-8 max-w-2xl mx-auto">
             Sign up as a Dwellot agent and grow your real estate business with qualified leads and powerful tools.
