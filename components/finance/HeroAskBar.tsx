@@ -22,7 +22,7 @@ export function HeroAskBar({ onAsk }: { onAsk: (question: string) => void }) {
 
   return (
     <form
-      className="glass-panel rounded-2xl p-4 sm:p-5 shadow-2xl max-w-2xl mx-auto text-left"
+      className="glass-panel rounded-2xl p-4 sm:p-5 shadow-2xl max-w-2xl text-left"
       onSubmit={(e) => {
         e.preventDefault()
         const text = value.trim()
