@@ -56,11 +56,13 @@ function FinanceMenu() {
   }, [open])
 
   return (
-    <div ref={wrap} className="relative" onMouseLeave={() => setOpen(false)}>
+    /* Click to open, not hover: with both, hovering opened the menu and the
+       click that followed closed it again, which reads as a broken button.
+       Click also behaves the same on touch, where there is no hover. */
+    <div ref={wrap} className="relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        onMouseEnter={() => setOpen(true)}
         aria-expanded={open}
         aria-haspopup="true"
         className={`${LINK_CLASS} inline-flex items-center gap-1`}
