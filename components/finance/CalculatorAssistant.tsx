@@ -1,6 +1,6 @@
 "use client"
 
-import { forwardRef, useImperativeHandle, useRef, useState } from "react"
+import { forwardRef, useImperativeHandle, useRef, useState, type ReactNode } from "react"
 import { ArrowUp, Sparkles } from "lucide-react"
 import { AssistantText } from "@/components/finance/AssistantText"
 import { AssistantFigureCards } from "@/components/finance/AssistantFigureCards"
@@ -49,8 +49,11 @@ export const CalculatorAssistant = forwardRef<
   {
     /** Moves the page's dials to the inputs the assistant calculated with. */
     onApply: (inputs: CalculatorInputs) => void
+    /** Controls shown once there is an answer to adjust. Supplied by the
+        page, because they drive the page's own calculator state. */
+    adjust?: ReactNode
   }
->(function CalculatorAssistant({ onApply }, ref) {
+>(function CalculatorAssistant({ onApply, adjust }, ref) {
   const [messages, setMessages] = useState<Msg[]>([])
   const [input, setInput] = useState("")
   const [busy, setBusy] = useState(false)
@@ -146,6 +149,11 @@ export const CalculatorAssistant = forwardRef<
           <div ref={endRef} />
         </div>
       )}
+
+      {/* Only once something has been answered: before that the dials at the
+          top of the page are the obvious thing to reach for, and a second
+          set of them would just be two of everything. */}
+      {messages.length > 0 && adjust}
 
       {error && (
         <p className="mt-4 text-sm text-amber-800 bg-amber-50 ring-1 ring-amber-200 rounded-lg px-4 py-3">

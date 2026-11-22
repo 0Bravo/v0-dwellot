@@ -23,6 +23,7 @@ import {
   type CalculatorInputs,
 } from "@/components/finance/CalculatorAssistant"
 import { HeroAskBar } from "@/components/finance/HeroAskBar"
+import { QuickAdjust } from "@/components/finance/QuickAdjust"
 import { compactMoney } from "@/lib/finance/format"
 
 /**
@@ -585,7 +586,37 @@ export default function MortgageCalculatorPage() {
 
         {/* Sits directly under the dials it moves, so the connection between
             what you typed and what changed is visible without scrolling. */}
-        <CalculatorAssistant ref={assistantRef} onApply={applyAssistantInputs} />
+        <CalculatorAssistant
+          ref={assistantRef}
+          onApply={applyAssistantInputs}
+          adjust={
+            <QuickAdjust
+              currency={currency}
+              symbol={symbol}
+              lenders={lenderRates}
+              price={propertyPrice}
+              priceMin={priceDialMin}
+              priceMax={priceDialMax}
+              priceStep={limits.step}
+              depositPercent={calculations.depositPercent}
+              depositLabel={formatMoney(downPayment, currency)}
+              rate={interestRate}
+              termYears={loanTerm}
+              monthlyLabel={formatMoney(calculations.monthlyPayment, currency)}
+              basisLabel={(basis) => BASIS_LABEL[basis as keyof typeof BASIS_LABEL] ?? basis}
+              formatPrice={(v) => compactMoney(v, symbol)}
+              formatRate={formatRatePct}
+              formatDepositPct={formatDepositPct}
+              onPrice={handlePriceChange}
+              onDepositPct={(pct) =>
+                setDownPayment(clampDeposit(Math.round((propertyPrice * pct) / 100), propertyPrice))
+              }
+              onRate={setInterestRate}
+              onTerm={setLoanTerm}
+              onLender={applyLender}
+            />
+          }
+        />
 
         {/* Affordability */}
         <div className="mt-8">
