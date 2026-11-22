@@ -200,22 +200,28 @@ export default async function AddPropertyPage() {
       {/* Testimonial/Stats */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Was "500+ Properties Listed" against 90, "10K+ Monthly Visitors"
+              against roughly 180, and agent and city counts nothing counts.
+              An agent who checks one of those and finds it wrong has no
+              reason to believe the rest of the page. The visitor and agent
+              numbers are left out rather than published small: leaving a
+              figure out is honest, inventing one is not. */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <p className="text-4xl font-bold text-teal-700 mb-2">500+</p>
-              <p className="text-gray-600">Properties Listed</p>
+              <p className="text-4xl font-bold text-teal-700 mb-2">Free</p>
+              <p className="text-gray-600">To list a property</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-teal-700 mb-2">10K+</p>
-              <p className="text-gray-600">Monthly Visitors</p>
+              <p className="text-4xl font-bold text-teal-700 mb-2">90</p>
+              <p className="text-gray-600">Properties listed</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-teal-700 mb-2">50+</p>
-              <p className="text-gray-600">Active Agents</p>
+              <p className="text-4xl font-bold text-teal-700 mb-2">Cedi &amp; USD</p>
+              <p className="text-gray-600">Mortgage tools buyers use</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-teal-700 mb-2">8</p>
-              <p className="text-gray-600">Cities Covered</p>
+              <p className="text-4xl font-bold text-teal-700 mb-2">Direct</p>
+              <p className="text-gray-600">Enquiries by WhatsApp</p>
             </div>
           </div>
         </div>

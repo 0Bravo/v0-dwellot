@@ -43,8 +43,9 @@ export async function generateMetadata({
   if (listing_type === "sale") parts.push("for Sale")
   else if (listing_type === "rent") parts.push("for Rent")
   else parts.push("for Sale & Rent")
-  if (location) parts.push(`in ${location}`)
-  parts.push("Ghana")
+  /* "in East Legon" then "Ghana" joined on a space read as one place name,
+     and with no location the preposition vanished altogether. */
+  parts.push(location ? `in ${location}, Ghana` : "in Ghana")
 
   /* No brand here: the layout template appends it, and spelling it out made
      every one of these titles end "| Dwellot | Dwellot Ghana". */
