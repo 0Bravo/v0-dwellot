@@ -53,7 +53,7 @@ export default function FeaturedProperties() {
             Featured Properties in Ghana
           </h2>
           <p className="mt-3 text-gray-500 max-w-xl mx-auto leading-relaxed">
-            A selection of our most popular verified listings available for remote purchase.
+            A selection of our most popular listings available for remote purchase.
           </p>
         </div>
 

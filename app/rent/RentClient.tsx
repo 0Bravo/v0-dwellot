@@ -721,10 +721,11 @@ export default function RentClient({ initialProperties, initialTotal, initialFil
               <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <ShieldCheck className="w-7 h-7 text-blue-600" />
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-2">Verified Listings</h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Every rental listing is reviewed for accuracy. Browse with confidence knowing properties are real and available.
-              </p>
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Listed by agents and landlords</h3>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Contact whoever is letting the property directly. Always view it, or have someone
+                  you trust view it, before you pay anything.
+                </p>
             </div>
             <div className="text-center">
               <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4">

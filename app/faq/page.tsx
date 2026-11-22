@@ -88,7 +88,7 @@ export default function FAQPage() {
       questions: [
         {
           q: "What is Dwellot?",
-          a: "Dwellot is Ghana's leading online property marketplace connecting buyers, sellers, renters, and landlords. We provide verified property listings across Ghana with detailed information, photos, and direct agent contact. Our platform makes finding and listing properties simple, transparent, and secure.",
+          a: "Dwellot is an online property marketplace connecting buyers, sellers, renters, and landlords. We list properties across Ghana with detailed information, photos, and direct agent contact. Our platform makes finding and listing properties simple, transparent, and secure.",
         },
         {
           q: "Is Dwellot free to use?",
@@ -100,7 +100,7 @@ export default function FAQPage() {
         },
         {
           q: "Are Dwellot properties verified?",
-          a: "Yes, our team verifies all property listings before publishing. We check agent credentials, property documentation, and listing accuracy. However, we recommend buyers conduct their own due diligence including property searches at the Lands Commission and physical inspections.",
+          a: "Not all of them. We have checked two developments, Appolonia City and Bestworld Real Estate, and those listings carry a Verified developer badge. Every other listing comes from the agent or developer and has not been independently checked by us, so treat it as you would any listing: view the property, insist on sight of the title, and instruct your own solicitor to run a Lands Commission search before any money moves.",
         },
         {
           q: "How do I contact property agents?",
