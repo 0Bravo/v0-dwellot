@@ -10,7 +10,6 @@ import {
   Heart,
   HomeIcon,
   Car,
-  Shield,
   Users,
   MessageCircle,
   CheckCircle,
@@ -87,12 +86,11 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
           <span className="bg-teal-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold">
             FEATURED PROPERTY
           </span>
-          {property.status === "active" && (
-            <span className="bg-emerald-600 text-white px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
-              <Shield className="w-3 h-3" />
-              Verified
-            </span>
-          )}
+            {/* A "Verified" badge rendered here on status === "active",
+                which only means the listing is published. Nothing about the
+                property or the seller is checked, and a shield badge reads as
+                exactly the fraud reassurance we cannot give. Removed until
+                there is a real check behind it. */}
         </div>
 
         <div className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white px-3 py-1.5 rounded-lg text-sm font-medium">
