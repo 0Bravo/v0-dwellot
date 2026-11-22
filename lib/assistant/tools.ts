@@ -1,5 +1,9 @@
-import { calculateMortgage, type MortgageCurrency } from "@/lib/mortgage/calc"
-import { calculateBuyingCosts, DEFAULT_COSTS_INPUT } from "@/lib/finance/buying-costs"
+import { calculateMortgage, type MortgageCurrency, type MortgageResult } from "@/lib/mortgage/calc"
+import {
+  calculateBuyingCosts,
+  DEFAULT_COSTS_INPUT,
+  type BuyingCostsResult,
+} from "@/lib/finance/buying-costs"
 import { buildFinanceIndexEdition } from "@/lib/finance/index-edition"
 
 /**
@@ -63,16 +67,28 @@ export const TOOLS = [
   },
 ]
 
+export interface CalculatorInputs {
+  currency: MortgageCurrency
+  price: number
+  deposit: number
+  annualRatePct: number
+  termYears: number
+}
+
+/** What the engines returned, kept structured so the page can draw it
+    rather than reading it back out of a paragraph. */
+export interface AssistantFigures {
+  mortgage?: { currency: MortgageCurrency; inputs: CalculatorInputs } & MortgageResult
+  costs?: { priceGhs: number; depositGhs: number } & BuyingCostsResult
+}
+
 export interface ToolOutcome {
+  /** What goes back to the model. */
   result: string
   /** Set by calculate_mortgage: the inputs the page's dials should move to. */
-  calculatorInputs?: {
-    currency: MortgageCurrency
-    price: number
-    deposit: number
-    annualRatePct: number
-    termYears: number
-  }
+  calculatorInputs?: CalculatorInputs
+  /** The same numbers, for the page to render as cards. */
+  figures?: AssistantFigures
 }
 
 /** Guards against a model passing something absurd straight into the engine. */
@@ -98,9 +114,11 @@ export async function runTool(name: string, input: Record<string, unknown>): Pro
     }
 
     const result = calculateMortgage({ price, deposit, annualRatePct, termYears })
+    const inputs: CalculatorInputs = { currency, price, deposit, annualRatePct, termYears }
     return {
-      result: JSON.stringify({ currency, inputs: { price, deposit, annualRatePct, termYears }, ...result }),
-      calculatorInputs: { currency, price, deposit, annualRatePct, termYears },
+      result: JSON.stringify({ currency, inputs, ...result }),
+      calculatorInputs: inputs,
+      figures: { mortgage: { currency, inputs, ...result } },
     }
   }
 
@@ -116,7 +134,10 @@ export async function runTool(name: string, input: Record<string, unknown>): Pro
       depositGhs,
       usingMortgage: input.usingMortgage !== false,
     })
-    return { result: JSON.stringify(result) }
+    return {
+      result: JSON.stringify(result),
+      figures: { costs: { priceGhs, depositGhs, ...result } },
+    }
   }
 
   if (name === "list_index_rates") {

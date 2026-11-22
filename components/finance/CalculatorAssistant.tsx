@@ -3,6 +3,8 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from "react"
 import { ArrowUp, Sparkles } from "lucide-react"
 import { AssistantText } from "@/components/finance/AssistantText"
+import { AssistantFigureCards } from "@/components/finance/AssistantFigureCards"
+import type { AssistantFigures } from "@/lib/assistant/tools"
 import type { MortgageCurrency } from "@/lib/mortgage/calc"
 
 /**
@@ -25,6 +27,9 @@ export interface CalculatorInputs {
 interface Msg {
   role: "user" | "assistant"
   content: string
+  /** Kept per message, so scrolling back shows each answer's own numbers
+      rather than the latest ones under an older reply. */
+  figures?: AssistantFigures
 }
 
 const SUGGESTIONS = [
@@ -90,7 +95,7 @@ export const CalculatorAssistant = forwardRef<
       } else if (!res.ok) {
         setError(data?.error ?? "The assistant could not answer.")
       } else {
-        setMessages([...next, { role: "assistant", content: data.reply }])
+        setMessages([...next, { role: "assistant", content: data.reply, figures: data.figures }])
         if (data.calculatorInputs) {
           onApply(data.calculatorInputs as CalculatorInputs)
           setApplied(true)
@@ -131,6 +136,7 @@ export const CalculatorAssistant = forwardRef<
               >
                 {m.role === "assistant" ? <AssistantText>{m.content}</AssistantText> : m.content}
               </div>
+              {m.figures && <AssistantFigureCards figures={m.figures} />}
             </div>
           ))}
           {applied && !busy && (

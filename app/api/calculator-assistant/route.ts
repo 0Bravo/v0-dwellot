@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { buildCalculatorSystemPrompt } from "@/lib/assistant/calculator-prompt"
-import { TOOLS, runTool, type ToolOutcome } from "@/lib/assistant/tools"
+import { TOOLS, runTool, type AssistantFigures, type ToolOutcome } from "@/lib/assistant/tools"
 import { allowRequest } from "@/lib/rate-limit"
 
 /**
@@ -85,6 +85,10 @@ export async function POST(request: Request) {
   const messages: { role: "user" | "assistant"; content: unknown }[] = [...cleaned]
 
   let calculatorInputs: ToolOutcome["calculatorInputs"]
+  /* Accumulated across rounds, because a question like "what do I need up
+     front" usually produces a repayment and a cost breakdown, and the page
+     should be able to draw both. */
+  const figures: AssistantFigures = {}
   let outputTokens = 0
   let stopReason: string | undefined
 
@@ -132,6 +136,8 @@ export async function POST(request: Request) {
              if the model works through two scenarios, the visitor should end
              up looking at the one it finished on. */
           if (outcome.calculatorInputs) calculatorInputs = outcome.calculatorInputs
+          if (outcome.figures?.mortgage) figures.mortgage = outcome.figures.mortgage
+          if (outcome.figures?.costs) figures.costs = outcome.figures.costs
           results.push({ type: "tool_result", tool_use_id: call.id, content: outcome.result })
         }
 
@@ -148,14 +154,14 @@ export async function POST(request: Request) {
 
       if (stopReason === "refusal" || (stopReason === "max_tokens" && reply.length < 80)) {
         console.error("[calculator-assistant] generation stopped:", stopReason, outputTokens)
-        return NextResponse.json({ reply: CUT_SHORT, calculatorInputs, stopReason, outputTokens })
+        return NextResponse.json({ reply: CUT_SHORT, calculatorInputs, figures, stopReason, outputTokens })
       }
 
       if (!reply) {
         return NextResponse.json({ error: "The assistant had nothing to say." }, { status: 502 })
       }
 
-      return NextResponse.json({ reply, calculatorInputs, stopReason, outputTokens })
+      return NextResponse.json({ reply, calculatorInputs, figures, stopReason, outputTokens })
     }
 
     /* Out of rounds. Whatever it was converging on, it is not converging fast
@@ -166,6 +172,7 @@ export async function POST(request: Request) {
         "I couldn't get that one settled. Try asking for a single figure — a price, a deposit " +
         "and a term is usually enough.",
       calculatorInputs,
+      figures,
       stopReason: "tool_round_cap",
       outputTokens,
     })
