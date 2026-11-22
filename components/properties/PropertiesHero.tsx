@@ -60,10 +60,10 @@ export function PropertiesHero() {
           <div className="relative z-20 py-12 md:py-16 px-6 md:px-12">
             <div className="text-center mb-8">
               <p className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 font-display">
-                Find your next <span className="text-emerald-400">home in Ghana</span>
+                Homes for sale and rent <span className="text-emerald-400">across Ghana</span>
               </p>
               <p className="text-lg md:text-xl text-white/90 font-medium">
-                Houses, apartments and land, from agents and developers across the country.
+                From agents and developers, with what each one costs to buy.
               </p>
             </div>
 
