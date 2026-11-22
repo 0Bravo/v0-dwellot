@@ -26,6 +26,17 @@ const MAX_HISTORY = 8
 const WINDOW_MS = 60_000
 const MAX_PER_WINDOW = 8
 
+/** Shown when generation stops before the answer does. Says the honest thing
+    the model was in the middle of saying, and points at a page rather than
+    pretending to weigh up anyone's circumstances. */
+const CUT_SHORT =
+  "I can only answer questions about the figures in this month's index, and I am not " +
+  "able to tell you what to do about your own borrowing. The currency question in " +
+  "particular turns on where your income is and how long you expect to hold the " +
+  "property: /finance/cedi-or-dollar-mortgage sets out the trade-off, and a lender or " +
+  "a licensed adviser can look at your own position. Ask me about a rate, a fee or a " +
+  "repayment figure in the index and I can answer that."
+
 /* Per-instance and therefore approximate: serverless runs many copies, so a
    determined caller gets MAX_PER_WINDOW per instance rather than overall. It
    stops casual abuse and costs nothing. A shared store is the real fix if
@@ -127,7 +138,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "The assistant had nothing to say." }, { status: 502 })
     }
 
-    return NextResponse.json({ reply, edition: edition.editionLabel })
+    /* Generation does not always finish. A refusal stops it mid-sentence and
+       hands back the fragment, and hitting the token ceiling does the same.
+       Shipping half a sentence reads as a broken site, and on an advice-shaped
+       question the severed half is exactly the half that looks like advice, so
+       the fragment is replaced rather than trimmed. stopReason is returned so
+       this is diagnosable from outside without a deploy. */
+    const stopReason: string | undefined =
+      typeof data?.stop_reason === "string" ? data.stop_reason : undefined
+
+    if (stopReason === "refusal") {
+      console.error("[finance-assistant] refusal; fragment discarded")
+      return NextResponse.json({ reply: CUT_SHORT, edition: edition.editionLabel, stopReason })
+    }
+
+    if (stopReason === "max_tokens") {
+      console.warn("[finance-assistant] max_tokens")
+      return NextResponse.json({
+        reply: `${reply}\n\n(Cut short. Ask for one figure at a time, or see /finance/compare-mortgage-rates.)`,
+        edition: edition.editionLabel,
+        stopReason,
+      })
+    }
+
+    return NextResponse.json({ reply, edition: edition.editionLabel, stopReason })
   } catch (error) {
     console.error("[finance-assistant]", error)
     return NextResponse.json({ error: "The assistant is unavailable." }, { status: 502 })
