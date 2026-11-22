@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useRef, useState } from "react"
 import Link from "next/link"
 import {
   Calculator,
@@ -17,7 +17,12 @@ import {
 } from "lucide-react"
 import { PageHero } from "@/components/ui/PageHero"
 import { RadialSlider } from "@/components/ui/RadialSlider"
-import { CalculatorAssistant, type CalculatorInputs } from "@/components/finance/CalculatorAssistant"
+import {
+  CalculatorAssistant,
+  type CalculatorAssistantHandle,
+  type CalculatorInputs,
+} from "@/components/finance/CalculatorAssistant"
+import { HeroAskBar } from "@/components/finance/HeroAskBar"
 import { compactMoney } from "@/lib/finance/format"
 
 /**
@@ -72,6 +77,8 @@ export default function MortgageCalculatorPage() {
   )
   const [interestRate, setInterestRate] = useState(MORTGAGE_DEFAULTS.GHS.rate)
   const [loanTerm, setLoanTerm] = useState(MORTGAGE_DEFAULTS.GHS.termYears)
+
+  const assistantRef = useRef<CalculatorAssistantHandle>(null)
 
   const { grr, lenders, ratesReviewed } = useMortgageRates()
   const lenderRates = lenders[currency]
@@ -159,6 +166,12 @@ export default function MortgageCalculatorPage() {
           Ghana Reference Rate: <span className="font-semibold text-white">{grr.rate}%</span>
           {grr.effectiveDate && <span className="text-teal-200">effective {formatRateDate(grr.effectiveDate)}</span>}
         </p>
+
+        {/* Takes the question, answers it further down. The hero is where
+            people arrive, the dials are where the answer means something. */}
+        <div className="mt-6">
+          <HeroAskBar onAsk={(q) => assistantRef.current?.ask(q)} />
+        </div>
       </PageHero>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -572,7 +585,7 @@ export default function MortgageCalculatorPage() {
 
         {/* Sits directly under the dials it moves, so the connection between
             what you typed and what changed is visible without scrolling. */}
-        <CalculatorAssistant onApply={applyAssistantInputs} />
+        <CalculatorAssistant ref={assistantRef} onApply={applyAssistantInputs} />
 
         {/* Affordability */}
         <div className="mt-8">
