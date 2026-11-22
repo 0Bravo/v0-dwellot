@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { forwardRef, useImperativeHandle, useRef, useState } from "react"
 import { ArrowUp, Sparkles } from "lucide-react"
 import { AssistantText } from "@/components/finance/AssistantText"
 import type { MortgageCurrency } from "@/lib/mortgage/calc"
@@ -34,12 +34,18 @@ const SUGGESTIONS = [
   "What changes if I put down 30% instead of 20%?",
 ]
 
-export function CalculatorAssistant({
-  onApply,
-}: {
-  /** Moves the page's dials to the inputs the assistant calculated with. */
-  onApply: (inputs: CalculatorInputs) => void
-}) {
+export interface CalculatorAssistantHandle {
+  /** Ask from elsewhere on the page. Brings the panel into view first. */
+  ask: (question: string) => void
+}
+
+export const CalculatorAssistant = forwardRef<
+  CalculatorAssistantHandle,
+  {
+    /** Moves the page's dials to the inputs the assistant calculated with. */
+    onApply: (inputs: CalculatorInputs) => void
+  }
+>(function CalculatorAssistant({ onApply }, ref) {
   const [messages, setMessages] = useState<Msg[]>([])
   const [input, setInput] = useState("")
   const [busy, setBusy] = useState(false)
@@ -51,6 +57,14 @@ export function CalculatorAssistant({
      apologises every time someone types in it. */
   const [unavailable, setUnavailable] = useState(false)
   const endRef = useRef<HTMLDivElement>(null)
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useImperativeHandle(ref, () => ({
+    ask(question: string) {
+      sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+      void send(question)
+    },
+  }))
 
   async function send(question: string) {
     const text = question.trim()
@@ -93,7 +107,7 @@ export function CalculatorAssistant({
   if (unavailable) return null
 
   return (
-    <section className="mt-8 bg-white rounded-2xl ring-1 ring-gray-200 p-6 sm:p-8">
+    <section ref={sectionRef} className="mt-8 scroll-mt-20 bg-white rounded-2xl ring-1 ring-gray-200 p-6 sm:p-8">
       <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
         <Sparkles className="w-5 h-5 text-teal-600" aria-hidden="true" />
         Describe what you&apos;re looking at
@@ -184,4 +198,4 @@ export function CalculatorAssistant({
       </p>
     </section>
   )
-}
+})
