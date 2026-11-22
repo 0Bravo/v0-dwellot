@@ -342,7 +342,7 @@ export default function HomeClient({
             </Link>
           </div>
           <p className="text-sm text-gray-500 mt-4">
-            Available 24/7 &bull; Mobile Money payments accepted &bull; Local support team
+            Message us on WhatsApp &bull; We reply from the UK, in UK hours
           </p>
         </div>
       </section>
