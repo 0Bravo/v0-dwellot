@@ -19,7 +19,11 @@ export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-haiku-5-5"
-const MAX_TOKENS = 400
+/* The whole output budget, thinking included. 400 was far too small: the
+   model spends most of it reasoning, emits a few words of text and hits the
+   ceiling, so visitors got "I can't tell you" and nothing after it. Raising
+   it is the fix, not trimming the answers. Overridable without a deploy. */
+const MAX_TOKENS = Number(process.env.ANTHROPIC_MAX_TOKENS) || 1200
 const MAX_CHARS_PER_MESSAGE = 600
 /** Only the tail of the conversation is sent; this is a FAQ, not therapy. */
 const MAX_HISTORY = 8
@@ -153,7 +157,7 @@ export async function POST(request: Request) {
     }
 
     if (stopReason === "max_tokens") {
-      console.warn("[finance-assistant] max_tokens")
+      console.warn("[finance-assistant] max_tokens", data?.usage?.output_tokens)
       return NextResponse.json({
         reply: `${reply}\n\n(Cut short. Ask for one figure at a time, or see /finance/compare-mortgage-rates.)`,
         edition: edition.editionLabel,
@@ -161,7 +165,12 @@ export async function POST(request: Request) {
       })
     }
 
-    return NextResponse.json({ reply, edition: edition.editionLabel, stopReason })
+    return NextResponse.json({
+      reply,
+      edition: edition.editionLabel,
+      stopReason,
+      outputTokens: data?.usage?.output_tokens,
+    })
   } catch (error) {
     console.error("[finance-assistant]", error)
     return NextResponse.json({ error: "The assistant is unavailable." }, { status: 502 })
