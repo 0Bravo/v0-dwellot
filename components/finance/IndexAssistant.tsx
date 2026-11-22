@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react"
 import { ArrowUp, Sparkles } from "lucide-react"
+import { AssistantText } from "@/components/finance/AssistantText"
 
 /**
  * A question box for this month's figures.
@@ -82,7 +83,7 @@ export function IndexAssistant() {
                     : "bg-gray-50 ring-1 ring-gray-200 text-gray-800"
                 }`}
               >
-                {m.content}
+                {m.role === "assistant" ? <AssistantText>{m.content}</AssistantText> : m.content}
               </div>
             </div>
           ))}

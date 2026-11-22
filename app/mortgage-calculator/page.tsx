@@ -106,7 +106,9 @@ export default function MortgageCalculatorPage() {
     setDownPayment(clampDeposit(next.deposit, next.price))
     setInterestRate(next.annualRatePct)
     setLoanTerm(next.termYears)
-    window.scrollTo({ top: 0, behavior: "smooth" })
+    /* No scroll here. The panel scrolls its own answer into view straight
+       after, so anything this did was undone a frame later; the line under
+       the answer is what tells the visitor the dials moved. */
   }
 
   const switchCurrency = (next: MortgageCurrency) => {
