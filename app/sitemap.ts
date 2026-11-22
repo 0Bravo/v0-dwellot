@@ -1,6 +1,11 @@
 import type { MetadataRoute } from "next"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { COLLECTION_BASE, listCollectionValues, type CollectionKind } from "@/lib/properties/collections"
+import {
+  COLLECTION_BASE,
+  listCollectionValues,
+  listComboValues,
+  type CollectionKind,
+} from "@/lib/properties/collections"
 
 const BASE_URL = "https://dwellot.com"
 
@@ -17,6 +22,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/blog/buying-property-ghana-2026`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.75 },
     { url: `${BASE_URL}/mortgage-calculator`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.85 },
+    { url: `${BASE_URL}/locations`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/estates`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/developers`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/ghana-property-finance-index`, lastModified: new Date(), changeFrequency: "daily", priority: 0.95 },
     { url: `${BASE_URL}/finance`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.85 },
     { url: `${BASE_URL}/finance/compare-mortgage-rates`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
@@ -102,5 +110,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // A sitemap short of these pages beats no sitemap at all.
   }
 
-  return [...staticPages, ...collectionUrls, ...locationUrls, ...propertyTypeUrls, ...propertyUrls]
+  /* Location x property type: "3-bedroom houses in East Legon" and the like. */
+  let comboUrls: MetadataRoute.Sitemap = []
+  try {
+    const combos = await listComboValues()
+    comboUrls = combos.map((c) => ({
+      url: `${BASE_URL}/property-search/${c.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }))
+  } catch {
+    // As above.
+  }
+
+  return [...staticPages, ...collectionUrls, ...comboUrls, ...locationUrls, ...propertyTypeUrls, ...propertyUrls]
 }

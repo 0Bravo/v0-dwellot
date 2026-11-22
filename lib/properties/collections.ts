@@ -153,3 +153,93 @@ export async function getCollection(
 function unique(values: (string | null | undefined)[]): string[] {
   return [...new Set(values.map((v) => (v ?? "").trim()).filter(Boolean))]
 }
+
+/* ---------------------------------------------------------------------------
+ * Location x property type
+ *
+ * "3-bedroom houses in East Legon" is a real query with real inventory behind
+ * it, and it is where honest scale comes from: each page is differentiated by
+ * data rather than by rewording the same prose. The same two-listing floor
+ * applies, which is what stops this turning into a thousand empty pages.
+ * ------------------------------------------------------------------------ */
+
+export interface ComboValue {
+  location: string
+  propertyType: string
+  slug: string
+  count: number
+}
+
+/** "east-legon/house" style slug, one segment each. */
+export function comboSlug(location: string, propertyType: string): string {
+  return `${slugify(location)}--${slugify(propertyType)}`
+}
+
+export async function listComboValues(min = 2): Promise<ComboValue[]> {
+  try {
+    const { data, error } = await createAdminClient()
+      .from("properties")
+      .select("location, property_type")
+      .eq("status", "active")
+    if (error || !data) return []
+
+    const counts = new Map<string, { location: string; propertyType: string; count: number }>()
+    for (const row of data as unknown as { location: string | null; property_type: string | null }[]) {
+      const location = (row.location ?? "").trim()
+      const propertyType = (row.property_type ?? "").trim()
+      if (!location || !propertyType) continue
+      const key = comboSlug(location, propertyType)
+      const existing = counts.get(key)
+      if (existing) existing.count += 1
+      else counts.set(key, { location, propertyType, count: 1 })
+    }
+
+    return [...counts.entries()]
+      .filter(([, v]) => v.count >= min)
+      .map(([slug, v]) => ({ ...v, slug }))
+      .sort((a, b) => b.count - a.count)
+  } catch {
+    return []
+  }
+}
+
+export async function getCombo(slug: string): Promise<Collection | null> {
+  const values = await listComboValues()
+  const match = values.find((v) => v.slug === slug)
+  if (!match) return null
+
+  try {
+    const { data, error } = await createAdminClient()
+      .from("properties")
+      .select(SELECT)
+      .eq("status", "active")
+      .eq("location", match.location)
+      .eq("property_type", match.propertyType)
+      .order("price", { ascending: true })
+    if (error || !data) return null
+
+    const properties = data as unknown as CollectionProperty[]
+    const sale = properties.filter((p) => p.listing_type === "sale" && typeof p.price === "number")
+    const prices = sale.map((p) => p.price as number).filter((n) => n > 0)
+
+    return {
+      kind: "location",
+      name: `${titleCase(match.propertyType)}s in ${match.location}`,
+      slug,
+      properties,
+      forSale: properties.filter((p) => p.listing_type === "sale").length,
+      forRent: properties.filter((p) => p.listing_type === "rent").length,
+      minPrice: prices.length ? Math.min(...prices) : null,
+      maxPrice: prices.length ? Math.max(...prices) : null,
+      currency: properties.find((p) => p.currency)?.currency ?? "USD",
+      relatedLocations: [match.location],
+      relatedDevelopers: unique(properties.map((p) => p.developer)),
+    }
+  } catch {
+    return null
+  }
+}
+
+function titleCase(value: string): string {
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+}
