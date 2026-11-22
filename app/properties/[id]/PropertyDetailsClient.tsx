@@ -1,5 +1,6 @@
 "use client"
 
+import { isVerifiedListing, type VerifiableListing } from "@/lib/properties/verified"
 import { useState, useEffect, useCallback } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
@@ -679,16 +680,20 @@ export default function PropertyDetailsClient({ initialProperty = null }: Proper
                 </div>
               </div>
 
-              <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
-                <div className="flex items-center mb-3">
-                  <Shield className="w-6 h-6 text-green-600 mr-3" />
-                  <span className="font-bold text-green-800">Verified Property</span>
+              {/* Only where a check was really done. This claimed every
+                  listing had been verified with the owner, which was not so. */}
+              {isVerifiedListing(property as VerifiableListing) && (
+                <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4">
+                  <div className="flex items-center mb-3">
+                    <Shield className="w-6 h-6 text-green-600 mr-3" />
+                    <span className="font-bold text-green-800">Verified developer</span>
+                  </div>
+                  <p className="text-sm text-green-700">
+                    Dwellot has checked this development and the company behind it. That is not a
+                    survey or a title search on this particular unit, which stays your solicitor&apos;s job.
+                  </p>
                 </div>
-                <p className="text-sm text-green-700">
-                  This property has been verified by our team for accuracy and legitimacy. All information has been
-                  confirmed with the property owner.
-                </p>
-              </div>
+              )}
             </div>
           </div>
         </div>

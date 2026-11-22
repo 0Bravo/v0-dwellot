@@ -1,5 +1,6 @@
 "use client"
 
+import { isVerifiedListing, type VerifiableListing } from "@/lib/properties/verified"
 import { useState, useCallback } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -16,6 +17,7 @@ import {
   ChevronRight,
   MapPin,
   Camera,
+  Shield,
 } from "lucide-react"
 import { generateWhatsAppUrl } from "@/lib/utils/whatsapp"
 import { trackEnquiry } from "@/lib/utils/track-enquiry"
@@ -86,11 +88,14 @@ export function FeaturedPropertyCard({ property }: { property: Property }) {
           <span className="bg-teal-600 text-white px-4 py-1.5 rounded-lg text-sm font-semibold">
             FEATURED PROPERTY
           </span>
-            {/* A "Verified" badge rendered here on status === "active",
-                which only means the listing is published. Nothing about the
-                property or the seller is checked, and a shield badge reads as
-                exactly the fraud reassurance we cannot give. Removed until
-                there is a real check behind it. */}
+            {/* Scoped to listings actually checked. It used to render on
+                status === "active", which only means published. */}
+            {isVerifiedListing(property as VerifiableListing) && (
+              <span className="bg-emerald-600 text-white px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-1">
+                <Shield className="w-3 h-3" />
+                Verified developer
+              </span>
+            )}
         </div>
 
         <div className="absolute top-4 right-4 z-10 bg-black bg-opacity-50 text-white px-3 py-1.5 rounded-lg text-sm font-medium">
