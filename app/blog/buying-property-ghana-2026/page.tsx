@@ -471,7 +471,7 @@ export default function BuyingPropertyGhanaGuide() {
               <CardContent className="p-8 text-center">
                 <h2 className="text-2xl font-bold mb-4">Ready to Find Your Dream Property in Ghana?</h2>
                 <p className="text-muted-foreground mb-6">
-                  Browse thousands of verified properties across Ghana on Dwellot
+                  Browse properties across Ghana on Dwellot
                 </p>
                 <Link href="/properties">
                   <Button size="lg" className="bg-teal-600 hover:bg-teal-700">

@@ -7,14 +7,14 @@ export const revalidate = 60
 export const metadata: Metadata = {
   title: "Properties for Rent in Ghana | Houses & Apartments",
   description:
-    "Browse verified rental properties in Ghana. Find houses, apartments, and commercial spaces for rent in Accra, Kumasi, and across Ghana. Filter by location, price, and bedrooms.",
+    "Browse rental properties in Ghana. Find houses, apartments, and commercial spaces for rent in Accra, Kumasi, and across Ghana. Filter by location, price, and bedrooms.",
   alternates: {
     canonical: "https://dwellot.com/rent",
   },
   openGraph: {
     title: "Properties for Rent in Ghana | Dwellot",
     description:
-      "Find your perfect rental property in Ghana. Verified listings of houses, apartments, and commercial spaces.",
+      "Find your perfect rental property in Ghana. Listings of houses, apartments, and commercial spaces.",
     url: "https://dwellot.com/rent",
   },
 }

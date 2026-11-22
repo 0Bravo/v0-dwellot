@@ -181,7 +181,7 @@ export default function AgentSignupPage() {
           <div className="lg:col-span-2 space-y-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Become a Dwellot Agent</h1>
-              <p className="text-gray-600">Join Ghana{"'"}s fastest-growing property platform and reach thousands of buyers and renters.</p>
+              <p className="text-gray-600">List your properties on Dwellot and reach thousands of buyers and renters.</p>
             </div>
 
             <div className="space-y-4">

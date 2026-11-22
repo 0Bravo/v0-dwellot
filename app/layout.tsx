@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     template: "%s | Dwellot Ghana",
   },
   description:
-    "Find your dream property in Ghana. Browse thousands of verified houses, apartments, and commercial properties for sale and rent in Accra, Kumasi, East Legon, Airport Hills, Appolonia City, and across Ghana. Ghana's most trusted property marketplace.",
+    "Find your dream property in Ghana. Browse houses, apartments, and commercial properties for sale and rent in Accra, Kumasi, East Legon, Airport Hills, Appolonia City, and across Ghana. Ghana's most trusted property marketplace.",
   keywords: [
     // Primary keywords (High volume)
     "Ghana property",
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     "Ghana property marketplace",
     "real estate agents Ghana",
     "Ghana property listings",
-    "verified properties Ghana",
+    "Ghana mortgage rates",
     "property investment Ghana",
     "expat housing Ghana",
     "affordable homes Ghana",
@@ -127,7 +127,7 @@ export const metadata: Metadata = {
     siteName: "Dwellot",
     title: "Dwellot - Ghana's #1 Property Marketplace",
     description:
-      "Discover your perfect home in Ghana. Thousands of verified properties for sale and rent in Accra, Kumasi, and across Ghana.",
+      "Discover your perfect home in Ghana. Properties for sale and rent in Accra, Kumasi, and across Ghana, with what buying one actually costs.",
     images: [
       {
         url: "/images/hero-bg.jpg",
@@ -141,7 +141,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Dwellot - Ghana's #1 Property Marketplace",
-    description: "Find your dream property in Ghana. Browse thousands of verified listings.",
+    description: "Find your dream property in Ghana. Browse listings, and see what buying one actually costs.",
     images: ["/images/hero-bg.jpg"],
     creator: "@dwellot",
     site: "@dwellot",

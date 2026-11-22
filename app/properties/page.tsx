@@ -26,7 +26,7 @@ export async function generateMetadata({
   parts.push("Ghana")
 
   const title = parts.length > 1 ? `${parts.join(" ")} | Dwellot` : "Properties for Sale & Rent in Ghana | Dwellot"
-  const description = `Browse verified properties ${parts.join(" ").toLowerCase()}. Filter by location, price, bedrooms. Houses, apartments, land, and commercial properties on Dwellot.`
+  const description = `Browse properties ${parts.join(" ").toLowerCase()}. Filter by location, price, bedrooms. Houses, apartments, land, and commercial properties on Dwellot.`
 
   return {
     title,

@@ -58,7 +58,7 @@ export default function HeroSection() {
   }
 
   const trustPills = [
-    { icon: ShieldCheck, label: "Verified Listings" },
+    { icon: ShieldCheck, label: "Verified Developments" },
     { icon: Globe, label: "Remote Purchase Support" },
     { icon: MapPin, label: "Ghana-Wide Coverage" },
   ]
@@ -89,7 +89,7 @@ export default function HeroSection() {
             </h1>
 
             <p className="text-white/85 text-lg leading-relaxed mb-8 max-w-lg">
-              Browse 500+ verified residential properties across Ghana. Our team guides you through
+              Browse residential properties across Ghana. Our team guides you through
               every step — from search to keys — no matter where you live.
             </p>
 

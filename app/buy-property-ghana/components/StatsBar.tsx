@@ -2,11 +2,16 @@
 
 import { motion } from "framer-motion"
 
+/* Figures we can stand behind. The previous set was invented: "1,200+
+   Happy Buyers" against no completed sale, "500+ Properties Listed"
+   against 90, and "100% Verified Listings" against two verified
+   developments. The count is hardcoded and will drift; it should come
+   from the same query that feeds the listings page. */
 const stats = [
-  { value: "500+", label: "Properties Listed" },
-  { value: "1,200+", label: "Happy Buyers" },
-  { value: "15+", label: "Cities Covered" },
-  { value: "100%", label: "Verified Listings" },
+  { value: "90", label: "Properties Listed" },
+  { value: "2", label: "Verified Developments" },
+  { value: "Cedi or USD", label: "Mortgage Comparison" },
+  { value: "Free", label: "To Browse" },
 ]
 
 export default function StatsBar() {
